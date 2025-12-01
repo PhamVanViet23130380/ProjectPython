@@ -1,0 +1,115 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'app/css/home.css' %}">
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
+
+    <title>Trang Chủ</title>
+</head>
+<body>
+    <header>
+        <nav class="ab-header">
+            <div class="ab-left">
+                <div class="logo-wrap">
+                    <img src="{% static 'app/images/Airbnb_Logo_Bélo.svg.png' %}" class="ab-logo">
+                </div>
+            </div>
+            
+            <div class="ab-center">    
+                <div class="ab-menu">
+                    <span class="ab-item active">🏠 Nơi lưu trú</span>
+                    <span class="ab-item">
+                        🎈 Trải nghiệm 
+                        <span class="badge-new">MỚI</span>
+                    </span>
+                    <span class="ab-item">
+                        🛎 Dịch vụ 
+                        <span class="badge-new">MỚI</span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="ab-right">
+                <span class="host-btn">Trở thành host</span>
+
+                <button class="ab-icon">🌐</button>
+                <button class="ab-icon">☰</button>
+            </div>
+        </nav>
+
+        <nav class="ab-footer">
+            <div class="ab-search">
+
+                <!-- ITEM 1 -->
+                <div class="ab-search-item">
+                    <span class="label">Địa điểm</span>
+                    <span class="value">Tìm kiếm điểm đến</span>
+                </div>
+                <div class="divider"></div>
+
+                <!-- ITEM 2 -->
+                <div class="ab-search-item">
+                    <span class="label">Thời gian</span>
+                    <span class="value">Thêm ngày</span>
+                </div>
+                <div class="divider"></div>
+
+                <!-- ITEM 3 + SEARCH BUTTON -->
+                <div class="search-last">
+                    <div class="search-last-left">
+                        <span class="label">Khách</span>
+                        <span class="value">Thêm khách</span>
+                    </div>
+
+                    <button class="ab-search-btn">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+
+            </div>
+        </nav>
+
+    </header>
+
+
+    <!-- LISTINGS -->
+    <main class="listing-container">
+
+        <div class="grid">
+            {% for item in listings %}
+            <div class="card">
+                <img src="{{ item.image }}" class="card-img" alt="room">
+                <div class="card-body">
+                    <div class="card-header">
+                        <p class="location">{{ item.location }}</p>
+                        <p class="rating">⭐ {{ item.rating }}</p>
+                    </div>
+
+                    <p class="title">{{ item.title }}</p>
+
+                    <p class="price">
+                        <strong>{{ item.price|intcomma }} đ</strong> / đêm
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>© {{ now|date:"Y" }} © 2025 Airbnb, Inc. · Quyền riêng tư · Điều khoản</p>
+    </footer>
+</body>
+</html>
