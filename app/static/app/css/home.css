@@ -63,6 +63,10 @@ header {
     border-bottom: 2px solid #000;
 }
 
+.ab-item.action {
+    text-decoration: none !important;
+}
+
 .badge-new {
     background: #2d4f9e;
     color: white;

@@ -1,0 +1,374 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dịch vụ | Airbnb Clone</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+
+    <!-- CSS riêng cho trang dịch vụ -->
+    <link rel="stylesheet" href="{% static 'app/css/service.css' %}">
+
+</head>
+
+<body>
+    <header>
+        <nav class="ab-header">
+            <div class="ab-left">
+                <div class="logo-wrap">
+                    <img src="{% static 'app/images/Airbnb_Logo_Bélo.svg.png' %}" class="ab-logo">
+                </div>
+            </div>
+            
+            <div class="ab-center">    
+                <div class="ab-menu">
+                    <span class="ab-item active">🏠 Nơi lưu trú</span>
+                    <span class="ab-item">
+                        🎈 Trải nghiệm 
+                        <span class="badge-new">MỚI</span>
+                    </span>
+                    <a href="{% url 'service' %}" class="ab-item action">
+                        🛎 Dịch vụ 
+                        <span class="badge-new">MỚI</span>
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="ab-right">
+                <span class="host-btn">Trở thành host</span>
+
+                <button class="ab-icon">🌐</button>
+                <button class="ab-icon">☰</button>
+            </div>
+        </nav>
+
+        <nav class="ab-footer">
+            <div class="ab-search">
+
+                <!-- ITEM 1 -->
+                <div class="ab-search-item">
+                    <span class="label">Địa điểm</span>
+                    <span class="value">Tìm kiếm điểm đến</span>
+                </div>
+                <div class="divider"></div>
+
+                <!-- ITEM 2 -->
+                <div class="ab-search-item">
+                    <span class="label">Thời gian</span>
+                    <span class="value">Thêm ngày</span>
+                </div>
+                <div class="divider"></div>
+
+                <!-- ITEM 3 + SEARCH BUTTON -->
+                <div class="search-last">
+                    <div class="search-last-left">
+                        <span class="label">Khách</span>
+                        <span class="value">Thêm khách</span>
+                    </div>
+
+                    <button class="ab-search-btn">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+
+            </div>
+        </nav>
+
+    </header>
+
+    <!-- SECTION: ĐẦU BẾP -->
+    <section class="service-section">
+        <div class="section-header">
+            <h2>Đầu bếp</h2>
+            <!-- NÚT LƯỚT -->
+            <div class="slider-controls">
+                <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
+                <button class="slide-btn right" onclick="slideRight(this)">❯</button>
+            </div>
+        </div>
+        <!-- WRAPPER CHO SCROLL -->
+        <div class="scroll-wrapper">
+        <div class="service-row">
+
+            <div class="service-card">
+                <img src="{% static 'app/images/64a9113d-05fa-44f7-95c8-24088567bf0d.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Bữa ăn La Mã đích thực</h4>
+                <p>Từ ₫1.987.574/khách · ★4,97</p>
+            </div>
+
+            <div class="service-card">
+                <img src="{% static 'app/images/4bc4102d-3381-40b8-bf43-be3142c040ee.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Giá vé siêu địa phương</h4>
+                <p>Từ ₫2.608.048/khách · ★5,0</p>
+            </div>
+
+            <div class="service-card">
+                <img src="{% static 'app/images/6cc0ffd7-bd7c-450b-9be0-a4ff434c6308.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Đằng sau ngọn lửa</h4>
+                <p>Tối thiểu ₫1.726.698 · ★5,0</p>
+            </div>
+
+            <div class="service-card">
+                <img src="{% static 'app/images/d4.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Thực đơn Cali–Mediterranean</h4>
+                <p>Tối thiểu ₫1.075.136 · ★5,0</p>
+            </div>
+
+            <div class="service-card">
+                <img src="{% static 'app/images/d5.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Ẩm thực Catalan</h4>
+                <p>Từ ₫1.223.123/khách</p>
+            </div>
+
+            <div class="service-card">
+                <img src="{% static 'app/images/d6.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Ẩm thực Catalan</h4>
+                <p>Từ ₫1.223.123/khách</p>
+            </div>
+
+            <div class="service-card">
+                <img src="{% static 'app/images/d7.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Ẩm thực Catalan</h4>
+                <p>Từ ₫1.223.123/khách</p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- SECTION: ĐÀO TẠO -->
+    <section class="service-section">
+        <div class="section-header">
+            <h2>Đào tạo</h2>
+            <!-- NÚT LƯỚT -->
+            <div class="slider-controls">
+                <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
+                <button class="slide-btn right" onclick="slideRight(this)">❯</button>
+            </div>
+        </div>
+        <!-- WRAPPER CHO SCROLL -->
+        <div class="scroll-wrapper">
+        <div class="service-row">
+
+            <div class="service-card">
+                <img src="{% static 'app/images/t1.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Tập luyện toàn thân bởi Peter</h4>
+                <p class="location">Từ ₫1.317.196 /khách · ★ 5,0</p>
+            </div>
+
+            <div class="service-card">
+                <img src="{% static 'app/images/t2.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Huấn luyện cá nhân và thể dục nhóm</h4>
+                <p class="location">Từ ₫2.257.905 /khách · ★ 5,0</p>
+            </div>
+
+            <div class="service-card">
+                <img src="{% static 'app/images/t3.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Tập luyện năng lượng cao của Vicky</h4>
+                <p class="location">Từ ₫4.215.027 /khách · ★ 5,0</p>
+            </div>
+
+            <div class="service-card">
+                <img src="{% static 'app/images/t4.webp' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Tập luyện phục hồi của Taylor</h4>
+                <p class="location">Từ ₫1.791.387 /khách · ★ 5,0</p>
+            </div>
+
+             <div class="service-card">
+                <img src="{% static 'app/images/t5.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Sun-sweat by Nishant</h4>
+                <p class="location">Từ ₫2.634.392 /khách · ★ 5,0</p>
+            </div>
+
+             <div class="service-card">
+                <img src="{% static 'app/images/t6.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Yoga nghi lễ của Ana Ponzo</h4>
+                <p class="location">Từ ₫2.257.905 /khách · ★ 5,0</p>
+            </div>
+
+             <div class="service-card">
+                <img src="{% static 'app/images/t7.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Sun-sweat by Nishant</h4>
+                <p class="location">Từ ₫2.257.905 /khách · ★ 5,0</p>
+            </div>
+
+        </div>
+    </div>
+    </section>
+
+
+    <!-- SECTION: MASSAGE -->
+    <section class="service-section">
+        <div class="section-header">
+            <h2>Massage</h2>
+            <!-- NÚT LƯỚT -->
+            <div class="slider-controls">
+                <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
+                <button class="slide-btn right" onclick="slideRight(this)">❯</button>
+            </div>
+        </div>
+        <!-- WRAPPER CHO SCROLL -->
+        <div class="scroll-wrapper">
+        <div class="service-row">
+
+            <div class="service-card">
+                <img src="{% static 'app/images/m1.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Thư giãn và mát-xa cơ sâu bởi Javier</h4>
+                <p class="location">Từ ₫1.366.970 /khách · ★ 5,0</p>
+            </div>
+
+            <div class="service-card">
+                <img src="{% static 'app/images/m2.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Massage tốt Dịch vụ di động</h4>
+                <p class="location">Từ ₫3.951.588 /khách · ★ 5,0</p>
+            </div>
+
+            <div class="service-card">
+                <img src="{% static 'app/images/m3.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Phục hồi và thư giãn bởi Deisy</h4>
+                <p class="location">Từ ₫1.580.635 /khách · ★ 4,69</p>
+            </div>
+
+            <div class="service-card">
+                <img src="{% static 'app/images/m4.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Massage trị liệu bằng hương thơm của Jenna</h4>
+                <p class="location">Từ ₫4.741.906 /khách · ★ 5,0</p>
+            </div>
+
+             <div class="service-card">
+                <img src="{% static 'app/images/m5.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Massage cơ sâu của Olga - London</h4>
+                <p class="location">Từ ₫4.741.906 /khách · ★ 5,0</p>
+            </div>
+
+             <div class="service-card">
+                <img src="{% static 'app/images/m6.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>The Massage Escape Guy</h4>
+                <p class="location">Từ ₫4.741.906 /khách · ★ 5,0</p>
+            </div>
+
+             <div class="service-card">
+                <img src="{% static 'app/images/m7.avif' %}">
+                <div class="heart"><i class="fa-regular fa-heart"></i></div>
+                <h4>Liệu pháp Ayurvedic với dầu của Tania</h4>
+                <p class="location">Từ ₫4.741.906 /khách · ★ 5,0</p>
+            </div>
+
+        </div>
+    </div>
+    </section>
+
+
+<!--FOOTER-->
+    <footer class="footer">
+    <!-- PHẦN 1: NGUỒN CẢM HỨNG CHO NHỮNG KỲ NGHỈ -->
+    <section class="footer-explore">
+        <h3>Nguồn cảm hứng cho những kỳ nghỉ sau này</h3>
+
+        <div class="footer-explore-tabs">
+            <span class="active">Địa điểm</span>
+            <span>Loại chỗ ở</span>
+            <span>Điểm du lịch</span>
+            <span>Trải nghiệm</span>
+            <span>Không chỉ có ở chỗ ở</span>
+        </div>
+
+        <div class="footer-explore-grid">
+            <div><b>Đà Lạt</b><br>Cho thuê nhà</div>
+            <div><b>Đà Nẵng</b><br>Cho thuê nhà</div>
+            <div><b>Huế</b><br>Cho thuê nhà</div>
+            <div><b>Hội An</b><br>Biệt thự</div>
+            <div><b>Nha Trang</b><br>Căn hộ</div>
+            <div><b>Phú Quốc</b><br>Resort</div>
+            <div><b>Hà Nội</b><br>Căn hộ dịch vụ</div>
+            <div><b>TP. Hồ Chí Minh</b><br>Phòng riêng</div>
+            <div><b>Sa Pa</b><br>Nhà vườn</div>
+            <div><b>Cần Thơ</b><br>Cho thuê nhà</div>
+        </div>
+    </section>
+
+    <hr>
+
+    <!-- PHẦN 2: 4 CỘT -->
+    <section class="footer-columns">
+        <div class="col">
+            <h4>Hỗ trợ</h4>
+            <p>Trung tâm trợ giúp</p>
+            <p>AirCover</p>
+            <p>Hỗ trợ người khuyết tật</p>
+            <p>Tùy chọn hủy</p>
+            <p>Báo cáo vấn đề hàng xóm</p>
+        </div>
+
+        <div class="col">
+            <h4>Cộng đồng</h4>
+            <p>Airbnb.org</p>
+            <p>Chống phân biệt đối xử</p>
+            <p>Đối tác cộng đồng</p>
+        </div>
+
+        <div class="col">
+            <h4>Đón tiếp khách</h4>
+            <p>Cho thuê nhà trên Airbnb</p>
+            <p>Tài nguyên đón tiếp</p>
+            <p>Diễn đàn cộng đồng</p>
+            <p>Đón tiếp khách có trách nhiệm</p>
+        </div>
+
+        <div class="col">
+            <h4>Giới thiệu</h4>
+            <p>Tin tức Airbnb</p>
+            <p>Tính năng mới</p>
+            <p>Cơ hội nghề nghiệp</p>
+            <p>Nhà đầu tư</p>
+            <p>Charity & Sustainability</p>
+        </div>
+    </section>
+
+    <hr>
+
+    <!-- PHẦN 3: COPYRIGHT -->
+    <section class="footer-bottom">
+        <div class="left">
+            © 2024 Airbnb, Inc · Quyền riêng tư · Điều khoản
+        </div>
+
+        <div class="right">
+            <span><i class="fa-solid fa-globe"></i> Tiếng Việt (VN)</span>
+            <span>₫ VND</span>
+            <span class="icons">
+                <i class="fa-brands fa-facebook"></i>
+                <i class="fa-brands fa-x-twitter"></i>
+                <i class="fa-brands fa-instagram"></i>
+            </span>
+        </div>
+    </section>
+
+</footer>
+</body>
+<script src="{% static 'app/js/service.js' %}"></script>
+</html>
