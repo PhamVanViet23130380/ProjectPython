@@ -83,11 +83,11 @@ header {
 .ab-icon {
     background: #f2f2f2;
     border: none;
-    width: 52px;
-    height: 52px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 20px;
+    font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -107,7 +107,7 @@ header {
 }
 
 .ab-icon i {
-    font-size: 20px;
+    font-size: 16px;
 }
 
 .host-btn i {
@@ -117,9 +117,127 @@ header {
 }
 
 @media (max-width: 700px) {
-    .ab-icon { width: 44px; height: 44px; font-size: 18px; }
+    .ab-icon { width: 40px; height: 40px; font-size: 15px; }
     .ab-item i { font-size: 16px; }
     .host-btn i { font-size: 15px; }
+}
+
+/* Host modal styles */
+.host-modal-overlay{
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    align-items: center;
+    justify-content: center;
+    z-index: 1200;
+}
+.host-modal{
+    background: #fff;
+    width: min(1100px, 92%);
+    border-radius: 14px;
+    padding: 26px 34px 20px 34px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    position: relative;
+}
+.host-modal-close{
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    cursor: pointer;
+}
+.host-modal h2{
+    text-align:center;
+    margin: 6px 0 22px 0;
+    font-size: 22px;
+}
+.host-modal-grid{ 
+    display:flex; 
+    gap:24px; 
+    justify-content:center; 
+    align-items:stretch; 
+}
+.host-option{ 
+    cursor:pointer; 
+    flex:1; 
+}
+.host-option-card{ 
+    border:1px solid #eee; 
+    border-radius:12px; 
+    padding:28px 18px; 
+    display:flex; 
+    flex-direction:column; 
+    align-items:center; 
+    gap:18px; 
+    background:#fff; 
+}
+.host-option-card img{ 
+    width:86px; 
+    height:86px; 
+    object-fit:cover; 
+    border-radius:12px; 
+}
+.host-option-card .option-icon{
+    width:86px;
+    height:86px;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#fff9f9;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.host-option-card .option-icon i{
+    font-size:34px;
+    color: #333; 
+}
+.host-option-title{ 
+    font-weight:700; 
+    margin-top:6px; 
+}
+
+.host-option.selected .host-option-card{
+     outline:3px solid #e6f3ff; 
+     box-shadow:0 8px 20px rgba(0,0,0,0.08); 
+     border-color:transparent; 
+}
+
+.host-modal-actions{ 
+    display:flex; 
+    justify-content:flex-end; 
+    margin-top:22px; 
+}
+
+.host-modal-next{ 
+    background:#ff385c; 
+    border:none; 
+    color:white; 
+    padding:12px 20px; 
+    border-radius:8px; 
+    font-weight:700; 
+    cursor:pointer; 
+}
+.host-modal-next:disabled{ 
+    opacity:0.5; 
+    cursor:not-allowed;
+}
+
+@media (max-width:900px){
+    .host-modal-grid{ flex-direction:column; }
+}
+
+/* Trạng thái mặc định: Ẩn */
+#host-modal-overlay {
+    display: none;
+}
+
+/* Trạng thái mở */
+#host-modal-overlay.is-open {
+    display: flex; 
 }
 
 /* SEARCH BAR */
@@ -228,4 +346,10 @@ header {
 
 .ab-search-item { flex: 1; }
 
-.search-last { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-radius: 40px; }
+.search-last { 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    padding: 12px 20px; 
+    border-radius: 40px; 
+}

@@ -28,70 +28,7 @@
 </head>
 
 <body>
-    <header>
-        <nav class="ab-header">
-            <div class="ab-left">
-                <div class="logo-wrap">
-                    <img src="{% static 'app/images/Airbnb_Logo_Bélo.svg.png' %}" class="ab-logo">
-                </div>
-            </div>
-
-            <div class="ab-center">
-                <div class="ab-menu">
-                    <a href="{% url 'home' %}" class="ab-item"><i class="fa-solid fa-home"></i> Nơi lưu trú</a>
-                    <a href="{% url 'experience' %}" class="ab-item action">
-                        <i class="fa-solid fa-compass"></i> Trải nghiệm
-                        <span class="badge-new">MỚI</span>
-                    </a>
-                    <a href="{% url 'service' %}" class="ab-item">
-                        <i class="fa-solid fa-concierge-bell"></i> Dịch vụ
-                        <span class="badge-new">MỚI</span>
-                    </a>
-
-                </div>
-            </div>
-
-            <div class="ab-right">
-                <span class="host-btn"><i class="fa-solid fa-user-plus"></i> Trở thành host</span>
-
-                <button class="ab-icon" aria-label="Ngôn ngữ"><i class="fa-solid fa-globe"></i></button>
-                <button class="ab-icon" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
-            </div>
-        </nav>
-
-        <nav class="ab-footer">
-            <div class="ab-search">
-
-                <!-- ITEM 1 -->
-                <div class="ab-search-item">
-                    <span class="label">Địa điểm</span>
-                    <span class="value">Tìm kiếm điểm đến</span>
-                </div>
-                <div class="divider"></div>
-
-                <!-- ITEM 2 -->
-                <div class="ab-search-item">
-                    <span class="label">Thời gian</span>
-                    <span class="value">Thêm ngày</span>
-                </div>
-                <div class="divider"></div>
-
-                <!-- ITEM 3 + SEARCH BUTTON -->
-                <div class="search-last">
-                    <div class="search-last-left">
-                        <span class="label">Khách</span>
-                        <span class="value">Thêm khách</span>
-                    </div>
-                    <button class="ab-search-btn">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </button>
-                </div>
-
-            </div>
-        </nav>
-
-    </header>
-
+    {% include 'app/header.html' with active_page='experience' %}
     <main>
         <!-- SECTION: Trải nghiệm được ưa chuộng -->
         <section class="section cards-section">
@@ -460,7 +397,7 @@
     </div>
     </section>
   <!--FOOTER-->
-    {% include 'app/footer.html' %}
+      {% include 'app/footer.html' %}
 </body>
 <script src="{% static 'app/js/luotcard.js' %}"></script>
 </html>
