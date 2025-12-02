@@ -1,0 +1,466 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'app/css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/experience.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/footer.css' %}">
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
+        integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
+        crossorigin="anonymous"></script>
+
+    <title>Trải Nghiệm</title>
+</head>
+
+<body>
+    <header>
+        <nav class="ab-header">
+            <div class="ab-left">
+                <div class="logo-wrap">
+                    <img src="{% static 'app/images/Airbnb_Logo_Bélo.svg.png' %}" class="ab-logo">
+                </div>
+            </div>
+
+            <div class="ab-center">
+                <div class="ab-menu">
+                    <a href="{% url 'home' %}" class="ab-item"><i class="fa-solid fa-home"></i> Nơi lưu trú</a>
+                    <a href="{% url 'experience' %}" class="ab-item action">
+                        <i class="fa-solid fa-compass"></i> Trải nghiệm
+                        <span class="badge-new">MỚI</span>
+                    </a>
+                    <a href="{% url 'service' %}" class="ab-item">
+                        <i class="fa-solid fa-concierge-bell"></i> Dịch vụ
+                        <span class="badge-new">MỚI</span>
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="ab-right">
+                <span class="host-btn"><i class="fa-solid fa-user-plus"></i> Trở thành host</span>
+
+                <button class="ab-icon" aria-label="Ngôn ngữ"><i class="fa-solid fa-globe"></i></button>
+                <button class="ab-icon" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </nav>
+
+        <nav class="ab-footer">
+            <div class="ab-search">
+
+                <!-- ITEM 1 -->
+                <div class="ab-search-item">
+                    <span class="label">Địa điểm</span>
+                    <span class="value">Tìm kiếm điểm đến</span>
+                </div>
+                <div class="divider"></div>
+
+                <!-- ITEM 2 -->
+                <div class="ab-search-item">
+                    <span class="label">Thời gian</span>
+                    <span class="value">Thêm ngày</span>
+                </div>
+                <div class="divider"></div>
+
+                <!-- ITEM 3 + SEARCH BUTTON -->
+                <div class="search-last">
+                    <div class="search-last-left">
+                        <span class="label">Khách</span>
+                        <span class="value">Thêm khách</span>
+                    </div>
+                    <button class="ab-search-btn">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+
+            </div>
+        </nav>
+
+    </header>
+
+    <main>
+        <!-- SECTION: Trải nghiệm được ưa chuộng -->
+        <section class="section cards-section">
+            <div class="section-header">
+                <h2>Trải nghiệm được ưa chuộng tại Thành phố Hồ Chí Minh</h2>
+            <!-- NÚT LƯỚT -->
+            <div class="slider-controls">
+                <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
+                <button class="slide-btn right" onclick="slideRight(this)">❯</button>
+            </div>
+        </div>
+            <div class="cards-wrapper">
+                <div class="cards-row">
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="popular-badge">Phổ biến</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Hành khách nữ - Ẩm thực và tham quan đường phố bằng xe máy</h4>
+                        <p class="meta">Từ ₫650.000/khách · ★4,96</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="popular-badge">Phổ biến</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Tour ẩm thực đường phố bằng xe máy tốt nhất ở Thành phố Hồ Chí Minh</h4>
+                        <p>Từ ₫730.000/khách · ★4,98</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="popular-badge">Phổ biến</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Địa đạo Củ Chi và Đồng bằng sông Cửu Long - Tour theo nhóm nhỏ</h4>
+                        <p>Từ ₫990.000/khách · ★4,86</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="popular-badge">Phổ biến</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Tour nửa ngày đường hầm Củ Chi 'ít đông đúc' - Bến Đước</h4>
+                        <p>Từ ₫662.400/khách · ★4,87</p>
+                    </div>
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="popular-badge">Phổ biến</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Mì bà, cà phê, trái cây độc đáo và lịch sử</h4>
+                        <p>Từ ₫750.000 /khách · ★4,98</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="popular-badge">Phổ biến</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Tour khám phá ẩm thực Saigon Eleven bằng xe tay ga</h4>
+                        <p>Từ ₫705.000 /khách · ★4,98</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="popular-badge">Phổ biến</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Saigon Unseen, History, Hidden Gems Motor Tour</h4>
+                        <p>Từ ₫780.000 /khách · ★4,97</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Tour đi bộ thuần chay không chỉ là đồ ăn chay</h4>
+                        <p>Từ ₫900.000 /khách · ★4,98</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+                <!-- SECTION: AIRBNB ORIGINAL -->
+        <section class="section cards-section">
+            <div class="section-header">
+                <h2>Airbnb Original</h2>
+                <!-- NÚT LƯỚT -->
+            <div class="slider-controls">
+                <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
+                <button class="slide-btn right" onclick="slideRight(this)">❯</button>
+            </div>
+        </div>
+            <div class="cards-wrapper">
+                <div class="cards-row">
+                        <div class="card">
+                            <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg" loading="lazy" alt="Du lịch nông nghiệp" />
+                            <div class="airbnb-original"><i class="fa-solid fa-leaf leaf" aria-hidden="true"></i>Original</div>
+                            <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                            <h4>Tham gia giải đấu Marty Supreme Invitational</h4>
+                            <p>Thành phố New York, Hoa Kỳ<br>Đóng vào ngày 5 tháng 12</p>
+                        </div>
+
+                        <div class="card">
+                            <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                            <div class="airbnb-original"><i class="fa-solid fa-leaf leaf" aria-hidden="true"></i>Original</div>
+                            <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                            <h4>Tham quan triển lãm cá nhân mới của Jack Pierson cùng nghệ sĩ</h4>
+                            <p>Miami Beach, Hoa Kỳ<br>Từ ₫5.268.784/khách</p>
+                        </div>
+
+                        <div class="card">
+                            <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                            <div class="airbnb-original"><i class="fa-solid fa-leaf leaf" aria-hidden="true"></i>Original</div>
+                            <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                            <h4>Vào phòng tập với vận động viên Olympic Omar Visintin</h4>
+                            <p>Milan, Italy · Từ ₫795.030/khách</p>
+                        </div>
+
+                        <div class="card">
+                            <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                            <div class="airbnb-original"><i class="fa-solid fa-leaf leaf" aria-hidden="true"></i>Original</div>
+                            <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                            <h4>Tùy chỉnh một chiếc túi Ana với người sáng lập LUAR Raul Lopez</h4>
+                            <p>New York, Hoa Kỳ · Từ ₫5.268.784/khách</p>
+                        </div>
+
+                        <div class="card">
+                            <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                            <div class="airbnb-original"><i class="fa-solid fa-leaf leaf" aria-hidden="true"></i>Original</div>
+                            <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                            <h4>Tinh thần anh hùng với vận động viên Paralympic Francesca Porcellato</h4>
+                            <p>Milan, Italy · Từ ₫795.030/khách</p>
+                        </div>
+
+                        <div class="card">
+                            <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                            <div class="airbnb-original"><i class="fa-solid fa-leaf leaf" aria-hidden="true"></i>Original</div>
+                            <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                            <h4>Bữa tối thân mật với Đầu bếp Charlie Mitchell</h4>
+                            <p>New York, Hoa Kỳ<br>Sẽ mở vào ngày 4 tháng 12</p>
+                        </div>
+
+                        <div class="card">
+                            <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                            <div class="airbnb-original"><i class="fa-solid fa-leaf leaf" aria-hidden="true"></i>Original</div>
+                            <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                            <h4>Khắc đá cẩm thạch với một nhà điêu khắc thế hệ thứ ba</h4>
+                            <p>Athens, Hy Lạp · Từ ₫1.528.903/khách · ★5,0</p>
+                        </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: VĂN HÓA & TOUR -->
+        <section class="section cards-section">
+            <div class="section-header">
+                <h2>Diễn ra hôm nay tại Thành phố Hồ Chí Minh</h2>
+              <!-- NÚT LƯỚT -->
+            <div class="slider-controls">
+                <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
+                <button class="slide-btn right" onclick="slideRight(this)">❯</button>
+            </div>
+        </div>
+            <div class="cards-wrapper">
+                <div class="cards-row">
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">07:00</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Saigon Unseen, History, Hidden Gems Motor Tour</h4>
+                        <p>Từ ₫780.000/khách · ★4,97</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">07:00</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Tour địa phương 'Lesser-Known' Đồng bằng sông Cửu Long MyTho 1 ngày</h4>
+                        <p>Từ ₫1.188.000/khách · ★4,87</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">08:00</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Nữ hành khách - Thành phố Hồ Chí Minh Tour bằng xe tay ga</h4>
+                        <p>Từ ₫500.000/khách · ★4,92</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">13:30</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Tìm hiểu kỹ thuật cà phê trứng Việt Nam</h4>
+                        <p>Từ ₫520.000/khách · ★4,92</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">17:30</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Tour đi bộ thuần chay không chỉ là đồ ăn chay</h4>
+                        <p>Từ ₫900.000/khách · ★4,98</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">17:30</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Bia thủ công Sài Gòn và Tour ẩm thực địa phương bằng xe tay ga</h4>
+                        <p>Từ ₫1.100.000/khách · ★4,92</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">08:00</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Tour tham quan theo nhóm nhỏ đồng bằng sông Cửu Long - Khám phá cả ngày</h4>
+                        <p>Từ ₫700.000/khách · ★4,77</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- SECTION: NGÀY MAI -->
+        <section class="section cards-section">
+            <div class="section-header">
+                <h2>Ngày mai, tại Thành phố Hồ Chí Minh</h2>
+              <!-- NÚT LƯỚT -->
+            <div class="slider-controls">
+                <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
+                <button class="slide-btn right" onclick="slideRight(this)">❯</button>
+            </div>
+        </div>
+            <div class="cards-wrapper">
+                <div class="cards-row">
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">16:30</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Tour ẩm thực đi bộ riêng với 13 lần nếm thử bằng ô tô</h4>
+                        <p>Từ ₫705.000/khách · ★4,99</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">17:30</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Khám phá những địa điểm ít người biết đến trong chuyến phiêu lưu bằng xe máy</h4>
+                        <p>Từ ₫750.000/khách · ★4,96</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">13:30</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Hành trình cà phê Việt Nam - Người khổng lồ chưa biết</h4>
+                        <p>Từ ₫760.000/khách · ★4,99</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">10:30</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Nấu các món ăn truyền thống trong một ngôi nhà địa phương</h4>
+                        <p>Từ ₫1.050.000/khách · ★4,95</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">08:30</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Ba khu phố thú vị nhất Sài Gòn</h4>
+                        <p>Từ ₫950.000/khách · ★4,93</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">10:00</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Khám phá thực hành về Cà phê và Văn hóa Việt Nam</h4>
+                        <p>Từ ₫750.000/khách · ★4,99</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">08:00</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Tour theo nhóm nhỏ nửa ngày - Địa đạo Củ Chi</h4>
+                        <p>Từ ₫450.000/khách · ★4,77</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+               <!-- SECTION: TRẢI NGHIỆM CUỐI TUẦN -->
+        <section class="section cards-section">
+            <div class="section-header">
+                <h2>Trải nghiệm vào cuối tuần này</h2>
+              <!-- NÚT LƯỚT -->
+            <div class="slider-controls">
+                <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
+                <button class="slide-btn right" onclick="slideRight(this)">❯</button>
+            </div>
+        </div>
+            <div class="cards-wrapper">
+                <div class="cards-row">
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">Th 7 · 07:00</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Khám phá Củ Chi từ kênh đào đến đường hầm</h4>
+                        <p>Từ ₫1.850.000/khách · ★4,99</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">Th 6 · 10:00</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Khám phá thực hành về Cà phê và Văn hóa Việt Nam</h4>
+                        <p>Từ ₫750.000/khách · ★4,99</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">Th 6 · 08:00</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Tour theo nhóm nhỏ nửa ngày - Địa đạo Củ Chi</h4>
+                        <p>Từ ₫450.000/khách · ★4,77</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">Th 6 · 07:00</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Tour 'ít du lịch hơn' Mekong BenTre 1 ngày đích thực</h4>
+                        <p>Từ ₫1.658.000/khách · ★4,85</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">Th 6 · 08:30</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Thưởng thức ẩm thực đường phố địa phương với một tín đồ ẩm thực</h4>
+                        <p>Từ ₫650.000/khách · ★4,97</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">Th 6 · 08:00</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Khám phá hương vị đích thực với Tour ẩm thực địa phương</h4>
+                        <p>Từ ₫650.000/khách · ★4,98</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://bcp.cdnchinhphu.vn/Uploaded/buithuhuong/2019_09_06/du-lich-rai-nghiem-4.jpg">
+                        <div class="time-badge">Th 6 · 17:00</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Trải nghiệm cocktail bí mật ở Sài Gòn</h4>
+                        <p>Từ ₫1.975.000/khách · ★4,97</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    </div>
+    </div>
+    </div>
+    </section>
+  <!--FOOTER-->
+    {% include 'app/footer.html' %}
+</body>
+<script src="{% static 'app/js/luotcard.js' %}"></script>
+</html>

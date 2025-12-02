@@ -1,0 +1,292 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background: #ffffff;
+}
+
+header {
+    background-color: #ffffff;
+}
+
+
+/* ===============================
+   LAYOUT CHUNG CHO TRANG EXPERIENCE
+================================= */
+.experience-section, .cards-section {
+    margin-bottom: 60px;
+    max-width: 1600px;     /* không vượt quá */
+    margin: 0 auto;
+    padding-left: 80px;    /* ← khoảng cách Airbnb */
+    padding-right: 80px;   /* → khoảng cách Airbnb */
+    padding-top: 40px;
+}
+
+/* ===============================
+   SECTION HEADER
+================================= */
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.section-header h2 {
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.arrow-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: #f7f7f7;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.arrow-btn:hover {
+    background: #e5e5e5;
+}
+
+/* ===============================
+   EXPERIENCE CARD LIST
+================================= */
+/* ---- SCROLL CONTAINER ---- */
+
+.exp-scroll-wrapper, .cards-wrapper {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    padding-bottom: 10px;
+    white-space: nowrap;
+}
+.exp-scroll-wrapper::-webkit-scrollbar, .cards-wrapper::-webkit-scrollbar { display: none; }
+
+/* ---- SLIDER BUTTON ---- */
+.slider-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.slide-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: #f1f1f1;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.25s ease;
+}
+
+.slide-btn:hover {
+    background: #e0e0e0;
+}
+
+.slide-btn.left {
+    opacity: 0.6;
+}
+
+.slide-btn.left:hover {
+    opacity: 1;
+}
+
+.experience-row, .cards-row { 
+    display:flex; 
+    flex-wrap:nowrap; 
+    gap:24px; 
+}
+
+.experience-card, .card { 
+    min-width:260px; 
+    max-width:260px; 
+    flex:0 0 auto; 
+    position:relative; 
+    display:flex; 
+    flex-direction:column; 
+    background:#fff; 
+    border-radius:8px; 
+    overflow:hidden; 
+    box-shadow:0 6px 18px rgba(0,0,0,0.06); 
+}
+.experience-card img, .card img { 
+    width:100%; 
+    height:220px; 
+    object-fit:cover; 
+    border-radius:8%; 
+}
+.experience-card h4, .card h4 { 
+    font-size:16px; 
+    font-weight:600; 
+    margin:12px 10px 4px 10px; 
+    line-height:1.35; 
+}
+.experience-card p, .card p { 
+    font-size:14px; 
+    color:#555; 
+    padding:0 10px 12px 10px; 
+}
+.exp-heart, .experience-card .heart, .card .card-heart { 
+    position:absolute; 
+    top:12px; 
+    right:12px; 
+    background:white; 
+    width:36px; 
+    height:36px; 
+    border-radius:50%; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    box-shadow:0 2px 6px rgba(0,0,0,0.14); 
+}
+/* Thời gian (badge góc trái) */
+.card .time-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(255,255,255,0.95);
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 13px;
+    color: #222;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+/* Badge "Phổ biến" for popular experiences */
+.card .popular-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(255,255,255,0.98);
+    padding: 6px 12px;
+    border-radius: 18px;
+    font-weight: 700;
+    font-size: 13px;
+    color: #222;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+/* Badge "Airbnb Original" (small pill with leaf icon) */
+.card .airbnb-original {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(255,255,255,0.98);
+    padding: 6px 10px;
+    border-radius: 18px;
+    font-weight: 700;
+    font-size: 13px;
+    color: #222;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+}
+.card .airbnb-original .leaf {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff7e6;
+    font-size: 14px; /* slightly larger for icon */
+    color: #8a5a2b; /* warm leaf color */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.experience-card:hover {
+    transform: scale(1.03);
+    border-radius: 8%;
+}
+
+/* Icon trái tim luôn hiển thị */
+.experience-card .heart {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.14);
+    opacity: 1 !important;      /* luôn hiện */
+    visibility: visible !important;
+}
+
+.experience-card h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 12px 10px 4px 10px;
+    line-height: 1.35;
+    white-space: normal !important;
+    word-wrap: break-word;
+
+}
+
+.experience-card p {
+    font-size: 14px;
+    color: #555;
+    padding: 0 10px 12px 10px;
+}
+
+.experience-card .location {
+    font-size: 13px;
+    color: #777;
+    margin: 2px 10px;
+}
+
+
+/* ===============================
+   RESPONSIVE - MOBILE/TABLET
+================================= */
+
+@media (max-width: 1200px) {
+    .experience-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .experience-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .experience-container {
+        padding: 30px 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .experience-row {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .section-header h2 {
+        font-size: 22px;
+    }
+}
+@media (max-width: 600px) {
+    .experience-row {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .section-header h2 {
+        font-size: 22px;
+    }
+}
+

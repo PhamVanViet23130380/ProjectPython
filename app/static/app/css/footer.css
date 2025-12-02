@@ -1,0 +1,94 @@
+/* ---------------- FOOTER ---------------- */
+.footer {
+    background: #f7f7f7;
+    margin-top: 60px;
+    padding: 60px 80px;
+    border-top: 1px solid #e0e0e0;
+}
+
+/* PHẦN 1 – NGUỒN CẢM HỨNG */
+.footer-explore h3 {
+    font-size: 20px;
+    margin-bottom: 28px;
+}
+
+.footer-explore-tabs {
+    display: flex;
+    gap: 38px;
+    margin-bottom: 28px;
+}
+
+.footer-explore-tabs span {
+    font-size: 15px;
+    color: #555;
+    cursor: pointer;
+    padding-bottom: 6px;
+}
+
+.footer-explore-tabs .active {
+    font-weight: 600;
+    border-bottom: 2px solid #000;
+    color: #000;
+}
+
+.footer-explore-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    column-gap: 50px;
+    row-gap: 18px;
+    padding-bottom: 30px;
+    font-size: 14px;
+    color: #555;
+}
+
+.footer-explore-grid b {
+    color: #222;
+    font-weight: 600;
+}
+
+/* PHẦN 2 – 4 CỘT */
+
+.footer-columns {
+    margin: 40px 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 40px;
+}
+
+.footer-columns h4 {
+    margin-bottom: 15px;
+    font-size: 15px;
+}
+
+.footer-columns p {
+    margin-bottom: 10px;
+    color: #555;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.footer-columns p:hover {
+    text-decoration: underline;
+}
+
+/* PHẦN 3 – BOTTOM BAR */
+
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 35px;
+    font-size: 14px;
+    color: #555;
+}
+
+.footer-bottom .right {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.footer-bottom .right i {
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 17px;
+}

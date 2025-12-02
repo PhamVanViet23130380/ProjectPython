@@ -8,3 +8,6 @@ def home(request):
 def service(request):
     return render(request, 'app/service.html')
 
+def experience(request):
+    return render(request, 'app/experience.html')
+
