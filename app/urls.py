@@ -8,4 +8,5 @@ urlpatterns = [
     path('experience/', views.experience, name='experience'),
     path('dich-vu/', views.service, name='service'),
     path('login/', views.login_view, name='login'),
+    path('taobaidang/', views.taobaidang, name='taobaidang'),
 ]
