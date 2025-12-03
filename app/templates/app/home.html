@@ -24,36 +24,511 @@
         integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
         crossorigin="anonymous"></script>
 
-    <title>Trải Nghiệm</title>
+    <title>Nơi lưu trú</title>
 </head>
 
 <body>
     {% include 'app/header.html' with active_page='home' %}
     <!-- LISTINGS -->
-    <main class="listing-container">
+    <main>
 
-        <div class="grid">
-            {% for item in listings %}
-            <div class="card">
-                <img src="{{ item.image }}" class="card-img" alt="room">
-                <div class="card-body">
-                    <div class="card-header">
-                        <p class="location">{{ item.location }}</p>
-                        <p class="rating">⭐ {{ item.rating }}</p>
-                    </div>
-
-                    <p class="title">{{ item.title }}</p>
-
-                    <p class="price">
-                        <strong>{{ item.price|intcomma }} đ</strong> / đêm
-                    </p>
+        <section class="section cards-section">
+            <div class="section-header">
+                <h2>Nơi lưu trú được ưa chuông ở Hà Nội ></h2>
+                <!-- NÚT LƯỚT -->
+                <div class="slider-controls">
+                    <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
+                    <button class="slide-btn right" onclick="slideRight(this)">❯</button>
                 </div>
             </div>
-            {% endfor %}
-        </div>
+            <div class="cards-wrapper">
+                <div class="cards-row">
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/miso/Hosting-1298388548884218266/original/315a9807-e959-4733-b5a8-45d5bd2c4244.png?im_w=720">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Phòng tại Quận Hoàn Kiếm</h4>
+                        <p class="meta">₫616.236 cho 2 đêm · ★4,92</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/miso/Hosting-1180239774814924564/original/5b1c443e-cbd3-4614-b927-ec95d64380e6.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Phòng tại Quận Hoàn Kiếm</h4>
+                        <p class="meta">₫639.059 cho 2 đêm · ★4,82</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1543226481919602359/original/047057f9-0e77-429c-8cc6-9dddf4f653b3.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Phòng tại Quận Đống Đa</h4>
+                        <p class="meta">₫1.217.304 cho 2 đêm · ★5,0</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/miso/Hosting-1207805086134572738/original/a151029a-2fd7-4aa7-baf8-569a3b32a24b.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Phòng tại Quận Hoàn Kiếm</h4>
+                        <p class="meta">₫1.111452 cho 2 đêm · ★4,96</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTQ4NTMwNDk5NzM5MDQzMjU4OQ==/original/028c1b21-357a-48ca-8f90-419b52788947.png?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ tại Quận Tây Hồ</h4>
+                        <p class="meta">₫1.400.430 cho 2 đêm · ★5,0</p>
+                    </div>
+
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTE0NjI0MjA3MjE0OTA3MTU5OA%3D%3D/original/65b04fdd-0592-480a-a41d-17ba4b851533.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Nơi ở tại Quận Tây Hồ</h4>
+                        <p class="meta">₫933.602 cho 2 đêm · ★4,91</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTE3MzIxMTQ0MjAzMDc0NjE1Ng%3D%3D/original/abd9f397-e596-48d7-9066-18013d6e075b.jpeg?im_w=720">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Nơi ở tại Quận Hoàn Kiếm</h4>
+                        <p class="meta">₫933.620 cho 2 đêm · ★4,91</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1323891888012442327/original/350d53c0-0b40-45ce-aab2-22db770f8c20.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Phòng tại Quận Tây Hồ</h4>
+                        <p class="meta">₫1.429.010 cho 2 đêm · ★4,96</p>
+                    </div>
+
+
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: CĂN PHÒNG TẠI ĐÀ LẠT CUỐI TUẦN NÀY -->
+        <section class="section cards-section">
+            <div class="section-header">
+                <h2>Căn phòng tại Đà Lạt vào cuối tuần này ></h2>
+                <!-- NÚT LƯỚT -->
+                <div class="slider-controls">
+                    <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
+                    <button class="slide-btn right" onclick="slideRight(this)">❯</button>
+                </div>
+            </div>
+            <div class="cards-wrapper">
+                <div class="cards-row">
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/bfdf27ab-ac56-49be-9c82-ae59313269a2.jpg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Phòng tại Phường 1</h4>
+                        <p class="meta">₫967.295 cho 2 đêm · ★4,92</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1031143726041246737/original/6d066100-9d1d-4fcf-b6fa-eb10695f1fb6.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Phòng tại Dalat</h4>
+                        <p class="meta">₫753.177 cho 2 đêm · ★4,76</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/14c1f895-8d1e-4a14-96d6-8c52e9b8256d.jpg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Phòng tại Dalat</h4>
+                        <p class="meta">₫3.105.000 cho 2 đêm · ★4.94</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/832e961b-b328-4ad2-af23-6251715b890b.jpg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Nhà tại Dalat</h4>
+                        <p class="meta">₫2.433.447 cho 2 đêm · ★4,89</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1149852181500806941/original/527e47ac-a168-4f90-b8b5-096971bab757.jpeg?im_w=1200">
+                        <div class="popular-badge"></div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ tại Dalat</h4>
+                        <p class="meta">₫4.050.000 cho 2 đêm · ★4.98</p>
+                    </div>
+
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1353653864064161285/original/736f6de3-2004-4bab-b151-074c43995dd1.jpeg?im_w=1200">
+                        <div class="popular-badge"></div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Chỗ nghĩ phục vụ bữa sáng tại Dalat</h4>
+                        <p class="meta">₫2.030.941 cho 2 đêm · ★5.0</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1112942505725723641/original/409bf0d3-c873-4852-bf0f-c3051dd8e651.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Nơi ở tại Dalat</h4>
+                        <p class="meta">Từ ₫1.600.000 cho 2 đêm · ★4,83</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/7c6cb91b-a308-4991-8e23-2e3aec466020.jpg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Phòng tại Quận Tây Hồ</h4>
+                        <p class="meta">₫1.429.010 cho 2 đêm · ★4,96</p>
+                    </div>
+
+
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: CHỖ Ở TẠI VŨNG TÀU -->
+        <section class="section cards-section">
+            <div class="section-header">
+                <h2>Chỗ ở tại vũng tàu ></h2>
+                <!-- NÚT LƯỚT -->
+                <div class="slider-controls">
+                    <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
+                    <button class="slide-btn right" onclick="slideRight(this)">❯</button>
+                </div>
+            </div>
+            <div class="cards-wrapper">
+                <div class="cards-row">
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/miso/Hosting-1324955592152429127/original/dbe1334d-c409-4c12-9586-4748fff5332f.jpeg?im_w=1200">
+                        <div class="popular-badge"></div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ tại Vũng Tàu</h4>
+                        <p class="meta">₫935.765 cho 2 đêm · ★4,75</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/prohost-api/Hosting-705602580862042057/original/195f641f-55fc-41dc-b9f7-1ddf962bd1d1.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ tại Vũng Tàu</h4>
+                        <p class="meta">₫2.031.072 cho 2 đêm · ★4,87</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-985452273027067097/original/b52cc6b7-3b69-47c8-a880-bdee71d5860b.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ tại Vũng Tàu</h4>
+                        <p class="meta">₫1.825.993 cho 2 đêm · ★5,0</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/miso/Hosting-1327307809472209250/original/192a9c3e-88f9-4ca3-a294-985f6ab5197b.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Phòng tại Vũng Tàu</h4>
+                        <p class="meta">₫726.750 cho 2 đêm · ★4,96</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1146327806519584685/original/dea69514-64a6-4642-80b4-cd071fdc2008.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ tại Vũng Tàu</h4>
+                        <p class="meta">₫1.950.271 cho 2 đêm · ★4,93</p>
+                    </div>
+
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/miso/Hosting-968556098058240700/original/9b683bf4-1f1c-4af2-9296-534f68312cf2.jpeg?im_w=1200">
+                        <div class="popular-badge"></div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ tại Vũng Tàu</h4>
+                        <p class="meta">₫1.848.187 cho 2 đêm · ★4,91</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-858131205689322602/original/06608599-e2ed-4868-8cfa-90da9fb5549c.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ tại Vũng Tàu</h4>
+                        <p class="meta">₫2.054.119 cho 2 đêm · ★4,93</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/b91da414-ee08-4993-b980-c95225522e76.jpg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ tại Vũng Tàu</h4>
+                        <p class="meta">₫2.567.648 cho 2 đêm · ★5,0</p>
+                    </div>
+
+
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: CĂN PHÒNG TẠI ĐÀ NẴNG VÀO THÁNG TỚI -->
+        <section class="section cards-section">
+            <div class="section-header">
+                <h2>Căn phòng tại Đà Nẳng vào tháng tới ></h2>
+                <!-- NÚT LƯỚT -->
+                <div class="slider-controls">
+                    <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
+                    <button class="slide-btn right" onclick="slideRight(this)">❯</button>
+                </div>
+            </div>
+            <div class="cards-wrapper">
+                <div class="cards-row">
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/0a4bd2da-563b-4f49-8b75-5dfca64b3fc7.jpg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Phòng tại Quận Sơn Trà</h4>
+                        <p class="meta">₫730.353 cho 2 đêm · ★4,9</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/b5376fc0-3a3e-4802-8ef4-56a3baf587ba.jpg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Phòng tại Quận Sơn Trà</h4>
+                        <p class="meta">₫7.680.000 cho 2 đêm · ★4,99</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTM4NjU2MTg3NDUzMDU1NDQ2Nw==/original/d04b3b4b-50b9-4371-8911-6205206d126c.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Biệt thự tại Quận Sơn Trà</h4>
+                        <p class="meta">₫1.676.924 cho 2 đêm · ★5,0</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1558413114768000235/original/5493b30c-c2a0-4048-9859-9012b3feca13.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Khách sạn tại Quận Sơn Trà</h4>
+                        <p class="meta">₫10.270.593 cho 2 đêm · ★5,0</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1527350768979919060/original/8c18f303-c67e-430f-ba07-d517bc1e5e06.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Biệt thự tại Quận Sơn Trà</h4>
+                        <p class="meta">₫2.054.119 cho 2 đêm · ★5,0</p>
+                    </div>
+
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTQ1MDY5MjQxMzE0MDc5ODkyMg==/original/831a6189-2040-4b30-bebb-089a8e5714fd.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Cặn hộ tại Quận Ngũ Hành Sơn</h4>
+                        <p class="meta">₫1.164.378 cho 2 đêm · ★5,0</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-38285617/original/56f3d650-4ef1-46ba-b242-105545264485.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Khách sạn tại Quận Sơn Trà</h4>
+                        <p class="meta">₫1.164.378 cho 2 đêm · ★4,95</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTM2ODU5MTM2NjE2NDQyNzE3Nw==/original/d8ff4c9f-4499-4260-bdb9-9b18b85f5230.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ tại Mân Thái</h4>
+                        <p class="meta">₫2.838.048 cho 2 đêm · ★4,95</p>
+                    </div>
+
+
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: NƠI Ở TẠI QUẬN BÌNH THẠNH -->
+        <section class="section cards-section">
+            <div class="section-header">
+                <h2>Nơi ở tại quận Bình Thạnh ></h2>
+                <!-- NÚT LƯỚT -->
+                <div class="slider-controls">
+                    <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
+                    <button class="slide-btn right" onclick="slideRight(this)">❯</button>
+                </div>
+            </div>
+            <div class="cards-wrapper">
+                <div class="cards-row">
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/miso/Hosting-1435460583230043464/original/93413a94-c3e2-4428-b99a-50c8a042a5a3.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Phòng tại Phường 22</h4>
+                        <p class="meta">₫1.024.777 cho 2 đêm · ★5,0</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1466783006936841330/original/c4978558-a233-43f9-8c4f-a6cb0002627a.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Phòng tại Phường 22</h4>
+                        <p class="meta">₫1.369.412 cho 2 đêm · ★4,92</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1302038731279195166/original/0bd55b33-7a88-45f4-8ae7-0a33866d0110.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ tại Phường 22</h4>
+                        <p class="meta">₫1.255.295 cho 2 đêm · ★5,0</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1263391677815590946/original/a2f9c725-1e95-4435-8679-9d2b8f24ab2e.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Phòng tại Thành phố Hồ Chí Minh</h4>
+                        <p class="meta">₫1.380.000 cho 2 đêm · ★5.0</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTQwNzU5MzcxOTE3Mjg4OTc1MA==/original/a6e1d142-c049-4946-96d1-152addb2200a.png?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Phòng tại Phường 19</h4>
+                        <p class="meta">₫1.615.000 cho 2 đêm · ★4,85</p>
+                    </div>
+
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/miso/Hosting-1210124859107779594/original/7cf7fcd5-7e91-4fe6-9d98-d822e7f4a4e0.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Phòng tại Thành phố Hồ Chí Minh</h4>
+                        <p class="meta">₫1.198.236 cho 2 đêm · ★4,83</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1117901973868714933/original/c99df0af-20ee-4f8c-a4f2-5438ac8f55b3.jpeg?im_w=1200">
+                        <div class="popular-badge"></div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Nơi ở tại Phường 19</h4>
+                        <p class="meta">₫920.261 cho 2 đêm · ★4,79</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1428266525862273135/original/eda580d0-ba24-493e-8bcb-479f9dd1d6b6.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ chung cư cao cấp tại Phường 22</h4>
+                        <p class="meta">₫2.556.236 cho 2 đêm · ★4,86</p>
+                    </div>
+
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- SECTION: KHÁM PHÁ NƠI LỨU TRÚ TẠI QUẬN 7 -->
+        <section class="section cards-section">
+            <div class="section-header">
+                <h2>Khám phá nơi lưu trú tại Quận 7 ></h2>
+                <!-- NÚT LƯỚT -->
+                <div class="slider-controls">
+                    <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
+                    <button class="slide-btn right" onclick="slideRight(this)">❯</button>
+                </div>
+            </div>
+            <div class="cards-wrapper">
+                <div class="cards-row">
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/miso/Hosting-1407221093732629883/original/259a6e97-9194-4baf-8b7f-ca1f459e54da.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ tại Quận 7</h4>
+                        <p class="meta">₫1.550.000 cho 2 đêm · ★5,0</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTM2NzE2OTM5NTc0NTgyMDI1Ng==/original/14eb9f6e-836a-4653-a014-372d05bd43ff.jpeg?im_w=1200">
+                        <div class="popular-badge"></div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ tại Tân Phú</h4>
+                        <p class="meta">₫2.054.119 cho 2 đêm · ★4,86</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1511582535592614224/original/27082bef-22dd-4609-9294-db7b3759dc79.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ tại Quận 7</h4>
+                        <p class="meta">₫1.786.581 cho 2 đêm · ★5,0</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1411498745370751090/original/bb14fb4b-7def-4d02-bbbb-c1fd13e53475.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ tại Quận 7</h4>
+                        <p class="meta">₫1.688.942 cho 2 đêm · ★5,0</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/88072e06-9cf4-4311-847d-f06322202bd8.jpg?im_w=1200">
+                        <div class="popular-badge"></div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ chung cư cao cấp tại Tân Phú</h4>
+                        <p class="meta">₫1.369.412 cho 2 đêm · ★5,0</p>
+                    </div>
+
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/miso/Hosting-868574652576756001/original/59932548-6ef2-41e0-a0c6-f2843f45750d.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ tại Quận 7</h4>
+                        <p class="meta">₫1.829.707 cho 2 đêm · ★4,88</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1535923259861381364/original/9c8eca4c-faac-4251-b076-c83ed5cca2f8.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Căn hộ tại Quận 7</h4>
+                        <p class="meta">₫1.780.236 cho 2 đêm · ★5,0</p>
+                    </div>
+
+                    <div class="card">
+                        <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTQ0NzY3ODQ2MDkzNzUwODA3Nw==/original/b9eb3e4c-b322-4c39-aeca-b961e4949e16.jpeg?im_w=1200">
+                        <div class="popular-badge">Được khách yêu thích</div>
+                        <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                        <h4>Phòng tại Quận 7</h4>
+                        <p class="meta">₫1.255.295 cho 2 đêm · ★5,0</p>
+                    </div>
+
+
+                </div>
+            </div>
+        </section>
+
+
 
     </main>
             <!--FOOTER-->
                 {% include 'app/footer.html' %}
 </body>
+<script src="{% static 'app/js/luotcard.js' %}"></script>
 </html>
