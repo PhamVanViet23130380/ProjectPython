@@ -25,7 +25,8 @@ html, body {
     padding: 50px 40px 0 40px;
 }
 .start-header img{
-    width: 40px;
+    width: 120px;
+    height: auto;
 }
 
 .btnThoat{
@@ -35,6 +36,8 @@ html, body {
     border-radius: 20px;
     font-size: 14px;
     cursor: pointer;
+    color: #6b4a34;
+    text-decoration: none;
 }
 
 .btnThoat:hover{
@@ -51,6 +54,13 @@ html, body {
     font-size: 42px;
     font-weight: 700;
     line-height: 1.2;
+}
+
+.start-left h1{
+    color: var(--brown, #6b4a34);
+    white-space: normal;
+    max-width: 520px;
+    word-break: break-word;
 }
 
 .start-left {
@@ -121,7 +131,7 @@ html, body {
 }
 
 .start-btn {
-    background: #ff0066;
+    background: var(--brown, #6b4a34);
     color: white;
     font-size: 16px;
     padding: 12px 30px;
@@ -130,4 +140,10 @@ html, body {
     cursor: pointer;
     margin-top: 20px;
     margin-right: 40px;
+    transition: background 0.18s ease, transform 0.08s ease;
+}
+
+.start-btn:hover {
+    background: #4a2f1e; /* darker brown on hover */
+    transform: translateY(-2px);
 }

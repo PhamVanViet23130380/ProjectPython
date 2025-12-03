@@ -43,15 +43,15 @@
 
     button {
         border-radius: 20px;
-        border: 1px solid #FF4B2B;
-        background-color: #FF4B2B;
+        border: 1px solid var(--brown, #6b4a34);
+        background-color: var(--brown, #6b4a34);
         color: #FFFFFF;
         font-size: 12px;
         font-weight: bold;
         padding: 12px 45px;
         letter-spacing: 1px;
         text-transform: uppercase;
-        transition: transform 80ms ease-in;
+        transition: transform 80ms ease-in, background 120ms ease;
     }
 
     button:active {
@@ -157,9 +157,9 @@
     }
 
     .overlay {
-        background: #FF416C;
-        background: -webkit-linear-gradient(to right, #FF4B2B, #FF416C);
-        background: linear-gradient(to right, #FF4B2B, #FF416C);
+        background: var(--brown, #6b4a34);
+        background: -webkit-linear-gradient(to right, var(--brown, #6b4a34), var(--brown-dark, #4a2f1e));
+        background: linear-gradient(to right, var(--brown, #6b4a34), var(--brown-dark, #4a2f1e));
         background-repeat: no-repeat;
         background-size: cover;
         background-position: 0 0;
@@ -244,6 +244,6 @@
     }
 
     footer a {
-        color: #3c97bf;
+        color: var(--brown-dark, #4a2f1e);
         text-decoration: none;
     }

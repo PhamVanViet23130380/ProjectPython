@@ -24,26 +24,25 @@
     <title>Login</title>
 </head>
 <body>
-<h2>Sign in/up Form</h2>
 <div class="container" id="container">
     <div class="form-container sign-up-container">
         <form action="#">
-            <h1>Create Account</h1>
+            <h1>Tạo Tài Khoản</h1>
             <div class="social-container">
                 <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
                 <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
                 <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
             </div>
-            <span>or use your email for registration</span>
-            <input type="text" placeholder="Name" />
+            <span>hoặc sử dụng email của bạn để đăng ký</span>
+            <input type="text" placeholder="Tên" />
             <input type="email" placeholder="Email" />
-            <input type="password" placeholder="Password" />
-            <button>Sign Up</button>
+            <input type="password" placeholder="Mật khẩu" />
+            <button>Đăng Ký</button>
         </form>
     </div>
     <div class="form-container sign-in-container">
         <form action="Login" method="post">
-            <h1>Sign in</h1>
+            <h1>Đăng Nhập</h1>
             <div class="social-container">
                 <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
                 <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
@@ -51,35 +50,27 @@
             </div>
             <span style="color: red"></span>
             <input type="email" placeholder="Email" name="email"/>
-            <input type="password" placeholder="Password" name="password"/>
-            <a href="#">Forgot your password?</a>
-            <button>Sign In</button>
+            <input type="password" placeholder="Mật khẩu" name="password"/>
+            <a href="#">Quên mật khẩu?</a>
+            <button>Đăng Nhập</button>
         </form>
     </div>
     <div class="overlay-container">
         <div class="overlay">
             <div class="overlay-panel overlay-left">
-                <h1>Welcome Back!</h1>
-                <p>To keep connected with us please login with your personal info</p>
-                <button class="ghost" id="signIn">Sign In</button>
+                <h1>Chào Mừng Quay Lại!</h1>
+                <p>Để giữ kết nối với chúng tôi, vui lòng đăng nhập bằng thông tin cá nhân của bạn</p>
+                <button class="ghost" id="signIn">Đăng Nhập</button>
             </div>
             <div class="overlay-panel overlay-right">
-                <h1>Hello, Friend!</h1>
-                <p>Enter your personal details and start journey with us</p>
-                <button class="ghost" id="signUp">Sign Up</button>
+                <h1>Chào Bạn!</h1>
+                <p>Nhập thông tin cá nhân của bạn và bắt đầu hành trình với chúng tôi</p>
+                <button class="ghost" id="signUp">Đăng Ký</button>
             </div>
         </div>
     </div>
 </div>
 
-<footer>
-    <p>
-        Created with <i class="fa fa-heart"></i> by
-        <a target="_blank" href="https://florin-pop.com">Florin Pop</a>
-        - Read how I created this and how you can join the challenge
-        <a target="_blank" href="https://www.florin-pop.com/blog/2019/03/double-slider-sign-in-up-form/">here</a>.
-    </p>
-</footer>
 </body>
 <script>const signUpButton = document.getElementById('signUp');
 const signInButton = document.getElementById('signIn');
