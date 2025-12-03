@@ -112,11 +112,11 @@ header {
 /* CARD KÍCH THƯỚC CỐ ĐỊNH */
 .service-card, .card {
     min-width: 260px;    
-    max-width: 260px;
-    flex: 0 0 auto;  
+    max-width: 260px; 
     position: relative;
     display: flex;
     flex-direction: column;
+    border-radius: 16%;
 }
 
 .service-card img, .card img {
