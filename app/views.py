@@ -13,3 +13,6 @@ def experience(request):
 
 def login_view(request):
     return render(request, 'app/login.html')
+
+def taobaidang(request):
+    return render(request, 'app/taobaidang.html')
