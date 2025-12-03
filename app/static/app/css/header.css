@@ -24,7 +24,8 @@ header {
 }
 
 .ab-logo {
-    height: 34px;
+    height: 44px;
+    width: auto;
 }
 
 .ab-center {
@@ -120,6 +121,7 @@ header {
     .ab-icon { width: 40px; height: 40px; font-size: 15px; }
     .ab-item i { font-size: 16px; }
     .host-btn i { font-size: 15px; }
+    .ab-logo { height: 34px; }
 }
 
 /* Host modal styles */
