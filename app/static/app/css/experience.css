@@ -120,6 +120,9 @@ header {
     border-radius:8px; 
     overflow:hidden; 
     box-shadow:0 6px 18px rgba(0,0,0,0.06); 
+    transition: transform 0.2s ease;
+    cursor: pointer;
+    will-change: transform;
 }
 .experience-card img, .card img { 
     width:100%; 
@@ -132,6 +135,11 @@ header {
     font-weight:600; 
     margin:12px 10px 4px 10px; 
     line-height:1.35; 
+    display: block;
+    white-space: normal;
+    word-break: break-word;
+    overflow: visible;
+    text-overflow: clip;
 }
 .experience-card p, .card p { 
     font-size:14px; 
@@ -178,7 +186,7 @@ header {
     color: #222;
     box-shadow: 0 2px 6px rgba(0,0,0,0.12);
 }
-/* Badge "Airbnb Original" (small pill with leaf icon) */
+/* Badge "Airbnb Original" */
 .card .airbnb-original {
     position: absolute;
     top: 12px;
@@ -202,11 +210,10 @@ header {
     height: 20px;
     border-radius: 50%;
     background: #fff7e6;
-    font-size: 14px; /* slightly larger for icon */
-    color: #8a5a2b; /* warm leaf color */
+    font-size: 12px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
-.experience-card:hover {
+.experience-card:hover, .card:hover {
     transform: scale(1.03);
     border-radius: 8%;
 }
@@ -233,8 +240,12 @@ header {
     font-weight: 600;
     margin: 12px 10px 4px 10px;
     line-height: 1.35;
+    display: block;
     white-space: normal !important;
     word-wrap: break-word;
+    word-break: break-word;
+    overflow: visible;
+    text-overflow: clip;
 
 }
 
@@ -249,44 +260,3 @@ header {
     color: #777;
     margin: 2px 10px;
 }
-
-
-/* ===============================
-   RESPONSIVE - MOBILE/TABLET
-================================= */
-
-@media (max-width: 1200px) {
-    .experience-row {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-@media (max-width: 900px) {
-    .experience-row {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .experience-container {
-        padding: 30px 20px;
-    }
-}
-
-@media (max-width: 600px) {
-    .experience-row {
-        grid-template-columns: repeat(1, 1fr);
-    }
-
-    .section-header h2 {
-        font-size: 22px;
-    }
-}
-@media (max-width: 600px) {
-    .experience-row {
-        grid-template-columns: repeat(1, 1fr);
-    }
-
-    .section-header h2 {
-        font-size: 22px;
-    }
-}
-
