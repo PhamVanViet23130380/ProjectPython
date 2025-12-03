@@ -353,3 +353,93 @@ header {
     padding: 12px 20px; 
     border-radius: 40px; 
 }
+/* ============================
+   MENU 3-GẠCH DROPDOWN AIRBNB
+=============================== */
+
+.menu-dropdown {
+    position: absolute;
+    top: 92px;
+    right: 48px;
+
+    width: 350px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.15);
+
+    padding: 12px 0;
+    display: none;
+
+    z-index: 999;
+}
+
+.menu-dropdown.active {
+    display: block;
+}
+
+/* ITEM LINK */
+.md-item {
+    width: 100%;
+    padding: 14px 22px;
+    font-size: 15px;
+    color: #333;
+    text-decoration: none;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    transition: background 0.2s ease;
+}
+
+.md-item i {
+    font-size: 17px;
+    color: #444;
+}
+
+.md-item:hover {
+    background: #f7f7f7;
+}
+
+/* ===== HOST BLOCK (link lớn) ===== */
+.md-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 16px 22px;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+
+    text-decoration: none;
+    color: #333;
+
+    transition: background 0.2s ease;
+}
+
+.md-block:hover {
+    background: #f7f7f7;
+}
+
+.md-block .left {
+    max-width: 75%;
+}
+
+.md-block .title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.md-block .desc {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+.md-img {
+    width: 55px;
+    height: auto;
+}
+
+

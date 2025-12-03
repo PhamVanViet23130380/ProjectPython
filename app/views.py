@@ -11,3 +11,5 @@ def service(request):
 def experience(request):
     return render(request, 'app/experience.html')
 
+def login_view(request):
+    return render(request, 'app/login.html')
