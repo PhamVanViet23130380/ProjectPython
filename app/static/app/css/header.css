@@ -195,14 +195,10 @@ main { padding-top: calc(var(--header-height) + var(--search-height)); }
     .ab-logo { height: 34px; }
 }
 
-/* Host modal removed — styles deleted */
-
 /* SEARCH BAR */
-
 .ab-search {
     display: flex;
     align-items: center;
-    /* padding moved to the fixed ab-search rule above for compact look */
     background: #ffffff;
     border-radius: 36px;
     box-shadow: 0 3px 18px rgba(0, 0, 0, 0.08);
@@ -309,19 +305,17 @@ main { padding-top: calc(var(--header-height) + var(--search-height)); }
 =============================== */
 
 .menu-dropdown {
-    position: absolute;
-    top: calc(var(--header-height) + var(--search-height) + 12px);
-    right: 48px;
-
+    position: fixed;
+    top: calc(var(--header-height) + 12px);
+    right: 24px;
     width: 350px;
     background: #fff;
     border-radius: 18px;
     box-shadow: 0 8px 28px rgba(0,0,0,0.15);
-
     padding: 12px 0;
     display: none;
-
-    z-index: 999;
+    z-index: 2000;
+    overflow: visible;
 }
 
 .menu-dropdown.active {

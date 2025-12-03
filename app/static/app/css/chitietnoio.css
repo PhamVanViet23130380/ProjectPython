@@ -1,0 +1,76 @@
+/* Styles specific to chitietnoio (detail) page */
+
+:root{
+    --accent: #ff385c;
+    --muted:#6b7280;
+    --card-bg: #ffffff;
+    --shadow: 0 6px 18px rgba(16,24,40,0.08);
+}
+
+/* Page container adjustments */
+main.container{
+    max-width:1140px;
+}
+
+/* Gallery */
+.row.g-2 img{
+    object-fit:cover;
+    height:100%;
+}
+.row.g-2 > .col-12 img{
+    height:420px;
+    width:100%;
+    object-fit:cover;
+}
+.row.g-2 > .col-6 img{
+    height:200px;
+    width:100%;
+    object-fit:cover;
+}
+
+/* Title and badges */
+h1.h3{font-weight:600;margin-bottom:.25rem}
+.badge.bg-light.text-dark{border:1px solid #edf2f7;padding:.45rem .6rem}
+
+/* Amenities */
+.fa-solid{color:var(--accent)}
+
+/* Booking card */
+.card.sticky-top{border:none}
+.card.shadow-sm{box-shadow:var(--shadow)}
+.card .h5{font-weight:700}
+.card .form-control, .card .form-select{
+    height:44px;border-radius:8px;border:1px solid #e6e8eb;
+}
+.btn-danger{background:linear-gradient(180deg,var(--accent),#d61f4a);border:none;border-radius:28px;height:48px}
+
+/* Reviews */
+.border-bottom{border-color:#eef2f6}
+
+/* Host box */
+.rounded-circle{object-fit:cover}
+
+/* Map */
+.map-responsive{background:#f7fafc}
+
+/* Responsive tweaks */
+@media (max-width:991px){
+    .row.g-2 > .col-12 img{height:280px}
+    .row.g-2 > .col-6 img{height:140px}
+    .card.sticky-top{position:relative;top:auto}
+}
+
+/* Small polish */
+.small.text-muted{color:var(--muted)}
+.d-flex.gap-3{gap:1rem}
+
+/* Gallery image hover subtle scale */
+.row.g-2 img{transition:transform .25s ease}
+.row.g-2 img:hover{transform:scale(1.02)}
+
+/* Amenities grid items */
+.row.mt-3 > div{display:flex;align-items:center;gap:.6rem}
+
+/* Make booking card more like Airbnb box */
+.card-body{padding:1.2rem}
+.card.shadow-sm .small.text-muted{font-size:.85rem}

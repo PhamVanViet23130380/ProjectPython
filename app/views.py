@@ -10,3 +10,7 @@ def login_view(request):
 
 def taobaidang(request):
     return render(request, 'app/taobaidang.html')
+
+def chitietnoio(request):
+    """Render the detail page template created by the user."""
+    return render(request, 'app/chitietnoio.html')

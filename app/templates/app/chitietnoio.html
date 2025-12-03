@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'app/css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/chitietnoio.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/footer.css' %}">
+
+    <title>Chi tiết nơi ở</title>
+</head>
+
+<body>
+    {% include 'app/header.html' %}
+
+    <main class="container my-5">
+        <div class="row">
+            <!-- LEFT: main content -->
+            <div class="col-lg-8">
+                <!-- Gallery -->
+                <section class="mb-4">
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1496408576612343725/original/0bbb91de-5c32-46ce-b2aa-4914c331fc13.jpeg?im_w=1440"
+                                class="img-fluid rounded" alt="hero">
+                        </div>
+                        <div class="col-6">
+                            <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1496408576612343725/original/0bbb91de-5c32-46ce-b2aa-4914c331fc13.jpeg?im_w=720"
+                                class="img-fluid rounded" alt="img1">
+                        </div>
+                        <div class="col-6">
+                            <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1386690223982968237/original/4df20859-007e-4a86-8db1-7a008298e23e.jpeg?im_w=720"
+                                class="img-fluid rounded" alt="img2">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Title & location -->
+                <section class="mb-4">
+                    <h1 class="h3">Easygoing Home - Phòng Nest ấm cúng ở trung tâm thành phố</h1>
+                    <p class="text-muted">Phòng tại Quận 1, Việt Nam · 1 giường · Phòng tắm khép kín</p>
+                </section>
+
+                <!-- Badges and summary -->
+                <section class="mb-4">
+                    <div class="d-flex gap-3 flex-wrap">
+                        <span class="badge bg-light text-dark">Được khách yêu thích</span>
+                        <span class="badge bg-light text-dark">5,0 · 13 đánh giá</span>
+                        <span class="badge bg-light text-dark">Tự nhận phòng</span>
+                    </div>
+                </section>
+
+                <!-- Amenities -->
+                <section class="mb-4">
+                    <h3 class="h5">Nơi này có những gì cho bạn</h3>
+                    <div class="row mt-3">
+                        <div class="col-6 col-md-4 mb-2"><i class="fa-solid fa-lock me-2"></i>Khóa ở cửa phòng ngủ</div>
+                        <div class="col-6 col-md-4 mb-2"><i class="fa-solid fa-wifi me-2"></i>Wi-fi</div>
+                        <div class="col-6 col-md-4 mb-2"><i class="fa-solid fa-snowflake me-2"></i>Điều hòa nhiệt độ</div>
+                        <div class="col-6 col-md-4 mb-2"><i class="fa-solid fa-kitchen-set me-2"></i>Bếp</div>
+                        <div class="col-6 col-md-4 mb-2"><i class="fa-solid fa-washer me-2"></i>Máy giặt</div>
+                        <div class="col-6 col-md-4 mb-2"><i class="fa-solid fa-camera me-2"></i>Camera an ninh ngoài nhà</div>
+                    </div>
+                </section>
+
+                <!-- Calendar (simple static representation) -->
+                <section class="mb-4">
+                    <h3 class="h5">Lịch</h3>
+                    <div class="border rounded p-3">
+                        <p class="mb-0">20/3/2026 - 22/3/2026 · 2 đêm</p>
+                        <div class="mt-2 small text-muted">(Trình diễn lịch ở đây — bạn có thể gắn calendar widget sau.)</div>
+                    </div>
+                </section>
+
+                <!-- Reviews -->
+                <section class="mb-4">
+                    <h3 class="h5">Đánh giá</h3>
+                    <div class="mt-3">
+                        <div class="border-bottom pb-3 mb-3">
+                            <strong class="d-block">Ben</strong>
+                            <div class="text-muted small">2 tuần trước · ★★★★★</div>
+                            <p>Chỗ ở tuyệt vời ngay ngoài đường chính. Rất sạch sẽ, rẻ và khá yên tĩnh.</p>
+                        </div>
+
+                        <div class="border-bottom pb-3 mb-3">
+                            <strong class="d-block">Angus</strong>
+                            <div class="text-muted small">tháng 11 năm 2025 · ★★★★★</div>
+                            <p>Phòng tuyệt vời ở vị trí tuyệt vời để khám phá thành phố.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Map -->
+                <section class="mb-5">
+                    <h3 class="h5">Nơi bạn sẽ đến</h3>
+                    <div class="map-responsive border rounded overflow-hidden mt-3" style="height:360px;">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.4649268850846!2d106.67165081526006!3d10.77688999232206!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f0a5a2b0b09%3A0x0!2zMzXCsDQ2JzI5LjAiTiAxMDbCsDQwJzQxLjUiRQ!5e0!3m2!1sen!2s!4v1590000000000"
+                            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </section>
+
+                <!-- Host box -->
+                <section class="mb-5">
+                    <h3 class="h5">Gặp gỡ host của bạn</h3>
+                    <div class="d-flex align-items-center gap-3 border rounded p-3 mt-3">
+                        <img src="https://a0.muscache.com/im/pictures/user/host.jpg" class="rounded-circle"
+                            width="72" height="72" alt="host">
+                        <div>
+                            <strong>Anton Nhat</strong>
+                            <div class="small text-muted">Chủ nhà siêu cấp · 39 đánh giá</div>
+                            <p class="mb-0 small">Tôi là Anton/Nhật. Tôi thuê một căn hộ ở trung tâm Thành phố Hồ Chí Minh…</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- RIGHT: booking card -->
+            <aside class="col-lg-4">
+                <div class="card shadow-sm sticky-top" style="top:20px;">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="h5 mb-0">₫798.000</div>
+                                <div class="small text-muted">cho 2 đêm · ★5,0 · 13 đánh giá</div>
+                            </div>
+                        </div>
+
+                        <form class="mt-3">
+                            <div class="mb-2">
+                                <label class="form-label small">Nhận phòng</label>
+                                <input type="text" class="form-control" value="20/3/2026">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small">Trả phòng</label>
+                                <input type="text" class="form-control" value="22/3/2026">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Khách</label>
+                                <select class="form-select">
+                                    <option>1 khách</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-danger w-100">Đặt phòng</button>
+                            <div class="text-center small text-muted mt-2">Bạn vẫn chưa bị trừ tiền</div>
+                        </form>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    {% include 'app/footer.html' %}
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
+    integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
+    crossorigin="anonymous"></script>
+
+<style>
+    .map-responsive iframe{min-height:360px}
+</style>
+
+</html>

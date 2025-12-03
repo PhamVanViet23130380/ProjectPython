@@ -1,5 +1,5 @@
 function _findWrapper(btn) {
-    const sectionAncestor = btn.closest('.cards-section') || btn.closest('.service-section') || btn.closest('.experience-section') || btn.closest('section');
+    const sectionAncestor = btn.closest('.cards-section')
     if (!sectionAncestor) return null;
     return sectionAncestor.querySelector('.cards-wrapper');
 }
