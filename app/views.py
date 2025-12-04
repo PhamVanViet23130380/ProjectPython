@@ -14,3 +14,9 @@ def taobaidang(request):
 def chitietnoio(request):
     """Render the detail page template created by the user."""
     return render(request, 'app/chitietnoio.html')
+
+def buoc1(request):
+    return render(request, 'app/buoc1.html')
+
+def loaichoo(request):
+    return render(request, 'app/loaichoo.html')

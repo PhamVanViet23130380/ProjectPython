@@ -1,0 +1,217 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background: #ffffff;
+}
+
+html, body {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.start-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 50px 40px 0 40px;
+}
+.start-header img{
+    width: 120px;
+    height: auto;
+}
+
+.header-actions{
+    gap: 10px;
+}
+
+.btn{
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--brown, #6b4a34);
+}
+
+.btn:hover{
+    border: 1px solid black;
+}
+
+.question {
+    margin-top: 10px;
+    font-size: 38px;
+    font-weight: 700;
+}
+
+/* OPTIONS GRID */
+.start-main{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.options-grid {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 280px);
+    gap: 20px;
+}
+
+.option-item {
+    border: 1px solid #ddd;
+    padding: 22px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.15s;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.option-item:hover {
+    border-color: #000;
+}
+
+.option-item img {
+    width: 40px;
+}
+
+
+
+
+
+
+.start-footer {
+    margin-top: 20px;
+    padding: 20px 40px;
+    border-top: 5px solid #dddddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-link {
+    color: #222;
+    text-decoration: underline;
+    font-size: 16px;
+    transition: 0.3s ease all;
+    padding: 10px 14px;
+    border-radius: 5px;
+}
+
+.back-link:hover {
+    background: #dddddd;
+}
+
+.next-btn {
+    background: var(--brown, #6b4a34);
+    color: white;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.option-item.selected {
+    border-color: #222;
+    background: #f7f7f7;
+}
+
+.next-btn.disabled {
+    background: #e3e3e3;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+.next-btn:hover {
+    background: #4a2f1e;
+}
+
+
+
+/* FULL LAYOUT */
+.container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* HEADER FIXED */
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    background: white;
+    z-index: 1000;
+    padding: 40px 60px 20px 60px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border-bottom: 1px solid #eee;
+}
+
+.start-header img {
+    width: 120px;
+    height: auto;
+}
+
+/* FOOTER FIXED */
+.fixed-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    background: white;
+    z-index: 1000;
+
+    padding: 20px 60px;
+    border-top: 1px solid #ddd;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* SCROLL AREA */
+.scroll-area {
+    margin-top: 160px;     /* chừa chỗ header */
+    margin-bottom: 120px;  /* chừa chỗ footer */
+
+    padding: 20px 60px;
+    overflow-y: auto;      /* CHỈ PHẦN NÀY CUỘN */
+}
+
+/* Options grid */
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 260px);
+    gap: 20px;
+    margin-top: 40px;
+}
+
+/* Option item */
+.option-item {
+    border: 1px solid #ddd;
+    padding: 22px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.15s ease;
+}
+
+.option-item:hover {
+    border-color: #000;
+}

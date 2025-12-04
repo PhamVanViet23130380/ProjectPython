@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bước 1</title>
+    <link rel="stylesheet" href="{% static 'app/css/buoc1.css' %}">
+</head>
+<body>
+<div class="start-container">
+
+
+    <div class="start-header">
+        <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
+        <div class="header-actions">
+            <button class="btn btnThacMac">Bạn có thắc mắc?</button>
+            <button class="btn btnLuuThoat">Lưu và thoát</button>
+        </div>
+
+    </div>
+
+    <div class="step-main">
+
+        <div class="step-left">
+            <p class="step-number">Bước 1</p>
+            <h1 class="title">Chia sẻ thông tin về chỗ ở của bạn cho chúng tôi</h1>
+
+            <p class="desc">
+                Trong bước này, chúng tôi sẽ hỏi xem bạn cho thuê loại chỗ ở nào và bạn muốn cho khách đặt toàn bộ
+                nhà hay chỉ một phòng cụ thể. Sau đó, hãy cho chúng tôi biết vị trí và số lượng khách có thể ở tại đó.
+            </p>
+        </div>
+
+        <div class="step-right">
+            <div class="video-wrapper">
+                <video autoplay loop muted playsinline>
+                    <source src="https://stream.media.muscache.com/zFaydEaihX6LP01x8TSCl76WHblb01Z01RrFELxyCXoNek.mp4?v_q=high" type="video/mp4">
+                </video>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <div class="start-footer">
+        <a href="{% url 'taobaidang' %}" class="back-link">Quay lại</a>
+
+        <a href="{% url 'loaichoo' %}" class="next-btn">Tiếp theo</a>
+    </div>
+</div>
+
+</body>
+</html>
