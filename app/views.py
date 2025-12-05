@@ -20,3 +20,18 @@ def buoc1(request):
 
 def loaichoo(request):
     return render(request, 'app/loaichoo.html')
+
+def trungtamtrogiup(request):
+    return render(request, 'app/trungtamtrogiup.html')
+
+def datphong(request):
+    return render(request, 'app/datphong.html')
+
+def timhosthotrop(request):
+    return render(request, 'app/timhosthotrop.html')
+
+def phuongthucthanhtoan(request):
+    return render(request, 'app/phuongthucthanhtoan.html')
+
+def chinhsachdieukhoản(request):
+    return render(request, 'app/chinhsachdieukhoan.html')

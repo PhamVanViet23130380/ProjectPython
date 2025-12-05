@@ -1,0 +1,199 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'app/css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/trungtamtrogiup.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/footer.css' %}">
+    <title>Trung tâm trợ giúp - Home Nest</title>
+</head>
+
+<body>
+    {% include 'app/header.html' %}
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Chào Nguyễn Văn Anh Hàn! Chúng tôi có thể giúp gì cho bạn?</h1>
+                
+                <!-- Search Box -->
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Tìm kiếm thông tin hướng dẫn và những...">
+                    <button class="search-btn">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="help-content">
+        <div class="container">
+            <!-- Tabs Navigation -->
+            <nav class="help-tabs">
+                <button class="tab-btn active" data-tab="guest">Khách</button>
+                <button class="tab-btn" data-tab="host">Host cho thuê chỗ ở</button>
+                <button class="tab-btn" data-tab="experience">Host trải nghiệm</button>
+                <button class="tab-btn" data-tab="services">Nhà cung cấp dịch vụ</button>
+                <button class="tab-btn" data-tab="manage">Quản trị viên chuyên công tác</button>
+            </nav>
+
+            <!-- Tab Content -->
+            <div class="tab-content active" id="guest-content">
+                <h2 class="section-title">Đề xuất cho bạn</h2>
+                
+                <div class="help-cards">
+                    <!-- Card 1 -->
+                    <div class="help-card featured">
+                        <div class="card-icon">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h3>Danh tính của bạn chưa được xác minh đầy đủ</h3>
+                        <p>Quy trình xác minh danh tính giúp chúng tôi xác nhận rằng đó đúng là bạn. Đây là một trong những cách giúp chúng tôi đảm bảo an toàn trên Airbnb.</p>
+                        <a href="#" class="card-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="help-card">
+                        <div class="card-icon">
+                            <i class="fa-solid fa-link"></i>
+                        </div>
+                        <h3>Tìm thông tin đặt phòng/đặt chỗ</h3>
+                        <p>Tab Chuyến đi có đầy đủ thông tin chi tiết, biên lai và thông tin liên hệ của Chủ nhà/Người tổ chức cho mỗi đặt phòng/đặt chỗ của bạn.</p>
+                        <a href="#" class="card-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="help-card">
+                        <div class="card-icon">
+                            <i class="fa-solid fa-calendar-check"></i>
+                        </div>
+                        <h3>Hủy đặt phòng</h3>
+                        <p>Thời hạn hoàn tiền và số tiền hoàn lại phụ thuộc vào chính sách hủy của chỗ ở. Xem chi tiết trong email xác nhận hoặc trên trang đặt phòng.</p>
+                        <a href="#" class="card-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="help-card">
+                        <div class="card-icon">
+                            <i class="fa-solid fa-credit-card"></i>
+                        </div>
+                        <h3>Phương thức thanh toán</h3>
+                        <p>Chúng tôi chấp nhận nhiều phương thức thanh toán để giúp bạn dễ dàng đặt phòng. Xem danh sách đầy đủ các phương thức thanh toán được hỗ trợ.</p>
+                        <a href="{% url 'phuongthucthanhtoan' %}" class="card-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="help-card">
+                        <div class="card-icon">
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+                        <h3>Liên hệ hỗ trợ</h3>
+                        <p>Đội ngũ hỗ trợ của chúng tôi luôn sẵn sàng giúp đỡ bạn 24/7. Liên hệ với chúng tôi qua điện thoại, email hoặc chat trực tuyến.</p>
+                        <a href="#" class="card-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div class="help-card">
+                        <div class="card-icon">
+                            <i class="fa-solid fa-file-contract"></i>
+                        </div>
+                        <h3>Chính sách và điều khoản</h3>
+                        <p>Tìm hiểu về chính sách bảo mật, điều khoản dịch vụ và các quy định khác của Home Nest để đảm bảo trải nghiệm an toàn.</p>
+                        <a href="{% url 'chinhsachdieukhoản' %}" class="card-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <!-- Popular Topics -->
+                <section class="popular-topics">
+                    <h2 class="section-title">Chủ đề phổ biến</h2>
+                    <div class="topics-grid">
+                        <a href="{% url 'home' %}" class="topic-link">
+                            <i class="fa-solid fa-house"></i>
+                            <span>Tìm và đặt chỗ ở</span>
+                        </a>
+                        <a href="#" class="topic-link">
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                            <span>Thanh toán và hoàn tiền</span>
+                        </a>
+                        <a href="#" class="topic-link">
+                            <i class="fa-solid fa-user-shield"></i>
+                            <span>Tài khoản và bảo mật</span>
+                        </a>
+                        <a href="#" class="topic-link">
+                            <i class="fa-solid fa-comments"></i>
+                            <span>Đánh giá và phản hồi</span>
+                        </a>
+                        <a href="#" class="topic-link">
+                            <i class="fa-solid fa-xmark"></i>
+                            <span>Hủy và thay đổi đặt phòng</span>
+                        </a>
+                        <a href="#" class="topic-link">
+                            <i class="fa-solid fa-circle-question"></i>
+                            <span>Câu hỏi thường gặp</span>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Contact Section -->
+                <section class="contact-section">
+                    <h2 class="section-title">Cần thêm trợ giúp?</h2>
+                    <p class="contact-desc">Đội ngũ hỗ trợ của chúng tôi luôn sẵn sàng giúp bạn 24/7</p>
+                    <div class="contact-methods">
+                        <div class="contact-card">
+                            <i class="fa-solid fa-phone"></i>
+                            <h4>Gọi cho chúng tôi</h4>
+                            <p>1900-xxxx (24/7)</p>
+                        </div>
+                        <div class="contact-card">
+                            <i class="fa-solid fa-envelope"></i>
+                            <h4>Email</h4>
+                            <p>support@homenest.vn</p>
+                        </div>
+                        <div class="contact-card">
+                            <i class="fa-solid fa-message"></i>
+                            <h4>Chat trực tuyến</h4>
+                            <p>Bắt đầu chat ngay</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Other tab contents (hidden by default) -->
+            <div class="tab-content" id="host-content">
+                <h2 class="section-title">Hướng dẫn cho Host</h2>
+                <p>Nội dung dành cho chủ nhà đang được cập nhật...</p>
+            </div>
+
+            <div class="tab-content" id="experience-content">
+                <h2 class="section-title">Hướng dẫn cho Host trải nghiệm</h2>
+                <p>Nội dung dành cho host trải nghiệm đang được cập nhật...</p>
+            </div>
+
+            <div class="tab-content" id="services-content">
+                <h2 class="section-title">Hướng dẫn cho nhà cung cấp dịch vụ</h2>
+                <p>Nội dung dành cho nhà cung cấp dịch vụ đang được cập nhật...</p>
+            </div>
+
+            <div class="tab-content" id="manage-content">
+                <h2 class="section-title">Hướng dẫn cho quản trị viên</h2>
+                <p>Nội dung dành cho quản trị viên đang được cập nhật...</p>
+            </div>
+        </div>
+    </main>
+
+    {% include 'app/footer.html' %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
+    <script src="{% static 'app/js/trungtamtrogiup.js' %}"></script>
+</body>
+
+</html>

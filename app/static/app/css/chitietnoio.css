@@ -1,76 +1,283 @@
-/* Styles specific to chitietnoio (detail) page */
-
-:root{
+/* ===========================
+   GLOBAL VARIABLES
+=========================== */
+:root {
     --accent: #ff385c;
-    --muted:#6b7280;
+    --muted: #6b7280;
     --card-bg: #ffffff;
     --shadow: 0 6px 18px rgba(16,24,40,0.08);
 }
 
-/* Page container adjustments */
-main.container{
-    max-width:1140px;
+/* Page container */
+main.container {
+    max-width: 1140px;
 }
 
-/* Gallery */
-.row.g-2 img{
-    object-fit:cover;
-    height:100%;
-}
-.row.g-2 > .col-12 img{
-    height:420px;
-    width:100%;
-    object-fit:cover;
-}
-.row.g-2 > .col-6 img{
-    height:200px;
-    width:100%;
-    object-fit:cover;
+/* ===========================
+   GALLERY SECTION – AIRBNB STYLE
+=========================== */
+.gallery-section {
+    background: #fff;
+    padding: 0;
+    margin-top: 80px;
+    margin-bottom: 40px;
 }
 
-/* Title and badges */
-h1.h3{font-weight:600;margin-bottom:.25rem}
-.badge.bg-light.text-dark{border:1px solid #edf2f7;padding:.45rem .6rem}
-
-/* Amenities */
-.fa-solid{color:var(--accent)}
-
-/* Booking card */
-.card.sticky-top{border:none}
-.card.shadow-sm{box-shadow:var(--shadow)}
-.card .h5{font-weight:700}
-.card .form-control, .card .form-select{
-    height:44px;border-radius:8px;border:1px solid #e6e8eb;
-}
-.btn-danger{background:linear-gradient(180deg,var(--accent),#d61f4a);border:none;border-radius:28px;height:48px}
-
-/* Reviews */
-.border-bottom{border-color:#eef2f6}
-
-/* Host box */
-.rounded-circle{object-fit:cover}
-
-/* Map */
-.map-responsive{background:#f7fafc}
-
-/* Responsive tweaks */
-@media (max-width:991px){
-    .row.g-2 > .col-12 img{height:280px}
-    .row.g-2 > .col-6 img{height:140px}
-    .card.sticky-top{position:relative;top:auto}
+.gallery-section .container {
+    max-width: 1280px;
+    padding-left: 32px;
+    padding-right: 32px;
 }
 
-/* Small polish */
-.small.text-muted{color:var(--muted)}
-.d-flex.gap-3{gap:1rem}
+/* ==== GALLERY LAYOUT CHUẨN AIRBNB ==== */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* Ảnh trái rộng hơn, phải hẹp hơn */
+    gap: 8px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 480px; /* Chiều cao cố định cho toàn bộ gallery */
+    border-radius: 12px;
+    overflow: hidden;
+}
 
-/* Gallery image hover subtle scale */
-.row.g-2 img{transition:transform .25s ease}
-.row.g-2 img:hover{transform:scale(1.02)}
+/* --- Ảnh lớn bên trái --- */
+.gallery-main {
+    height: 100%;
+    overflow: hidden;
+}
 
-/* Amenities grid items */
-.row.mt-3 > div{display:flex;align-items:center;gap:.6rem}
+.gallery-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    border-radius: 12px 0 0 12px;
+}
 
-/* Make booking card more like Airbnb box */
-.card-body{padding:1.2rem}
-.card.shadow-sm .small.text-muted{font-size:.85rem}
+/* --- 4 Ảnh nhỏ bên phải (lưới 2x2 bằng nhau) --- */
+.gallery-thumbs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;  /* 2 cột bằng nhau */
+    grid-template-rows: 1fr 1fr;     /* 2 hàng bằng nhau */
+    gap: 8px;
+    height: 100%;
+}
+
+.thumb {
+    position: relative; /* Để nút có thể absolute bên trong */
+    overflow: hidden;
+    cursor: pointer;
+    transition: filter .25s;
+    width: 100%;
+    height: 100%;
+}
+
+.thumb:hover {
+    filter: brightness(0.9);
+}
+
+.thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Bo góc giống Airbnb - chỉ góc ngoài cùng */
+.thumb:nth-child(2) img { 
+    border-radius: 0 12px 0 0; /* Góc trên phải */
+}
+.thumb:nth-child(4) img { 
+    border-radius: 0 0 12px 0; /* Góc dưới phải */
+}
+
+/* --- Nút hiển thị tất cả ảnh đè lên ảnh cuối cùng --- */
+.thumb-last {
+    position: relative;
+}
+
+.thumb-last .gallery-btn {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    background: #fff;
+    color: #222;
+    border: 1px solid #222;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    z-index: 100;
+    transition: all 0.2s ease;
+    pointer-events: auto;
+}
+
+.thumb-last .gallery-btn:hover {
+    background: #f7f7f7;
+    transform: scale(1.02);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+
+/* ===========================
+   TITLES & BADGES
+=========================== */
+h1.h3 {
+    font-weight: 600;
+    margin-bottom: .25rem;
+}
+
+.badge.bg-light.text-dark {
+    border: 1px solid #edf2f7;
+    padding: .45rem .6rem;
+}
+
+/* ===========================
+   BOOKING CARD
+=========================== */
+.booking-card {
+    border: 1px solid #e0e0e0 !important;
+}
+
+.card.sticky-top {
+    border: none;
+}
+
+.card.shadow-sm {
+    box-shadow: var(--shadow);
+}
+
+.card .h5 {
+    font-weight: 700;
+}
+
+.card .form-control,
+.card .form-select {
+    height: 44px;
+    border-radius: 8px;
+    border: 1px solid #e6e8eb;
+}
+
+.booking-form input,
+.booking-form select {
+    font-size: 14px !important;
+    border: none !important;
+    background: transparent !important;
+}
+
+.btn-danger {
+    background: linear-gradient(180deg, var(--accent), #d61f4a);
+    border: none;
+    border-radius: 28px;
+    height: 48px;
+}
+
+.card-body {
+    padding: 1.2rem;
+}
+
+/* ===========================
+   AMENITIES / ICONS
+=========================== */
+.fa-solid {
+    color: var(--accent);
+}
+
+.row.mt-3 > div {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+}
+
+/* ===========================
+   REVIEWS
+=========================== */
+.border-bottom {
+    border-color: #eef2f6;
+}
+
+.small.text-muted {
+    color: var(--muted);
+}
+
+.d-flex.gap-3 {
+    gap: 1rem;
+}
+
+/* ===========================
+   MAP SECTION
+=========================== */
+.map-responsive iframe {
+    min-height: 400px;
+}
+
+.map-responsive {
+    background: #f7fafc;
+}
+
+/* ===========================
+   IMAGE HOVER EFFECTS
+=========================== */
+.object-fit-cover,
+.row.g-2 img {
+    object-fit: cover !important;
+}
+
+.row.g-2 img {
+    transition: transform .25s ease;
+}
+
+.row.g-2 img:hover {
+    transform: scale(1.02);
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width: 1024px) {
+    .gallery-section .container {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+    .gallery-grid {
+        grid-template-columns: 1fr 1fr;
+        height: 500px;
+    }
+}
+
+@media (max-width: 768px) {
+    .gallery-section .container {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .gallery-grid {
+        grid-template-columns: 1fr;
+        height: 340px;
+        border-radius: 0;
+    }
+
+    .gallery-thumbs {
+        display: none;
+    }
+}
+
+@media (max-width: 991px) {
+    .row.g-2 > .col-12 img { height: 280px; }
+    .row.g-2 > .col-6 img { height: 140px; }
+
+    .card.sticky-top {
+        position: relative;
+        top: auto;
+    }
+}
+
+/* Avatar */
+.rounded-circle {
+    object-fit: cover;
+}

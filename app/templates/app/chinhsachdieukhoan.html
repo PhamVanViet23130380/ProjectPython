@@ -1,0 +1,438 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chính sách và Điều khoản - Home Nest</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'app/css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/chinhsachdieukhoan.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/footer.css' %}">
+</head>
+
+<body>
+    {% include 'app/header.html' %}
+
+    <main class="policy-page">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'trungtamtrogiup' %}">Trung tâm trợ giúp</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Chính sách và điều khoản</li>
+                </ol>
+            </nav>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <p class="category-label">CHÍNH SÁCH</p>
+                <h1 class="page-title">Chính sách và Điều khoản</h1>
+                <p class="page-subtitle">Cập nhật lần cuối: Tháng 12 năm 2025</p>
+            </div>
+
+            <!-- Main Content -->
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="content-section">
+                        <p class="intro-text">
+                            Chào mừng đến với Home Nest! Bằng việc sử dụng dịch vụ của chúng tôi, bạn đồng ý tuân thủ các điều khoản và điều kiện được nêu dưới đây. Vui lòng đọc kỹ trước khi sử dụng nền tảng của chúng tôi.
+                        </p>
+
+                        <div class="alert-box info">
+                            <i class="fas fa-info-circle"></i>
+                            <div>
+                                <strong>Lưu ý quan trọng:</strong>
+                                <p>Các điều khoản này có hiệu lực pháp lý. Nếu bạn không đồng ý với bất kỳ điều khoản nào, vui lòng không sử dụng dịch vụ của chúng tôi.</p>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- Table of Contents -->
+                        <div class="content-block">
+                            <h2 class="section-title">Mục lục</h2>
+                            <ul class="toc-list">
+                                <li><a href="#privacy"><i class="fas fa-chevron-right"></i> 1. Chính sách bảo mật</a></li>
+                                <li><a href="#terms"><i class="fas fa-chevron-right"></i> 2. Điều khoản sử dụng</a></li>
+                                <li><a href="#cancellation"><i class="fas fa-chevron-right"></i> 3. Chính sách hủy phòng</a></li>
+                                <li><a href="#host-guarantee"><i class="fas fa-chevron-right"></i> 4. Bảo vệ Chủ nhà</a></li>
+                                <li><a href="#guest-refund"><i class="fas fa-chevron-right"></i> 5. Chính sách hoàn tiền</a></li>
+                                <li><a href="#community"><i class="fas fa-chevron-right"></i> 6. Quy tắc cộng đồng</a></li>
+                                <li><a href="#liability"><i class="fas fa-chevron-right"></i> 7. Trách nhiệm và giới hạn</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 1. Privacy Policy -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="privacy">1. Chính sách bảo mật</h2>
+                            <p>
+                                Home Nest cam kết bảo vệ quyền riêng tư và thông tin cá nhân của bạn. Chúng tôi thu thập, sử dụng và bảo vệ dữ liệu của bạn theo các tiêu chuẩn cao nhất về bảo mật thông tin.
+                            </p>
+
+                            <h3 class="subsection-title">Thông tin chúng tôi thu thập</h3>
+                            <ul class="feature-list">
+                                <li>Thông tin cá nhân: Họ tên, email, số điện thoại, địa chỉ</li>
+                                <li>Thông tin thanh toán: Chi tiết thẻ tín dụng/ghi nợ (được mã hóa)</li>
+                                <li>Thông tin đặt phòng: Lịch sử giao dịch, sở thích du lịch</li>
+                                <li>Dữ liệu thiết bị: Địa chỉ IP, loại trình duyệt, hệ điều hành</li>
+                                <li>Thông tin định vị: Vị trí địa lý khi sử dụng ứng dụng di động</li>
+                            </ul>
+
+                            <div class="info-box">
+                                <i class="fas fa-shield-halved"></i>
+                                <div>
+                                    <strong>Bảo mật dữ liệu</strong>
+                                    <p>Chúng tôi sử dụng mã hóa SSL 256-bit và tuân thủ tiêu chuẩn PCI DSS để bảo vệ thông tin thanh toán của bạn. Dữ liệu cá nhân được lưu trữ trên các máy chủ bảo mật với kiểm soát truy cập nghiêm ngặt.</p>
+                                </div>
+                            </div>
+
+                            <h3 class="subsection-title">Cách chúng tôi sử dụng thông tin</h3>
+                            <div class="security-grid">
+                                <div class="security-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Xử lý đặt phòng</span>
+                                </div>
+                                <div class="security-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Gửi xác nhận</span>
+                                </div>
+                                <div class="security-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Hỗ trợ khách hàng</span>
+                                </div>
+                                <div class="security-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Cải thiện dịch vụ</span>
+                                </div>
+                                <div class="security-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Phát hiện gian lận</span>
+                                </div>
+                                <div class="security-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Marketing hợp pháp</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 2. Terms of Service -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="terms">2. Điều khoản sử dụng</h2>
+                            <p>
+                                Khi sử dụng Home Nest, bạn đồng ý tuân thủ các điều khoản dưới đây. Việc vi phạm có thể dẫn đến việc tạm ngưng hoặc chấm dứt tài khoản.
+                            </p>
+
+                            <div class="policy-card">
+                                <div class="policy-icon">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div class="policy-content">
+                                    <h4>Quyền và Nghĩa vụ của Người dùng</h4>
+                                    <ul>
+                                        <li>Cung cấp thông tin chính xác và cập nhật</li>
+                                        <li>Bảo mật thông tin đăng nhập của bạn</li>
+                                        <li>Tuân thủ pháp luật và quy định địa phương</li>
+                                        <li>Tôn trọng quyền sở hữu trí tuệ</li>
+                                        <li>Không sử dụng dịch vụ cho mục đích bất hợp pháp</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="policy-card">
+                                <div class="policy-icon">
+                                    <i class="fas fa-home"></i>
+                                </div>
+                                <div class="policy-content">
+                                    <h4>Quyền và Nghĩa vụ của Chủ nhà</h4>
+                                    <ul>
+                                        <li>Cung cấp mô tả chính xác về chỗ ở</li>
+                                        <li>Duy trì tiêu chuẩn chất lượng cam kết</li>
+                                        <li>Trả lời khách trong vòng 24 giờ</li>
+                                        <li>Tôn trọng quyền riêng tư của khách</li>
+                                        <li>Tuân thủ luật thuế và giấy phép kinh doanh</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="alert-box warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div>
+                                    <strong>Cảnh báo:</strong>
+                                    <ul>
+                                        <li>Home Nest có quyền tạm ngưng hoặc chấm dứt tài khoản vi phạm mà không cần thông báo trước</li>
+                                        <li>Các tranh chấp sẽ được giải quyết theo luật pháp Việt Nam</li>
+                                        <li>Người dùng chịu trách nhiệm về thuế và phí liên quan đến giao dịch</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 3. Cancellation Policy -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="cancellation">3. Chính sách hủy phòng</h2>
+                            <p>
+                                Home Nest cung cấp 3 loại chính sách hủy phòng để Chủ nhà lựa chọn. Khách hàng cần xem kỹ chính sách trước khi đặt phòng.
+                            </p>
+
+                            <div class="cancellation-card flexible">
+                                <div class="cancellation-header">
+                                    <i class="fas fa-calendar-check"></i>
+                                    <h4>Linh hoạt (Flexible)</h4>
+                                </div>
+                                <ul>
+                                    <li>✓ Hoàn tiền 100% nếu hủy trước 24 giờ check-in</li>
+                                    <li>✓ Phí dịch vụ được hoàn lại đầy đủ</li>
+                                    <li>✓ Phù hợp cho chuyến đi có thể thay đổi kế hoạch</li>
+                                </ul>
+                            </div>
+
+                            <div class="cancellation-card moderate">
+                                <div class="cancellation-header">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <h4>Trung bình (Moderate)</h4>
+                                </div>
+                                <ul>
+                                    <li>✓ Hoàn tiền 100% nếu hủy trước 5 ngày check-in</li>
+                                    <li>✓ Hoàn tiền 50% nếu hủy trong vòng 5 ngày</li>
+                                    <li>✓ Không hoàn tiền nếu hủy sau khi check-in</li>
+                                </ul>
+                            </div>
+
+                            <div class="cancellation-card strict">
+                                <div class="cancellation-header">
+                                    <i class="fas fa-calendar-times"></i>
+                                    <h4>Nghiêm ngặt (Strict)</h4>
+                                </div>
+                                <ul>
+                                    <li>✓ Hoàn tiền 50% nếu hủy trước 7 ngày check-in</li>
+                                    <li>✓ Không hoàn tiền nếu hủy trong vòng 7 ngày</li>
+                                    <li>✓ Áp dụng cho các chỗ ở cao cấp hoặc dịp lễ</li>
+                                </ul>
+                            </div>
+
+                            <div class="info-box">
+                                <i class="fas fa-lightbulb"></i>
+                                <div>
+                                    <strong>Lưu ý đặc biệt:</strong>
+                                    <p>Trong trường hợp bất khả kháng (thiên tai, dịch bệnh, sự cố chính trị), Home Nest có thể áp dụng chính sách hoàn tiền đặc biệt. Vui lòng liên hệ bộ phận hỗ trợ để được tư vấn.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 4. Host Guarantee -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="host-guarantee">4. Bảo vệ Chủ nhà</h2>
+                            <p>
+                                Chương trình Bảo vệ Chủ nhà của Home Nest cung cấp bảo hiểm lên đến 1 triệu USD cho các thiệt hại về tài sản do khách gây ra.
+                            </p>
+
+                            <h3 class="subsection-title">Quy trình yêu cầu bồi thường</h3>
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <div class="timeline-marker">1</div>
+                                    <div class="timeline-content">
+                                        <h4>Báo cáo ngay lập tức</h4>
+                                        <p>Thông báo cho Home Nest trong vòng 14 ngày kể từ khi khách check-out</p>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-marker">2</div>
+                                    <div class="timeline-content">
+                                        <h4>Cung cấp bằng chứng</h4>
+                                        <p>Gửi ảnh, video, hóa đơn sửa chữa và bất kỳ tài liệu nào liên quan</p>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-marker">3</div>
+                                    <div class="timeline-content">
+                                        <h4>Thương lượng với khách</h4>
+                                        <p>Home Nest sẽ liên hệ khách và cố gắng giải quyết trực tiếp</p>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-marker">4</div>
+                                    <div class="timeline-content">
+                                        <h4>Xét duyệt yêu cầu</h4>
+                                        <p>Đội ngũ chuyên gia sẽ xem xét trong vòng 7-10 ngày làm việc</p>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-marker">5</div>
+                                    <div class="timeline-content">
+                                        <h4>Nhận bồi thường</h4>
+                                        <p>Nếu được chấp thuận, tiền sẽ được chuyển trong 30 ngày</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="alert-box warning">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <div>
+                                    <strong>Những gì không được bảo hiểm:</strong>
+                                    <ul>
+                                        <li>Hao mòn tự nhiên do sử dụng bình thường</li>
+                                        <li>Thiệt hại do thảm họa thiên nhiên</li>
+                                        <li>Mất mát vật phẩm cá nhân (trang sức, tiền mặt)</li>
+                                        <li>Chi phí cơ hội hoặc thu nhập bị mất</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 5. Guest Refund Policy -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="guest-refund">5. Chính sách hoàn tiền cho Khách</h2>
+                            <p>
+                                Nếu chỗ ở không đúng như mô tả hoặc Chủ nhà hủy đặt phòng, khách hàng sẽ được hoàn tiền hoặc nhận hỗ trợ tìm chỗ ở thay thế.
+                            </p>
+
+                            <div class="policy-card">
+                                <div class="policy-icon">
+                                    <i class="fas fa-house-circle-xmark"></i>
+                                </div>
+                                <div class="policy-content">
+                                    <h4>Chỗ ở không đúng mô tả</h4>
+                                    <ul>
+                                        <li>Báo cáo trong vòng 24 giờ sau check-in</li>
+                                        <li>Cung cấp ảnh và mô tả chi tiết vấn đề</li>
+                                        <li>Home Nest sẽ liên hệ Chủ nhà để giải quyết</li>
+                                        <li>Nếu không giải quyết được, hoàn tiền 100%</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="policy-card">
+                                <div class="policy-icon">
+                                    <i class="fas fa-ban"></i>
+                                </div>
+                                <div class="policy-content">
+                                    <h4>Chủ nhà hủy đặt phòng</h4>
+                                    <ul>
+                                        <li>Hoàn tiền 100% ngay lập tức</li>
+                                        <li>Hỗ trợ tìm chỗ ở tương đương hoặc tốt hơn</li>
+                                        <li>Bồi thường thêm 10% giá trị đặt phòng</li>
+                                        <li>Chủ nhà có thể bị phạt hoặc đình chỉ tài khoản</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 6. Community Standards -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="community">6. Quy tắc cộng đồng</h2>
+                            <p>
+                                Home Nest cam kết xây dựng một cộng đồng an toàn, thân thiện và tôn trọng lẫn nhau. Mọi thành viên đều phải tuân thủ các quy tắc sau.
+                            </p>
+
+                            <h3 class="subsection-title">Hành vi bị nghiêm cấm</h3>
+                            <div class="prohibited-grid">
+                                <div class="prohibited-item">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>Phân biệt đối xử</span>
+                                </div>
+                                <div class="prohibited-item">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>Quấy rối tình dục</span>
+                                </div>
+                                <div class="prohibited-item">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>Bạo lực/đe dọa</span>
+                                </div>
+                                <div class="prohibited-item">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>Lừa đảo/gian lận</span>
+                                </div>
+                                <div class="prohibited-item">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>Tổ chức tiệc tùng</span>
+                                </div>
+                                <div class="prohibited-item">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>Sử dụng ma túy</span>
+                                </div>
+                                <div class="prohibited-item">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>Gây thiệt hại tài sản</span>
+                                </div>
+                                <div class="prohibited-item">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>Spam/quảng cáo</span>
+                                </div>
+                            </div>
+
+                            <div class="info-box">
+                                <i class="fas fa-handshake"></i>
+                                <div>
+                                    <strong>Cam kết của chúng tôi:</strong>
+                                    <p>Home Nest không dung thứ bất kỳ hành vi phân biệt đối xử nào dựa trên chủng tộc, tôn giáo, quốc tịch, khuyết tật, giới tính, tuổi tác, hoặc khuynh hướng tình dục. Chúng tôi nỗ lực tạo ra một môi trường chào đón tất cả mọi người.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 7. Liability -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="liability">7. Trách nhiệm và Giới hạn</h2>
+                            <p>
+                                Home Nest là nền tảng kết nối Chủ nhà và Khách. Chúng tôi không sở hữu, kiểm soát hoặc quản lý bất kỳ chỗ ở nào được niêm yết.
+                            </p>
+
+                            <div class="liability-box">
+                                <h4>Giới hạn trách nhiệm của Home Nest</h4>
+                                <ul>
+                                    <li>Không chịu trách nhiệm về chất lượng, an toàn hoặc tính hợp pháp của chỗ ở</li>
+                                    <li>Không chịu trách nhiệm về hành vi của Chủ nhà hoặc Khách</li>
+                                    <li>Không bảo đảm tính chính xác tuyệt đối của thông tin do người dùng cung cấp</li>
+                                    <li>Không chịu trách nhiệm về tổn thất gián tiếp, ngẫu nhiên hoặc hậu quả</li>
+                                    <li>Trách nhiệm tổng thể giới hạn ở mức giá trị đặt phòng</li>
+                                </ul>
+                            </div>
+
+                            <div class="alert-box info">
+                                <i class="fas fa-balance-scale"></i>
+                                <div>
+                                    <strong>Giải quyết tranh chấp:</strong>
+                                    <p>Mọi tranh chấp phát sinh sẽ được ưu tiên giải quyết thông qua thương lượng và hòa giải. Nếu không đạt được thỏa thuận, tranh chấp sẽ được giải quyết theo luật pháp Việt Nam tại Tòa án có thẩm quyền tại TP. Hồ Chí Minh.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Last Updated -->
+                        <div class="update-info text-center mt-5 pt-4 border-top">
+                            <p class="text-muted mb-2"><i class="fas fa-clock"></i> Cập nhật lần cuối: <strong>05/12/2025</strong></p>
+                            <p class="small text-muted mb-0">Chúng tôi thường xuyên cập nhật chính sách để phản ánh các thay đổi trong dịch vụ và pháp luật.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {% include 'app/footer.html' %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -16,3 +16,16 @@ function slideRight(btn) {
     wrapper.scrollLeft += 350;
 }
 
+// Add click event listeners to all room cards
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.card[data-room-id]');
+    cards.forEach(card => {
+        card.addEventListener('click', function() {
+            const roomId = this.getAttribute('data-room-id');
+            if (roomId) {
+                window.location.href = `/chitietnoio/?room=${roomId}`;
+            }
+        });
+    });
+});
+
