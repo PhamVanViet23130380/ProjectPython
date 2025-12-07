@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Được sử dụng</title>
+    <link rel="stylesheet" href="{% static 'app/css/duocuse.css' %}">
+</head>
+
+<body>
+    <div class="start-container">
+
+
+        <div class="start-header fixed-header">
+            <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
+            <div class="header-actions">
+                <button class="btn btnThacMac">Bạn có thắc mắc?</button>
+                <button class="btn btnLuuThoat">Lưu và thoát</button>
+            </div>
+
+        </div>
+
+        <div class="start-main scroll-area">
+            <h1 class="question">Khách sẽ được sử dụng loại chỗ ở nào?</h1>
+
+            <div class="options">
+                <div class="option-item">
+                    <div class="option-content">
+                        <h3>Toàn bộ nhà</h3>
+                        <p>Khách được sử dụng riêng toàn bộ chỗ này</p>
+                    </div>
+
+                    <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
+                </div>
+
+                <div class="option-item">
+                    <div class="option-content">
+                        <h3>Một căn phòng</h3>
+                        <p>Khách sẽ có được phòng riêng trong một ngôi nhà và được sử dụng những khu vực chung</p>
+                    </div>
+
+                    <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
+                </div>
+
+                <div class="option-item">
+                    <div class="option-content">
+                        <h3>Phòng chung trong khách sạn giá rẻ</h3>
+                        <p>Khách ngủ chung tại một khách sản giá rẻ được quản lý chuyên nghiệp và có nhân viên trực tại
+                            chỗ 24/7</p>
+                    </div>
+
+                    <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
+                </div>
+            </div>
+        </div>
+
+
+        <div class="start-footer fixed-footer">
+            <a href="{% url 'loaichoo' %}" class="back-link">Quay lại</a>
+
+            <a href="{% url 'diachi' %}" class="next-btn">Tiếp theo</a>
+        </div>
+    </div>
+
+</body>
+<script>
+    const items = document.querySelectorAll('.option-item');
+    const nextBtn = document.querySelector('.next-btn');
+
+    let selectedItem = null;
+
+    items.forEach(item => {
+        item.addEventListener('click', () => {
+
+            // Bỏ chọn tất cả
+            items.forEach(i => i.classList.remove('selected'));
+
+            // Chọn ô hiện tại
+            item.classList.add('selected');
+            selectedItem = item;
+
+            // Bật nút "Tiếp theo"
+            nextBtn.classList.remove('disabled');
+            nextBtn.disabled = false;
+        });
+    });
+
+    // Trạng thái ban đầu
+    nextBtn.classList.add('disabled');
+    nextBtn.disabled = true;
+</script>
+
+</html>

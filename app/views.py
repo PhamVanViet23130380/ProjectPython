@@ -27,11 +27,29 @@ def trungtamtrogiup(request):
 def datphong(request):
     return render(request, 'app/datphong.html')
 
-def timhosthotrop(request):
-    return render(request, 'app/timhosthotrop.html')
-
 def phuongthucthanhtoan(request):
     return render(request, 'app/phuongthucthanhtoan.html')
 
-def chinhsachdieukhoản(request):
+def chinhsachdieukhoan(request):
     return render(request, 'app/chinhsachdieukhoan.html')
+
+def buoc2(request):
+    return render(request, 'app/buoc2.html')
+
+def duocuse(request):
+    return render(request, 'app/duocuse.html')
+
+def themanh(request):
+    return render(request, 'app/themanh.html')
+
+def thongtincb(request):
+    return render(request, 'app/thongtincb.html')
+
+def tiennghii(request):
+    return render(request, 'app/tiennghii.html')
+
+def tieude(request):
+    return render(request, 'app/tieude.html')
+
+def diachi(request):
+    return render(request, 'app/diachi.html')

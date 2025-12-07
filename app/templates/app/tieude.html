@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tiêu đề</title>
+    <link rel="stylesheet" href="{% static 'app/css/tieude.css' %}">
+</head>
+
+<body>
+    <div class="start-container">
+
+
+        <div class="start-header fixed-header">
+            <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
+            <div class="header-actions">
+                <button class="btn btnThacMac">Bạn có thắc mắc?</button>
+                <button class="btn btnLuuThoat">Lưu và thoát</button>
+            </div>
+
+        </div>
+
+        <div class="start-main scroll-area">
+            <h1 class="question">Bây giờ, hãy đặt tiêu đề cho chỗ ở thuộc danh mục căn hộ của bạn</h1>
+
+            <textarea name="text" id="titleInput" maxlength="50" placeholder="Viết tiêu đề ngắn"></textarea>
+            <div class="char-row"><span id="charCount">0</span>/50</div>
+        </div>
+
+        <div class="start-footer fixed-footer">
+            <a href="{% url 'themanh' %}" class="back-link">Quay lại</a>
+
+            <a href="#" class="next-btn">Tiếp theo</a>
+        </div>
+    </div>
+
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('titleInput');
+        const countEl = document.getElementById('charCount');
+        const nextBtn = document.querySelector('.next-btn');
+        const MAX = 50;
+
+        function update() {
+            const len = input.value.length;
+            countEl.textContent = len;
+            // highlight khi gần giới hạn
+            if (len >= 45 && len < MAX) {
+                document.querySelector('.char-row').classList.add('limit-near');
+            } else {
+                document.querySelector('.char-row').classList.remove('limit-near');
+            }
+
+            // bật Next nếu có ít nhất 1 ký tự
+            if (len >= 1 && len <= MAX) {
+                nextBtn.disabled = false;
+                nextBtn.classList.remove('disabled');
+            } else {
+                nextBtn.disabled = true;
+                nextBtn.classList.add('disabled');
+            }
+        }
+
+        // khởi tạo trạng thái (nếu textarea rỗng thì disable)
+        update();
+
+        // lắng nghe nhập liệu
+        input.addEventListener('input', update);
+    });
+</script>
+
+</html>

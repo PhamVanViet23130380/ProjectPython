@@ -22,22 +22,40 @@
 }
 
 .header-logo {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
+    height: 36px;
+    width: auto;
 }
 
 .header-title {
-    font-size: 24px;
-    font-weight: 700;
+    font-family: 'Poppins', 'Segoe UI', Tahoma, sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    text-decoration: none;
+    transition: transform 0.15s ease, filter 0.15s ease;
 }
 
-.home-text {
-    color: #8B4513;
+.header-title .home-text {
+    background: linear-gradient(90deg, #6b4a34 0%, #b58b6b 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 6px 18px rgba(107, 74, 52, 0.06);
 }
 
-.accent-text {
-    color: #FF385C;
+.header-title .accent-text {
+    background: linear-gradient(90deg, #6b4a34 0%, #b58b6b 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 8px 28px rgba(107, 74, 52, 0.06);
+}
+
+.logo-link:hover .header-title {
+    transform: translateY(-3px);
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.06));
 }
 
 /* Main Content */
@@ -63,6 +81,13 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+.back-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
 .back-btn-container {
     margin-bottom: 24px;
 }
@@ -70,27 +95,28 @@
 .back-btn {
     background: none;
     border: none;
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    color: #222;
+    color: #6b4a34;
+    font-size: 18px;
 }
 
 .back-btn:hover {
-    background: #F7F7F7;
+    background: #f5e6d3;
     transform: scale(1.05);
 }
 
 .booking-title {
     font-size: 32px;
     font-weight: 700;
-    color: #222;
-    margin-bottom: 32px;
+    color: #6b4a34;
+    margin: 0;
 }
 
 .booking-section {
@@ -148,7 +174,7 @@
 }
 
 .edit-btn:hover {
-    color: #FF385C;
+    color: #c77952;
 }
 
 /* Payment Options */
@@ -476,7 +502,7 @@
 }
 
 .policy-link:hover {
-    color: #FF385C;
+    color: #c77952;
 }
 
 /* Ground Rules */
@@ -508,14 +534,14 @@
 }
 
 .terms-text a:hover {
-    color: #FF385C;
+    color: #c77952;
 }
 
 /* Submit Button */
 .submit-btn {
     width: 100%;
     padding: 16px;
-    background: linear-gradient(to right, #E61E4D 0%, #D70466 100%);
+    background: linear-gradient(to right, #c77952 0%, #9a6f4a 100%);
     color: white;
     border: none;
     border-radius: 8px;
@@ -527,7 +553,7 @@
 }
 
 .submit-btn:hover {
-    background: linear-gradient(to right, #D70466 0%, #BD1E59 100%);
+    background: linear-gradient(to right, #6b4a34 0%, #563b2a 100%);
     transform: scale(1.02);
 }
 
@@ -625,7 +651,7 @@
 }
 
 .review-label i {
-    color: #FF385C;
+    color: #c77952;
     font-size: 18px;
     width: 20px;
     text-align: center;
@@ -683,7 +709,7 @@
 }
 
 .room-rating i {
-    color: #FF385C;
+    color: #c77952;
     font-size: 12px;
 }
 
@@ -750,7 +776,7 @@
 
 .trust-item i {
     font-size: 28px;
-    color: #FF385C;
+    color: #c77952;
     flex-shrink: 0;
 }
 

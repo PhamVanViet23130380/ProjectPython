@@ -139,7 +139,6 @@ main { padding-top: calc(var(--header-height) + var(--search-height)); }
 }
 
 .host-btn {
-    font-size: 15px;
     cursor: pointer;
     color: #444;
     padding: 8px 18px;

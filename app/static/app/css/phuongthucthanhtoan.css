@@ -1,3 +1,11 @@
+:root {
+    --tone-brown-main: #b58b6b;
+    --tone-brown-dark: #8f6a4f;
+    --tone-brown-accent: #c77952;
+    --tone-brown-soft: #f5ede3;
+    --tone-brown-muted: #d6c2b2;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -13,7 +21,7 @@ body {
 
 .payment-methods-page {
     min-height: 100vh;
-    padding-top: 140px;
+    padding-top: 160px;
     padding-bottom: 60px;
 }
 
@@ -100,10 +108,10 @@ body {
     font-size: 17px;
     line-height: 1.8;
     color: #222;
-    background: #F7F7F7;
+    background: var(--tone-brown-soft);
     padding: 16px 20px;
     border-radius: 8px;
-    border-left: 4px solid #FF385C;
+    border-left: 4px solid var(--tone-brown-accent);
     margin: 24px 0;
 }
 
@@ -144,7 +152,7 @@ body {
 }
 
 .toc-list a:hover {
-    color: #FF385C;
+    color: var(--tone-brown-accent);
 }
 
 /* Content Block */
@@ -202,7 +210,7 @@ body {
 }
 
 .info-box i {
-    color: #1E88E5;
+    color: var(--tone-brown-main);
     font-size: 24px;
     flex-shrink: 0;
 }
@@ -223,7 +231,7 @@ body {
 
 /* Payment Method Card */
 .payment-method-card {
-    background: #F7F7F7;
+    background: var(--tone-brown-soft);
     border-radius: 12px;
     padding: 24px;
     margin-bottom: 20px;
@@ -251,7 +259,7 @@ body {
 
 .method-icon i {
     font-size: 28px;
-    color: #FF385C;
+    color: var(--tone-brown-accent);
 }
 
 .method-icon.small {
@@ -307,7 +315,7 @@ body {
 }
 
 .wallet-badge {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--tone-brown-main) 0%, var(--tone-brown-dark) 100%);
     color: white;
     border: none;
 }
@@ -323,7 +331,7 @@ body {
 }
 
 .note-text i {
-    color: #FF385C;
+    color: var(--tone-brown-accent);
     margin-top: 2px;
 }
 
@@ -337,12 +345,12 @@ body {
 }
 
 .alert-box.warning {
-    background: #FFF4E5;
-    border: 1px solid #FFE0B2;
+    background: #fff8f1;
+    border: 1px solid var(--tone-brown-muted);
 }
 
 .alert-box i {
-    color: #F57C00;
+    color: var(--tone-brown-accent);
     font-size: 20px;
     flex-shrink: 0;
 }
@@ -375,7 +383,7 @@ body {
 }
 
 .country-title i {
-    color: #FF385C;
+    color: var(--tone-brown-accent);
 }
 
 .payment-method-card.compact {
@@ -384,7 +392,7 @@ body {
 
 /* Help Section */
 .help-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #c9a178 0%, #9a6f4a 100%);
     border-radius: 12px;
     padding: 32px;
     text-align: center;
@@ -409,7 +417,7 @@ body {
     align-items: center;
     gap: 10px;
     background: white;
-    color: #764ba2;
+    color: var(--tone-brown-dark);
     padding: 14px 32px;
     border-radius: 8px;
     text-decoration: none;
@@ -422,7 +430,7 @@ body {
 .btn-help:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-    color: #667eea;
+    color: var(--tone-brown-accent);
 }
 
 /* Sidebar */
@@ -472,7 +480,7 @@ body {
 }
 
 .btn-contact:hover {
-    background: #000;
+    background: var(--tone-brown-dark);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
@@ -490,7 +498,7 @@ body {
 }
 
 .contact-note a:hover {
-    color: #FF385C;
+    color: var(--tone-brown-accent);
 }
 
 /* Related Articles */
@@ -534,7 +542,7 @@ body {
 }
 
 .article-list a:hover {
-    color: #FF385C;
+    color: var(--tone-brown-accent);
 }
 
 .article-list i {
@@ -544,13 +552,13 @@ body {
 }
 
 .article-list a:hover i {
-    color: #FF385C;
+    color: var(--tone-brown-accent);
 }
 
 /* Responsive */
 @media (max-width: 992px) {
     .payment-methods-page {
-        padding-top: 120px;
+        padding-top: 140px;
     }
 
     .page-title {

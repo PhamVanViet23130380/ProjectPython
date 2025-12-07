@@ -15,9 +15,6 @@ html, body {
     overflow-x: hidden;
 }
 
-
-
-
 .start-header{
     display: flex;
     justify-content: space-between;
@@ -29,119 +26,113 @@ html, body {
     height: auto;
 }
 
-.btnThoat{
+.header-actions{
+    gap: 10px;
+}
+
+.btn{
     background: #fff;
     border: 1px solid #ddd;
     padding: 8px 18px;
     border-radius: 20px;
     font-size: 14px;
     cursor: pointer;
-    color: #6b4a34;
-    text-decoration: none;
+    color: var(--brown, #6b4a34);
 }
 
-.btnThoat:hover{
+.btn:hover{
     border: 1px solid black;
 }
 
-.start-layout {
-    display: flex;
-    margin-top: 0;
-    padding: 0;
-}
-
-.start-left h1{
-    font-size: 42px;
+.question {
+    margin-top: 10px;
+    font-size: 38px;
     font-weight: 700;
-    line-height: 1.2;
 }
 
-.start-left h1{
-    color: var(--brown, #6b4a34);
-    white-space: normal;
-    max-width: 520px;
-    word-break: break-word;
-}
 
-.start-left {
-    width: 45%;
-    display: flex;
-    justify-items: center;
-    align-items: center;
-    padding-left: 20px;
-
-}
-
-.start-right {
-    width: 55%;
-    padding-left: 40px;
+.start-main{
     display: flex;
     flex-direction: column;
-
+    justify-content: center;
+    align-items: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
 }
 
-.step-item {
-    display: flex;
-    align-items: flex-start;
+.options {
+    margin-top: 40px;
+    display: grid;
     gap: 20px;
-    padding: 20px 0;
-    border-bottom: 1px solid #ddd;
-
 }
 
-.step-number {
-    font-size: 26px;
-    font-weight: 600;
-    margin-top: 4px;
+.option-item{
+    border: 1px solid #ddd;
+    padding: 22px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.15s;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    width: 600px;
 }
 
-.step-content h3 {
-    font-size: 20px;
-    font-weight: 600;
+.option-item img{
+    width: 50px;
+    height: 50px;
 }
 
-.step-content p {
-    margin-top: 6px;
-    color: #555;
-    font-size: 20px;
-    line-height: 1.4;
-}
 
-.step-item img {
-    width: 120px;
-    height: auto;
-}
-
-.divider {
-    height: 1px;
-    background: #e5e5e5;
-    margin: 10px 0;
-
-}
 
 .start-footer {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 0;
+    margin-top: 20px;
     padding: 20px 60px;
-    border-top: 1px solid #ddd;
+    border-top: 5px solid #dddddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.start-btn {
+.back-link {
+    color: #222;
+    text-decoration: none;
+    font-size: 16px;
+    transition: 0.3s ease all;
+    padding: 10px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.back-link:hover {
+    background: #dddddd;
+}
+
+.next-btn {
     background: var(--brown, #6b4a34);
     color: white;
-    font-size: 16px;
     padding: 12px 32px;
-    border-radius: 10px;
     border: none;
+    border-radius: 10px;
+    font-size: 16px;
     cursor: pointer;
-    transition: background 0.18s ease, transform 0.08s ease;
     text-decoration: none;
+    transition: background 0.2s ease;
 }
 
-.start-btn:hover {
-    background: #4a2f1e; /* darker brown on hover */
-    transform: translateY(-2px);
+.next-btn:hover {
+    background: #4a2f1e;
+}
+
+.option-item.selected {
+    border-color: #222;
+    background: #f7f7f7;
+}
+
+.next-btn.disabled {
+    background: #e3e3e3;
+    color: #aaa;
+    cursor: not-allowed;
 }
 
 /* HEADER FIXED */
@@ -168,7 +159,6 @@ html, body {
     bottom: 0;
     left: 0;
     right: 0;
-    width: 100%;
 
     background: white;
     z-index: 1000;
@@ -177,9 +167,8 @@ html, body {
     border-top: 1px solid #ddd;
 
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
-    box-sizing: border-box;
 }
 
 /* SCROLL AREA */
@@ -190,3 +179,4 @@ html, body {
     padding: 20px 60px;
     overflow-y: auto;      /* CHỈ PHẦN NÀY CUỘN */
 }
+

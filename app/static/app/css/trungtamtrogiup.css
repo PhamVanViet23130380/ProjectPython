@@ -1,7 +1,19 @@
+:root {
+    --tone-brown-main: #b58b6b;
+    --tone-brown-dark: #8f6a4f;
+    --tone-brown-accent: #c77952;
+    --tone-brown-soft: #f5ede3;
+    --tone-brown-muted: #d6c2b2;
+}
+
 /* Hero Section */
 .hero-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 80px 0 120px;
+    background: linear-gradient(135deg, #c9a178 0%, #9a6f4a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: calc(70px + var(--header-height, 60px)) 0 10px;
+    min-height: calc(60vh + var(--header-height, 60px));
     position: relative;
     overflow: hidden;
 }
@@ -62,7 +74,7 @@
     right: 6px;
     top: 50%;
     transform: translateY(-50%);
-    background: #FF385C;
+    background: var(--tone-brown-accent);
     border: none;
     width: 46px;
     height: 46px;
@@ -76,14 +88,14 @@
 }
 
 .search-btn:hover {
-    background: #E61E4D;
+    background: var(--tone-brown-dark);
     transform: translateY(-50%) scale(1.05);
 }
 
 /* Help Content */
 .help-content {
     padding: 60px 0;
-    background: #f7f7f7;
+    background: var(--tone-brown-soft);
 }
 
 /* Tabs Navigation */
@@ -170,12 +182,12 @@
 .help-card:hover {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
     transform: translateY(-4px);
-    border-color: #FF385C;
+    border-color: var(--tone-brown-accent);
 }
 
 .help-card.featured {
-    border: 2px solid #FF385C;
-    background: linear-gradient(135deg, #fff5f7 0%, #ffffff 100%);
+    border: 2px solid var(--tone-brown-accent);
+    background: linear-gradient(135deg, #fff8f1 0%, #ffffff 100%);
 }
 
 .help-card.featured::before {
@@ -183,7 +195,7 @@
     position: absolute;
     top: 16px;
     right: 16px;
-    background: #FF385C;
+    background: var(--tone-brown-accent);
     color: white;
     padding: 4px 12px;
     border-radius: 4px;
@@ -195,7 +207,7 @@
 .card-icon {
     width: 56px;
     height: 56px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--tone-brown-main) 0%, var(--tone-brown-dark) 100%);
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -206,7 +218,7 @@
 }
 
 .help-card.featured .card-icon {
-    background: linear-gradient(135deg, #FF385C 0%, #E61E4D 100%);
+    background: linear-gradient(135deg, var(--tone-brown-accent) 0%, var(--tone-brown-dark) 100%);
 }
 
 .help-card h3 {
@@ -228,7 +240,7 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: #FF385C;
+    color: var(--tone-brown-accent);
     font-weight: 600;
     text-decoration: none;
     font-size: 15px;
@@ -236,7 +248,7 @@
 }
 
 .card-link:hover {
-    color: #E61E4D;
+    color: var(--tone-brown-dark);
     gap: 12px;
 }
 
@@ -274,18 +286,18 @@
 .topic-link:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
     transform: translateY(-2px);
-    border-color: #FF385C;
-    color: #FF385C;
+    border-color: var(--tone-brown-accent);
+    color: var(--tone-brown-accent);
 }
 
 .topic-link i {
     font-size: 22px;
-    color: #667eea;
+    color: var(--tone-brown-main);
     transition: all 0.3s ease;
 }
 
 .topic-link:hover i {
-    color: #FF385C;
+    color: var(--tone-brown-accent);
     transform: scale(1.1);
 }
 
@@ -315,21 +327,21 @@
 .contact-card {
     padding: 32px 24px;
     border-radius: 12px;
-    background: #f7f7f7;
+    background: var(--tone-brown-soft);
     transition: all 0.3s ease;
     cursor: pointer;
 }
 
 .contact-card:hover {
-    background: #667eea;
+    background: var(--tone-brown-accent);
     color: white;
     transform: translateY(-4px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 6px 20px rgba(156, 109, 72, 0.3);
 }
 
 .contact-card i {
     font-size: 40px;
-    color: #667eea;
+    color: var(--tone-brown-main);
     margin-bottom: 16px;
     transition: all 0.3s ease;
 }
@@ -367,7 +379,7 @@
     }
 
     .hero-section {
-        padding: 60px 0 100px;
+        padding: 60px 0 80px;
     }
 
     .help-cards {

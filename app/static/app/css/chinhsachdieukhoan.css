@@ -13,7 +13,7 @@ body {
 
 .policy-page {
     min-height: 100vh;
-    padding-top: 140px;
+    padding-top: 150px;
     padding-bottom: 60px;
     background: #FAFAFA;
 }
@@ -113,8 +113,8 @@ body {
 }
 
 .alert-box.info {
-    background: #E3F2FD;
-    border: 1px solid #90CAF9;
+    background: #F5E6D3;
+    border: 1px solid #D4A574;
 }
 
 .alert-box.warning {
@@ -128,7 +128,7 @@ body {
 }
 
 .alert-box.info i {
-    color: #1976D2;
+    color: #8B6534;
 }
 
 .alert-box.warning i {
@@ -191,7 +191,7 @@ body {
 }
 
 .toc-list a:hover {
-    color: #FF385C;
+    color: #8B6534;
 }
 
 /* Content Block */
@@ -205,7 +205,7 @@ body {
     color: #222;
     margin-bottom: 24px;
     scroll-margin-top: 160px;
-    border-left: 4px solid #FF385C;
+    border-left: 4px solid #8B6534;
     padding-left: 16px;
 }
 
@@ -249,8 +249,8 @@ body {
 
 /* Info Box */
 .info-box {
-    background: #F0F7FF;
-    border: 1px solid #B8DAFF;
+    background: #F5E6D3;
+    border: 1px solid #D4A574;
     border-radius: 8px;
     padding: 20px;
     margin: 24px 0;
@@ -259,7 +259,7 @@ body {
 }
 
 .info-box i {
-    color: #0066CC;
+    color: #8B6534;
     font-size: 24px;
     flex-shrink: 0;
 }
@@ -302,7 +302,7 @@ body {
 
 .policy-icon i {
     font-size: 24px;
-    color: #FF385C;
+    color: #8B6534;
 }
 
 .policy-content h4 {
@@ -341,7 +341,7 @@ body {
 }
 
 .security-item:hover {
-    border-color: #FF385C;
+    border-color: #8B6534;
     transform: translateY(-4px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -505,7 +505,7 @@ body {
     top: 0;
     width: 40px;
     height: 40px;
-    background: #FF385C;
+    background: #8B6534;
     color: white;
     border-radius: 50%;
     display: flex;
@@ -513,7 +513,7 @@ body {
     justify-content: center;
     font-weight: 700;
     font-size: 18px;
-    box-shadow: 0 2px 8px rgba(255, 56, 92, 0.3);
+    box-shadow: 0 2px 8px rgba(139, 101, 52, 0.3);
 }
 
 .timeline-content h4 {
@@ -531,7 +531,7 @@ body {
 
 /* Contact Section */
 .contact-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #8B6534 0%, #6B5428 100%);
     border-radius: 12px;
     padding: 40px;
     text-align: center;
@@ -573,14 +573,14 @@ body {
 
 .btn-contact-email {
     background: white;
-    color: #764ba2;
+    color: #8B6534;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-contact-email:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-    color: #667eea;
+    color: #6B5428;
 }
 
 .btn-help-center {
@@ -591,7 +591,7 @@ body {
 
 .btn-help-center:hover {
     background: white;
-    color: #764ba2;
+    color: #8B6534;
     transform: translateY(-2px);
 }
 

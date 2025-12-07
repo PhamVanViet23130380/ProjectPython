@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Bước 2</title>
+    <link rel="stylesheet" href="{% static 'app/css/buoc1.css' %}">
+</head>
+
+<body>
+    <div class="start-container">
+
+
+        <div class="start-header fixed-header">
+            <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
+            <div class="header-actions">
+                <button class="btn btnThacMac">Bạn có thắc mắc?</button>
+                <button class="btn btnLuuThoat">Lưu và thoát</button>
+            </div>
+
+        </div>
+
+        <div class="step-main scroll-area">
+
+            <div class="step-left">
+                <p class="step-number">Bước 2</p>
+                <h1 class="title">Làm cho chỗ ở của bạn trở nên nổi bật</h1>
+
+                <p class="desc">
+                    Ở bước này, bạn sẽ thêm một số tiện nghi được cung cấp tại chỗ ở
+                    của bạn, cùng với 5 bức ảnh trở lên. Sau đó, bạn sẽ soạn tiêu đề và nội dung mô tả.
+                </p>
+            </div>
+
+            <div class="step-right">
+                <div class="video-wrapper">
+                    <video autoplay loop muted playsinline>
+                        <source
+                            src="https://stream.media.muscache.com/H0101WTUG2qWbyFhy02jlOggSkpsM9H02VOWN52g02oxhDVM.mp4?v_q=high"
+                            type="video/mp4">
+                    </video>
+                </div>
+            </div>
+
+
+        </div>
+
+
+        <div class="start-footer fixed-footer">
+            <a href="{% url 'thongtincb' %}" class="back-link">Quay lại</a>
+
+            <a href="{% url 'tiennghii' %}" class="next-btn">Tiếp theo</a>
+        </div>
+    </div>
+
+</body>
+
+</html>

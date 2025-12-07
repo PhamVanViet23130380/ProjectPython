@@ -54,7 +54,12 @@ function loadRoom(roomId) {
     document.getElementById('location-text').textContent = room.location;
 
     // Host info (placeholder)
-    document.getElementById('host-avatar').src = "https://a0.muscache.com/im/pictures/user/host.jpg";
+    const hostAvatarEl = document.getElementById('host-avatar');
+    hostAvatarEl.onerror = function() {
+        this.onerror = null;
+        this.src = 'https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg';
+    };
+    hostAvatarEl.src = "https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg";
     document.getElementById('host-name').textContent = `Chủ nhà phòng ${room.id}`;
     document.getElementById('host-info').textContent = "Chủ nhà siêu cấp · Tham gia vào năm 2020";
     document.getElementById('host-reviews').textContent = Math.floor(Math.random() * 50) + 10;
@@ -254,6 +259,29 @@ function generateDefaultAmenities(room) {
     return baseAmenities;
 }
 
+// Hàm xóa backdrop và reset body
+function cleanupModal() {
+    // Kiểm tra xem có modal nào đang mở không
+    const openModals = document.querySelectorAll('.modal.show');
+    
+    // Chỉ cleanup nếu KHÔNG có modal nào đang mở
+    if (openModals.length === 0) {
+        // Xóa tất cả backdrop còn sót lại
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(el => {
+            el.remove();
+        });
+        
+        // Xóa class modal-open khỏi body
+        document.body.classList.remove('modal-open');
+        
+        // Reset style của body
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+        document.body.style.pointerEvents = '';
+    }
+}
+
 // Handle booking button click
 document.addEventListener('DOMContentLoaded', function() {
     const bookingBtn = document.querySelector('.booking-btn-main');
@@ -263,4 +291,14 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = `/datphong/?room=${roomId}`;
         });
     }
+
+    // Xử lý đóng modal - xóa backdrop và reset body
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        // Khi modal đã đóng hoàn toàn
+        modal.addEventListener('hidden.bs.modal', function () {
+            // Đợi một chút để Bootstrap xử lý xong
+            setTimeout(cleanupModal, 300);
+        });
+    });
 });

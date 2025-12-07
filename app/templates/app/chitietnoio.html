@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'app/css/header.css' %}">
     <link rel="stylesheet" href="{% static 'app/css/chitietnoio.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/header.css' %}">
     <link rel="stylesheet" href="{% static 'app/css/footer.css' %}">
 
     <title id="page-title">Chi tiết nơi ở</title>
@@ -42,7 +42,7 @@
         </div>
     </section>
 
-    <main class="container mt-5">
+    <main class="container">
         <div class="row">
             <!-- LEFT: main content -->
             <div class="col-lg-8">
@@ -59,7 +59,6 @@
                             </p>
                             <p class="text-muted" id="room-location">Phòng tại Quận 1, Thành phố Hồ Chí Minh, Việt Nam</p>
                         </div>
-                        <button class="btn btn-light"><i class="fa-regular fa-share-nodes"></i></button>
                         <button class="btn btn-light"><i class="fa-regular fa-heart"></i></button>
                     </div>
                 </section>
@@ -142,7 +141,7 @@
                 <section class="mb-5 pb-5 border-bottom">
                     <h2 class="h5 fw-bold mb-3">Lịch</h2>
                     <p class="text-muted mb-3">Bạn nhận được hoàn tiền 50% cho các đặt phòng bị hủy 3 ngày trước khi nhận phòng.</p>
-                    <div class="border rounded p-3 bg-light">
+                    <div class="border rounded p-3" style="background-color: #F5E6D3; border-color: #D4A574 !important;">
                         <p class="mb-0">
                             <i class="fa-solid fa-calendar"></i> 
                             Ngày 20/3/2026 - 22/3/2026 · 2 đêm
@@ -199,7 +198,7 @@
                     
                     <div class="mb-4">
                         <div class="d-flex align-items-start mb-3">
-                            <img src="https://a0.muscache.com/im/pictures/user/avatar.jpg" class="rounded-circle me-3" width="48" height="48" alt="Ben">
+                            <img src="https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg" class="rounded-circle me-3" width="48" height="48" alt="Ben">
                             <div class="flex-grow-1">
                                 <p class="fw-bold mb-1">Ben</p>
                                 <p class="text-muted small mb-2">Tháng 2, 2025</p>
@@ -210,7 +209,7 @@
 
                     <div class="mb-4">
                         <div class="d-flex align-items-start mb-3">
-                            <img src="https://a0.muscache.com/im/pictures/user/avatar2.jpg" class="rounded-circle me-3" width="48" height="48" alt="Angus">
+                            <img src="https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg" class="rounded-circle me-3" width="48" height="48" alt="Angus">
                             <div class="flex-grow-1">
                                 <p class="fw-bold mb-1">Angus</p>
                                 <p class="text-muted small mb-2">Tháng 11, 2025</p>
@@ -221,7 +220,7 @@
 
                     <div class="mb-4">
                         <div class="d-flex align-items-start mb-3">
-                            <img src="https://a0.muscache.com/im/pictures/user/avatar3.jpg" class="rounded-circle me-3" width="48" height="48" alt="Sarah">
+                            <img src="https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg" class="rounded-circle me-3" width="48" height="48" alt="Sarah">
                             <div class="flex-grow-1">
                                 <p class="fw-bold mb-1">Sarah</p>
                                 <p class="text-muted small mb-2">Tháng 10, 2025</p>
@@ -248,7 +247,7 @@
                     <h2 class="h5 fw-bold mb-4">Gặp gỡ chủ nhà của bạn</h2>
                     <div class="border rounded p-4">
                         <div class="d-flex align-items-center mb-4">
-                            <img id="host-avatar" src="" class="rounded-circle me-3" width="80" height="80" alt="Host">
+                            <img id="host-avatar" src="https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg" onerror="this.onerror=null; this.src='https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg';" class="rounded-circle me-3" width="80" height="80" alt="Host">
                             <div class="flex-grow-1">
                                 <h3 class="fw-bold mb-0" id="host-name">Host</h3>
                                 <p class="text-muted mb-0" id="host-info">Chủ nhà siêu cấp</p>
@@ -319,7 +318,7 @@
                         <hr class="my-3">
 
                         <div class="mb-3">
-                            <p class="small fw-bold mb-2">💰 Giá tiền:</p>
+                            <p class="small fw-bold mb-2"><i class="fa-solid fa-sack-dollar me-1" style="color: #c77952;"></i> Giá tiền:</p>
                             <div class="d-flex justify-content-between small mb-2">
                                 <span id="price-per-night">₫0 x 2 đêm</span>
                                 <span id="price-subtotal">₫0</span>
@@ -722,7 +721,12 @@
             document.getElementById('location-text').textContent = room.location;
 
             // Host info (placeholder)
-            document.getElementById('host-avatar').src = "https://a0.muscache.com/im/pictures/user/host.jpg";
+            const hostAvatarEl = document.getElementById('host-avatar');
+            hostAvatarEl.onerror = function() {
+                this.onerror = null;
+                this.src = 'https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg';
+            };
+            hostAvatarEl.src = "https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg";
             document.getElementById('host-name').textContent = `Chủ nhà phòng ${room.id}`;
             document.getElementById('host-info').textContent = "Chủ nhà siêu cấp · Tham gia vào năm 2020";
             document.getElementById('host-reviews').textContent = Math.floor(Math.random() * 50) + 10;
@@ -808,31 +812,124 @@
             }
         });
 
+        // Thay emoji bằng icon Font Awesome và format mô tả
+        function formatDescription(text) {
+            const iconMap = {
+                '📍': 'fa-location-dot',
+                '📌': 'fa-location-dot',
+                '🏠': 'fa-house',
+                '🏡': 'fa-house-chimney',
+                '🏢': 'fa-building',
+                '🏰': 'fa-chess-rook',
+                '🏛️': 'fa-landmark',
+                '🏮': 'fa-landmark',
+                '🛏️': 'fa-bed',
+                '🛁': 'fa-bath',
+                '🚿': 'fa-shower',
+                '🔑': 'fa-key',
+                '☕': 'fa-mug-saucer',
+                '🍳': 'fa-utensils',
+                '🍜': 'fa-utensils',
+                '🍤': 'fa-fish',
+                '🍽️': 'fa-utensils',
+                '🎯': 'fa-bullseye',
+                '🎭': 'fa-masks-theater',
+                '🎒': 'fa-suitcase-rolling',
+                '🎁': 'fa-gift',
+                '🚴': 'fa-person-biking',
+                '🏄': 'fa-person-swimming',
+                '🏊': 'fa-person-swimming',
+                '🚌': 'fa-bus',
+                '🚇': 'fa-train-subway',
+                '🚗': 'fa-car-side',
+                '👥': 'fa-user-group',
+                '👫': 'fa-user-group',
+                '👨‍👩‍👧‍👦': 'fa-people-group',
+                '👨‍👩‍👧': 'fa-people-group',
+                '👶': 'fa-baby',
+                '🧒': 'fa-child',
+                '🧸': 'fa-paw',
+                '💰': 'fa-tag',
+                '💼': 'fa-briefcase',
+                '✅': 'fa-check',
+                '✔️': 'fa-check',
+                '💡': 'fa-lightbulb',
+                '✨': 'fa-wand-magic-sparkles',
+                '🌟': 'fa-star',
+                '⭐': 'fa-star',
+                '💎': 'fa-gem',
+                '🔥': 'fa-fire',
+                '🌊': 'fa-water',
+                '🏖️': 'fa-umbrella-beach',
+                '🌅': 'fa-sun',
+                '🏔️': 'fa-mountain',
+                '🌳': 'fa-tree',
+                '🌲': 'fa-tree',
+                '📚': 'fa-book',
+                '📱': 'fa-mobile-screen',
+                '🔒': 'fa-lock',
+                '🏨': 'fa-hotel',
+                '🏊‍♂️': 'fa-person-swimming'
+            };
+
+            const escapeForRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            let html = text || '';
+
+            // Chuyển từng emoji sang icon, cho phép variation selector
+            Object.entries(iconMap).forEach(([emoji, icon]) => {
+                const regex = new RegExp(`${escapeForRegex(emoji)}\uFE0F?`, 'g');
+                html = html.replace(regex, `<i class="fa-solid ${icon} icon-bullet"></i>`);
+            });
+
+            return html.replace(/\n/g, '<br>');
+        }
+
+        // Đảm bảo backdrop không bị kẹt sau khi đóng modal
+        function cleanupModalState() {
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+            document.documentElement.style.paddingRight = '';
+            document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+        }
+
+        function wireModalCleanup(modalId) {
+            const el = document.getElementById(modalId);
+            if (!el) return;
+            el.addEventListener('hidden.bs.modal', () => {
+                cleanupModalState();
+                // Force cleanup after Bootstrap finishes
+                setTimeout(() => {
+                    cleanupModalState();
+                    document.body.style.overflow = '';
+                    document.documentElement.style.overflow = '';
+                }, 100);
+            });
+        }
+
+        // Mở modal an toàn: dọn dẹp trước, setup cleanup sau
+        function safeShowModal(modalId) {
+            cleanupModalState();
+            const modalElement = document.getElementById(modalId);
+            if (!modalElement) return;
+            const modal = new bootstrap.Modal(modalElement);
+            wireModalCleanup(modalId);
+            modal.show();
+            // Remove Bootstrap's inline padding and add overflow hidden via JS
+            setTimeout(() => {
+                document.body.style.paddingRight = '';
+                document.documentElement.style.paddingRight = '';
+                document.body.style.overflow = 'hidden';
+            }, 10);
+        }
+
         // Hiển thị modal mô tả
         function showDescriptionModal(room) {
             const modalContent = document.getElementById('modal-description-content');
             const fullDesc = room.fullDescription || generateDefaultDescription(room);
-            
-            // Convert \n thành <br> và format
-            const formattedDesc = fullDesc.replace(/\n/g, '<br>');
+            const formattedDesc = formatDescription(fullDesc);
             modalContent.innerHTML = formattedDesc;
-            
-            // Show modal
-            const modalElement = document.getElementById('descriptionModal');
-            const modal = new bootstrap.Modal(modalElement);
-            
-            // Cleanup khi modal đóng để tránh lỗi backdrop
-            modalElement.addEventListener('hidden.bs.modal', function () {
-                document.body.classList.remove('modal-open');
-                document.body.style.overflow = '';
-                document.body.style.paddingRight = '';
-                const backdrop = document.querySelector('.modal-backdrop');
-                if (backdrop) {
-                    backdrop.remove();
-                }
-            }, { once: true });
-            
-            modal.show();
+            safeShowModal('descriptionModal');
         }
 
         // Tạo mô tả mặc định cho các phòng chưa có fullDescription
@@ -891,23 +988,7 @@
             
             html += '</div>';
             modalContent.innerHTML = html;
-            
-            // Show modal
-            const modalElement = document.getElementById('amenitiesModal');
-            const modal = new bootstrap.Modal(modalElement);
-            
-            // Cleanup khi modal đóng để tránh lỗi backdrop
-            modalElement.addEventListener('hidden.bs.modal', function () {
-                document.body.classList.remove('modal-open');
-                document.body.style.overflow = '';
-                document.body.style.paddingRight = '';
-                const backdrop = document.querySelector('.modal-backdrop');
-                if (backdrop) {
-                    backdrop.remove();
-                }
-            }, { once: true });
-            
-            modal.show();
+            safeShowModal('amenitiesModal');
         }
 
         // Hiển thị modal gallery với tất cả ảnh
@@ -942,23 +1023,7 @@
             });
             
             galleryContainer.innerHTML = html;
-            
-            // Show modal
-            const modalElement = document.getElementById('galleryModal');
-            const modal = new bootstrap.Modal(modalElement);
-            
-            // Cleanup khi modal đóng
-            modalElement.addEventListener('hidden.bs.modal', function () {
-                document.body.classList.remove('modal-open');
-                document.body.style.overflow = '';
-                document.body.style.paddingRight = '';
-                const backdrop = document.querySelector('.modal-backdrop');
-                if (backdrop) {
-                    backdrop.remove();
-                }
-            }, { once: true });
-            
-            modal.show();
+            safeShowModal('galleryModal');
         }
 
         // Hiển thị modal đánh giá
@@ -1025,23 +1090,7 @@
                 `;
             });
             reviewsContainer.innerHTML = reviewsHTML;
-            
-            // Show modal
-            const modalElement = document.getElementById('reviewsModal');
-            const modal = new bootstrap.Modal(modalElement);
-            
-            // Cleanup
-            modalElement.addEventListener('hidden.bs.modal', function () {
-                document.body.classList.remove('modal-open');
-                document.body.style.overflow = '';
-                document.body.style.paddingRight = '';
-                const backdrop = document.querySelector('.modal-backdrop');
-                if (backdrop) {
-                    backdrop.remove();
-                }
-            }, { once: true });
-            
-            modal.show();
+            safeShowModal('reviewsModal');
         }
 
         // Generate stars for rating

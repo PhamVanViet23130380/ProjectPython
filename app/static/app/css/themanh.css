@@ -1,4 +1,3 @@
-/* RESET */
 * {
     margin: 0;
     padding: 0;
@@ -45,46 +44,125 @@ html, body {
 }
 
 .question {
-    margin-top: 10px;
+    margin-top: 0;
+    margin-bottom: 10px;
     font-size: 38px;
     font-weight: 700;
+    color: #222;
+    text-align: left;
+}
+.goiy {
+    font-size: 20px;
+    color: #222;
+    margin-bottom: 40px;
+    text-align: left;
 }
 
-/* OPTIONS GRID */
 .start-main{
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+    padding-top: 20px;
 }
 
-.options-grid {
-    margin-top: 40px;
-    display: grid;
-    grid-template-columns: repeat(3, 280px);
-    gap: 20px;
-}
-
-.option-item {
-    border: 1px solid #ddd;
-    padding: 22px;
-    border-radius: 14px;
-    cursor: pointer;
-    transition: 0.15s;
+/* Upload area */
+.upload-area {
+    margin-top: 30px;
+    border: 1px dashed #ddd;
+    border-radius: 12px;
+    background: #fafafa;
+    padding: 40px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    align-items: center;
+    gap: 18px;
+    min-height: 400px;
+    transition: border-color 0.15s, background 0.15s;
 }
 
-.option-item:hover {
-    border-color: #000;
+.upload-area.dragover {
+    border-color: #222;
+    background: #fff;
 }
 
-.option-item img {
-    width: 40px;
+.upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    color: #222;
 }
 
+.camera-icon {
+    width: 84px;
+    opacity: 0.9;
+}
 
+.add-photo-btn {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.hint {
+    font-size: 13px;
+    color: #222;
+}
+
+/* Thumbnails */
+.thumbs-wrap {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+    margin-top: 6px;
+}
+
+.thumb {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #eee;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Remove button on thumb */
+.thumb .remove-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Small note about requirement */
+.note-min {
+    font-size: 13px;
+    color: #666;
+    margin-top: 8px;
+}
 
 
 
@@ -124,6 +202,10 @@ html, body {
     transition: background 0.2s ease;
 }
 
+.next-btn:hover {
+    background: #4a2f1e;
+}
+
 .option-item.selected {
     border-color: #222;
     background: #f7f7f7;
@@ -133,19 +215,6 @@ html, body {
     background: #e3e3e3;
     color: #aaa;
     cursor: not-allowed;
-}
-
-.next-btn:hover {
-    background: #4a2f1e;
-}
-
-
-
-/* FULL LAYOUT */
-.container {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
 }
 
 /* HEADER FIXED */

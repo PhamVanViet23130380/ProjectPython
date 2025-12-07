@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông tin cơ bản</title>
+    <link rel="stylesheet" href="{% static 'app/css/thongtincb.css' %}">
+</head>
+<body>
+<div class="start-container">
+
+
+    <div class="start-header fixed-header">
+        <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
+        <div class="header-actions">
+            <button class="btn btnThacMac">Bạn có thắc mắc?</button>
+            <button class="btn btnLuuThoat">Lưu và thoát</button>
+        </div>
+
+    </div>
+
+    <div class="start-main scroll-area">
+        <div class="main-content">
+            <h1>Chia sẻ một số thông tin cơ bản về chỗ ở của bạn</h1>
+
+            <div class="info-section">
+                <div class="info-item">
+                    <label>Khách</label>
+                    <div class="quantity-control">
+                        <button class="qty-btn minus">−</button>
+                        <span class="qty-value">4</span>
+                        <button class="qty-btn plus">+</button>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <label>Phòng ngủ</label>
+                    <div class="quantity-control">
+                        <button class="qty-btn minus">−</button>
+                        <span class="qty-value">1</span>
+                        <button class="qty-btn plus">+</button>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <label>Giường</label>
+                    <div class="quantity-control">
+                        <span class="qty-value">1</span>
+                        <button class="qty-btn plus">+</button>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <label>Phòng tắm</label>
+                    <div class="quantity-control">
+                        <button class="qty-btn minus">−</button>
+                        <span class="qty-value">1</span>
+                        <button class="qty-btn plus">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="start-footer fixed-footer">
+             <a href="{% url 'diachi' %}" class="back-link">Quay lại</a>
+
+            <a href="{% url 'buoc2' %}" class="next-btn">Tiếp theo</a>
+    </div>
+</div>
+
+</body>
+<script>
+    document.querySelectorAll('.info-item').forEach(item => {
+        const minusBtn = item.querySelector('.qty-btn.minus');
+        const plusBtn = item.querySelector('.qty-btn.plus');
+        const qtyValue = item.querySelector('.qty-value');
+
+        if (plusBtn) {
+            plusBtn.addEventListener('click', () => {
+                let currentValue = parseInt(qtyValue.textContent);
+                qtyValue.textContent = currentValue + 1;
+            });
+        }
+
+        if (minusBtn) {
+            minusBtn.addEventListener('click', () => {
+                let currentValue = parseInt(qtyValue.textContent);
+                if (currentValue > 0) {
+                    qtyValue.textContent = currentValue - 1;
+                }
+            });
+        }
+    });
+</script>
+</html>

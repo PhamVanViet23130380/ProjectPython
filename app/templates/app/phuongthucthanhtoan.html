@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{% static 'app/css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/footer.css' %}">
     <link rel="stylesheet" href="{% static 'app/css/phuongthucthanhtoan.css' %}">
 </head>
 <body>
@@ -19,11 +20,11 @@
             <nav aria-label="breadcrumb" class="breadcrumb-nav">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{% url 'trungtamtrogiup' %}">Trang chủ</a></li>
-                    <li class="breadcrumb-item"><a href="#">All topics</a></li>
+                    <li class="breadcrumb-item"><a href="#">Tất cả chủ đề</a></li>
                     <li class="breadcrumb-item"><a href="#">Thanh toán và định giá</a></li>
                     <li class="breadcrumb-item"><a href="#">Thanh toán đặt phòng/đặt chỗ</a></li>
                     <li class="breadcrumb-item"><a href="#">Phương thức thanh toán</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Phương thức thanh toán được chấp nhận</li>
+                    <li class="breadcrumb-item active" aria-current="page">Phương thức thanh toán tại Việt Nam</li>
                 </ol>
             </nav>
 
@@ -38,189 +39,138 @@
                 <div class="col-lg-8">
                     <div class="content-section">
                         <p class="intro-text">
-                            Chúng tôi chấp nhận nhiều phương thức thanh toán khác nhau. Tại hầu hết các quốc gia, bạn có thể thanh toán bằng thẻ tín dụng của các tổ chức phát hành lớn, cũng như các loại thẻ ghi nợ có thể được xử lý như thẻ tín dụng. Chúng tôi cũng chấp nhận ví kỹ thuật số như Apple Pay và Google Pay, cũng với dịch vụ trực tuyến như PayPal và Klarna. Dù bạn chọn phương thức thanh toán nào, hãy đảm bảo an toàn bằng cách chỉ thanh toán trên Airbnb.
+                            Ở Việt Nam, bạn có thể thanh toán an toàn bằng thẻ ngân hàng (Visa, Mastercard, JCB phát hành tại Việt Nam), thẻ ATM nội địa qua Napas, ví điện tử phổ biến (MoMo, ZaloPay, Viettel Money, VNPay) và chuyển khoản ngân hàng/QR. Tất cả giao dịch đều cần thực hiện trực tiếp trên Home Nest để được bảo vệ.
                         </p>
 
                         <p class="highlight-text">
-                            Vì các tùy chọn được chấp nhận sẽ khác nhau tùy theo quốc gia hoặc khu vực, hãy kiểm tra danh sách quốc gia trong bài viết này để xem bạn có thể sử dụng phương thức thanh toán nào.
+                            Các tùy chọn dưới đây áp dụng riêng cho thị trường Việt Nam. Hãy chọn phương thức quen thuộc của bạn và đảm bảo đủ hạn mức trước khi thanh toán.
                         </p>
 
                         <div class="section-divider"></div>
 
                         <h2 class="section-title">Trong bài viết này</h2>
                         <ul class="toc-list">
-                            <li><a href="#klarna">📌 Trả góp với Klarna</a></li>
-                            <li><a href="#payment-methods">📌 Những phương thức thanh toán có thể sử dụng ở hầu hết quốc gia</a></li>
-                            <li><a href="#national-methods">📌 Những phương thức thanh toán có thể sử dụng ở một số quốc gia nhất định</a></li>
+                            <li><a href="#the-ngan-hang">📌 Thẻ ngân hàng và ATM nội địa</a></li>
+                            <li><a href="#vi-qr">📌 Ví điện tử và QR</a></li>
+                            <li><a href="#chuyen-khoan">📌 Chuyển khoản ngân hàng</a></li>
+                            <li><a href="#luu-y">📌 Lưu ý quan trọng</a></li>
                         </ul>
 
                         <div class="section-divider"></div>
 
-                        <!-- Section 1: Klarna -->
-                        <section id="klarna" class="content-block">
-                            <h2 class="block-title">Trả góp với Klarna</h2>
-                            <p>
-                                Ở Hoa Kỳ và Thụy Điển, bạn có thể thanh toán bằng Klarna, một dịch vụ cung cấp các tùy chọn thanh toán linh hoạt:
-                            </p>
-                            <ul class="feature-list">
-                                <li><strong>Trả trong 4 lần:</strong> Chia chi phí thành 4 khoản thanh toán không lãi suất</li>
-                                <li><strong>Trả theo thời gian:</strong> Lựa chọn trả góp hàng tháng có lãi suất</li>
-                                <li><strong>Trả ngay:</strong> Thanh toán toàn bộ ngay lập tức</li>
-                            </ul>
-                            <div class="info-box">
-                                <i class="fas fa-info-circle"></i>
-                                <div>
-                                    <strong>Lưu ý quan trọng:</strong>
-                                    <p>Để sử dụng Klarna, bạn cần đáp ứng các tiêu chí nhất định về tín dụng. Klarna sẽ thực hiện kiểm tra tín dụng mềm khi bạn chọn phương thức này.</p>
-                                </div>
-                            </div>
-                        </section>
+                        <!-- Thẻ ngân hàng & ATM nội địa -->
+                        <section id="the-ngan-hang" class="content-block">
+                            <h2 class="block-title">Thẻ ngân hàng và ATM nội địa</h2>
 
-                        <div class="section-divider"></div>
-
-                        <!-- Section 2: Common Payment Methods -->
-                        <section id="payment-methods" class="content-block">
-                            <h2 class="block-title">Những phương thức thanh toán có thể sử dụng ở hầu hết quốc gia</h2>
-                            
                             <div class="payment-method-card">
                                 <div class="method-icon">
                                     <i class="fas fa-credit-card"></i>
                                 </div>
                                 <div class="method-content">
-                                    <h3>Thẻ tín dụng và thẻ ghi nợ</h3>
-                                    <p>Chúng tôi chấp nhận hầu hết các thẻ tín dụng và thẻ ghi nợ chính, bao gồm:</p>
+                                    <h3>Thẻ tín dụng/ghi nợ quốc tế (phát hành tại Việt Nam)</h3>
+                                    <p>Chấp nhận thẻ Visa, Mastercard, JCB do ngân hàng Việt Nam phát hành. Thẻ ghi nợ cần bật tính năng thanh toán online/quốc tế.</p>
                                     <div class="card-brands">
                                         <span class="brand-badge">Visa</span>
                                         <span class="brand-badge">Mastercard</span>
-                                        <span class="brand-badge">American Express</span>
-                                        <span class="brand-badge">Discover</span>
                                         <span class="brand-badge">JCB</span>
                                     </div>
                                     <p class="note-text">
                                         <i class="fas fa-exclamation-circle"></i>
-                                        Thẻ ghi nợ phải có thể được xử lý như thẻ tín dụng và được liên kết với tổ chức phát hành quốc tế.
+                                        Đảm bảo thẻ đủ hạn mức/ số dư, bật 3D Secure (OTP) và cho phép thanh toán trực tuyến.
                                     </p>
                                 </div>
                             </div>
 
                             <div class="payment-method-card">
                                 <div class="method-icon">
-                                    <i class="fab fa-apple"></i>
+                                    <i class="fas fa-university"></i>
                                 </div>
                                 <div class="method-content">
-                                    <h3>Apple Pay</h3>
-                                    <p>Thanh toán nhanh chóng và bảo mật với Apple Pay trên iPhone, iPad, Mac và Apple Watch.</p>
+                                    <h3>Thẻ ATM nội địa Napas</h3>
+                                    <p>Hỗ trợ thẻ ATM của các ngân hàng Việt Nam có logo Napas, thanh toán qua cổng nội địa.</p>
                                     <p class="requirement-text">
-                                        <strong>Yêu cầu:</strong> Cần có thiết bị Apple tương thích và đã thiết lập Apple Pay
+                                        <strong>Lưu ý:</strong> Cần kích hoạt thanh toán trực tuyến cho thẻ và đăng ký SMS/Smart OTP của ngân hàng.
                                     </p>
-                                </div>
-                            </div>
-
-                            <div class="payment-method-card">
-                                <div class="method-icon">
-                                    <i class="fab fa-google"></i>
-                                </div>
-                                <div class="method-content">
-                                    <h3>Google Pay</h3>
-                                    <p>Sử dụng Google Pay để thanh toán một cách thuận tiện trên các thiết bị Android.</p>
-                                    <p class="requirement-text">
-                                        <strong>Yêu cầu:</strong> Cần có tài khoản Google và đã cấu hình Google Pay
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="payment-method-card">
-                                <div class="method-icon">
-                                    <i class="fab fa-paypal"></i>
-                                </div>
-                                <div class="method-content">
-                                    <h3>PayPal</h3>
-                                    <p>Liên kết tài khoản PayPal của bạn để thanh toán trực tuyến an toàn.</p>
-                                    <div class="alert-box warning">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                        <div>
-                                            <strong>Lưu ý:</strong> PayPal không khả dụng ở một số quốc gia nhất định. Kiểm tra tính khả dụng trong khu vực của bạn.
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </section>
 
                         <div class="section-divider"></div>
 
-                        <!-- Section 3: Country-Specific Methods -->
-                        <section id="national-methods" class="content-block">
-                            <h2 class="block-title">Những phương thức thanh toán có thể sử dụng ở một số quốc gia nhất định</h2>
-                            
-                            <div class="country-section">
-                                <h3 class="country-title">
-                                    <i class="fas fa-flag"></i>
-                                    Việt Nam
-                                </h3>
-                                <div class="payment-method-card compact">
-                                    <div class="method-icon small">
-                                        <i class="fas fa-university"></i>
-                                    </div>
-                                    <div class="method-content">
-                                        <h4>Thẻ ATM nội địa</h4>
-                                        <p>Chấp nhận các thẻ ATM được phát hành bởi các ngân hàng Việt Nam có logo Napas.</p>
-                                    </div>
-                                </div>
+                        <!-- Ví điện tử & QR -->
+                        <section id="vi-qr" class="content-block">
+                            <h2 class="block-title">Ví điện tử và QR</h2>
 
-                                <div class="payment-method-card compact">
-                                    <div class="method-icon small">
-                                        <i class="fas fa-mobile-alt"></i>
+                            <div class="payment-method-card">
+                                <div class="method-icon">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </div>
+                                <div class="method-content">
+                                    <h3>Ví điện tử phổ biến</h3>
+                                    <p>Thanh toán nhanh bằng ví điện tử tại Việt Nam.</p>
+                                    <div class="wallet-brands">
+                                        <span class="wallet-badge">MoMo</span>
+                                        <span class="wallet-badge">ZaloPay</span>
+                                        <span class="wallet-badge">Viettel Money</span>
                                     </div>
-                                    <div class="method-content">
-                                        <h4>Ví điện tử</h4>
-                                        <div class="wallet-brands">
-                                            <span class="wallet-badge">MoMo</span>
-                                            <span class="wallet-badge">ZaloPay</span>
-                                            <span class="wallet-badge">VNPay</span>
-                                        </div>
-                                    </div>
+                                    <p class="note-text">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        Đảm bảo ví đủ số dư hoặc liên kết thẻ/ngân hàng trước khi thanh toán.
+                                    </p>
                                 </div>
                             </div>
 
-                            <div class="country-section">
-                                <h3 class="country-title">
-                                    <i class="fas fa-flag"></i>
-                                    Trung Quốc
-                                </h3>
-                                <div class="payment-method-card compact">
-                                    <div class="method-icon small">
-                                        <i class="fab fa-alipay"></i>
-                                    </div>
-                                    <div class="method-content">
-                                        <h4>Alipay</h4>
-                                        <p>Thanh toán trực tuyến phổ biến tại Trung Quốc.</p>
-                                    </div>
+                            <div class="payment-method-card">
+                                <div class="method-icon">
+                                    <i class="fas fa-qrcode"></i>
                                 </div>
-
-                                <div class="payment-method-card compact">
-                                    <div class="method-icon small">
-                                        <i class="fab fa-weixin"></i>
-                                    </div>
-                                    <div class="method-content">
-                                        <h4>WeChat Pay</h4>
-                                        <p>Ví điện tử được tích hợp trong ứng dụng WeChat.</p>
-                                    </div>
+                                <div class="method-content">
+                                    <h3>Thanh toán QR (VNPay/QR ngân hàng)</h3>
+                                    <p>Quét mã QR bằng ứng dụng ngân hàng hoặc ví hỗ trợ chuẩn QR quốc gia (VNPay, Napas QR).</p>
+                                    <p class="requirement-text">
+                                        <strong>Mẹo:</strong> Kiểm tra hạn mức chuyển khoản nhanh 24/7 của ngân hàng trước khi quét.
+                                    </p>
                                 </div>
                             </div>
+                        </section>
 
-                            <div class="country-section">
-                                <h3 class="country-title">
-                                    <i class="fas fa-flag"></i>
-                                    Ấn Độ
-                                </h3>
-                                <div class="payment-method-card compact">
-                                    <div class="method-icon small">
-                                        <i class="fas fa-qrcode"></i>
-                                    </div>
-                                    <div class="method-content">
-                                        <h4>UPI (Unified Payments Interface)</h4>
-                                        <p>Hệ thống thanh toán tức thời phổ biến tại Ấn Độ.</p>
-                                    </div>
+                        <div class="section-divider"></div>
+
+                        <!-- Chuyển khoản -->
+                        <section id="chuyen-khoan" class="content-block">
+                            <h2 class="block-title">Chuyển khoản ngân hàng</h2>
+                            <div class="payment-method-card">
+                                <div class="method-icon">
+                                    <i class="fas fa-building-columns"></i>
+                                </div>
+                                <div class="method-content">
+                                    <h3>Chuyển khoản nhanh 24/7</h3>
+                                    <p>Thực hiện chuyển khoản qua Internet Banking/Mobile Banking đến tài khoản được hiển thị trong bước thanh toán.</p>
+                                    <p class="note-text">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        Nhập đúng nội dung theo hướng dẫn để hệ thống tự động xác nhận. Giữ biên lai/ảnh chụp giao dịch cho đến khi nhận được xác nhận đặt phòng.
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <div class="section-divider"></div>
+
+                        <!-- Lưu ý quan trọng -->
+                        <section id="luu-y" class="content-block">
+                            <h2 class="block-title">Lưu ý quan trọng</h2>
+                            <div class="info-box">
+                                <i class="fas fa-shield-alt"></i>
+                                <div>
+                                    <strong>An toàn thanh toán</strong>
+                                    <p>Chỉ thanh toán trên Home Nest, không chuyển khoản ngoài hệ thống cho bất kỳ bên thứ ba nào.</p>
+                                </div>
+                            </div>
+                            <div class="info-box">
+                                <i class="fas fa-receipt"></i>
+                                <div>
+                                    <strong>Hóa đơn và hoàn tiền</strong>
+                                    <p>Hóa đơn/biên lai sẽ được gửi qua email đã đăng ký. Hoàn tiền (nếu có) sẽ trả về đúng phương thức bạn đã dùng.</p>
                                 </div>
                             </div>
                         </section>

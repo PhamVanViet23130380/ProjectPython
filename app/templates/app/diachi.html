@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Địa chỉ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'app/css/diachi.css' %}">
+</head>
+
+<body>
+    <div class="start-container">
+        <div class="start-header fixed-header">
+            <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
+            <div class="header-actions">
+                <button class="btn btnThacMac">Bạn có thắc mắc?</button>
+                <button class="btn btnLuuThoat">Lưu và thoát</button>
+            </div>
+        </div>
+
+        <div class="location-main scroll-area">
+            <div class="location-content">
+                <h1 class="title">Chỗ ở của bạn nằm ở đâu?</h1>
+                <p class="desc">Địa chỉ của bạn chỉ được chia sẻ với khách sau khi họ đặt phòng thành công.</p>
+
+                <div class="search-section">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-map-pin"></i>
+                        <input type="text" id="addressInput" class="address-input" placeholder="Nhập địa chỉ của bạn">
+                    </div>
+
+                    <div class="checkbox-option">
+                        <input type="checkbox" id="useCurrentLocation">
+                        <label for="useCurrentLocation">
+                            <i class="fas fa-location-arrow"></i>
+                            Sử dụng vị trí hiện tại của tôi
+                        </label>
+                    </div>
+                </div>
+
+                <div class="map-container">
+                    <div id="map" class="map-placeholder">
+                        <i class="fas fa-map-location-dot"></i>
+                        <p>Bản đồ sẽ hiển thị tại đây</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="start-footer fixed-footer">
+            <a href="{% url 'duocuse' %}" class="back-link">Quay lại</a>
+
+            <a href="{% url 'thongtincb' %}" class="next-btn">Tiếp theo</a>
+        </div>
+    </div>
+
+    <script src="{% static 'app/js/diachi.js' %}"></script>
+</body>
+
+</html>

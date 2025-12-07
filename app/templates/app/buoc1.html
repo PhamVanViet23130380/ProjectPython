@@ -10,7 +10,7 @@
 <div class="start-container">
 
 
-    <div class="start-header">
+    <div class="start-header fixed-header">
         <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
         <div class="header-actions">
             <button class="btn btnThacMac">Bạn có thắc mắc?</button>
@@ -19,7 +19,7 @@
 
     </div>
 
-    <div class="step-main">
+    <div class="step-main scroll-area">
 
         <div class="step-left">
             <p class="step-number">Bước 1</p>
@@ -43,7 +43,7 @@
     </div>
 
 
-    <div class="start-footer">
+    <div class="start-footer fixed-footer">
         <a href="{% url 'taobaidang' %}" class="back-link">Quay lại</a>
 
         <a href="{% url 'loaichoo' %}" class="next-btn">Tiếp theo</a>

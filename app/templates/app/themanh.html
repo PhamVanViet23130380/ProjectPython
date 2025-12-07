@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm ảnh chỗ ở</title>
+    <link rel="stylesheet" href="{% static 'app/css/themanh.css' %}">
+</head>
+
+<body>
+    <div class="start-container">
+
+
+        <div class="start-header fixed-header">
+            <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
+            <div class="header-actions">
+                <button class="btn btnThacMac">Bạn có thắc mắc?</button>
+                <button class="btn btnLuuThoat">Lưu và thoát</button>
+            </div>
+
+        </div>
+
+
+        <div class="start-main scroll-area">
+            <h1 class="question">Bổ sung một số bức ảnh chụp chỗ ở thuộc danh mục căn hộ của bạn</h1>
+
+            <p class="goiy">Bạn sẽ cần 5 bức ảnh để bắt đầu. Về sau, bạn vẫn có thể đăng thêm hoặc thay đổi ảnh</p>
+
+            <div class="upload-area" id="uploadArea">
+                <input id="fileInput" type="file" accept="image/*" multiple hidden>
+                <div class="upload-placeholder" id="uploadPlaceholder">
+                    <img src="https://img.icons8.com/ios/100/000000/camera--v1.png" alt="camera" class="camera-icon">
+                    <button class="btn add-photo-btn" id="chooseBtn">Thêm ảnh</button>
+                    <p class="hint">Kéo và thả ảnh vào đây hoặc nhấp vào "Thêm ảnh"</p>
+                </div>
+
+                <div class="thumbs-wrap" id="thumbsWrap" aria-live="polite"></div>
+            </div>
+        </div>
+
+        <div class="start-footer fixed-footer">
+            <a href="{% url 'tiennghii' %}" class="back-link">Quay lại</a>
+
+            <a href="{% url 'tieude' %}" class="next-btn">Tiếp theo</a>
+        </div>
+    </div>
+
+</body>
+<script>
+    (function () {
+        const fileInput = document.getElementById('fileInput');
+        const chooseBtn = document.getElementById('chooseBtn');
+        const uploadArea = document.getElementById('uploadArea');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const thumbsWrap = document.getElementById('thumbsWrap');
+        const nextBtn = document.querySelector('.next-btn');
+
+        // Current images list (File objects)
+        const images = [];
+        const MIN_REQUIRED = 5;
+
+        // create / get counter note element under uploadArea
+        let countNote = document.getElementById('countNote');
+        if (!countNote) {
+            countNote = document.createElement('div');
+            countNote.id = 'countNote';
+            countNote.className = 'note-min';
+            uploadArea.appendChild(countNote);
+        }
+
+        function renderThumbs() {
+            thumbsWrap.innerHTML = '';
+            if (images.length === 0) {
+                uploadPlaceholder.style.display = 'flex';
+            } else {
+                uploadPlaceholder.style.display = 'none';
+            }
+
+            images.forEach((file, index) => {
+                const url = URL.createObjectURL(file);
+                const div = document.createElement('div');
+                div.className = 'thumb';
+                div.innerHTML = `
+        <img src="${url}" alt="${file.name}">
+        <button class="remove-btn" data-index="${index}" title="Xóa">&times;</button>
+      `;
+                thumbsWrap.appendChild(div);
+            });
+
+            updateNextState();
+        }
+
+        function addFiles(fileList) {
+            // convert FileList -> Array and filter images
+            const list = Array.from(fileList).filter(f => f.type && f.type.startsWith('image/'));
+            if (list.length === 0) return;
+            // optional: limit number of images, e.g., max 20
+            const max = 20;
+            while (images.length + list.length > max) {
+                list.pop();
+            }
+            images.push(...list);
+            renderThumbs();
+        }
+
+        // Click "Thêm ảnh" -> open file chooser
+        chooseBtn.addEventListener('click', () => fileInput.click());
+        // When files chosen via file input
+        fileInput.addEventListener('change', (e) => {
+            addFiles(e.target.files);
+            fileInput.value = '';
+        });
+
+        // Drag & drop handlers
+        ['dragenter', 'dragover'].forEach(evt => {
+            uploadArea.addEventListener(evt, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                uploadArea.classList.add('dragover');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(evt => {
+            uploadArea.addEventListener(evt, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                uploadArea.classList.remove('dragover');
+            });
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            if (!dt) return;
+            if (dt.files && dt.files.length) {
+                addFiles(dt.files);
+            }
+        });
+
+        // Remove thumbnail
+        thumbsWrap.addEventListener('click', (e) => {
+            const btn = e.target.closest('.remove-btn');
+            if (!btn) return;
+            const idx = Number(btn.getAttribute('data-index'));
+            if (!Number.isNaN(idx)) {
+                images.splice(idx, 1);
+                renderThumbs();
+            }
+        });
+
+        // Update Next button state and counter text
+        function updateNextState() {
+            const count = images.length;
+            // update counter text
+            if (count >= MIN_REQUIRED) {
+                countNote.textContent = `Đã chọn ${count}/${MIN_REQUIRED} ảnh — đủ điều kiện.`;
+            } else if (count === 0) {
+                countNote.textContent = `Chưa có ảnh. Cần ít nhất ${MIN_REQUIRED} ảnh để tiếp tục.`;
+            } else {
+                const need = MIN_REQUIRED - count;
+                countNote.textContent = `Đã chọn ${count}/${MIN_REQUIRED} ảnh — cần thêm ${need} ảnh.`;
+            }
+
+            // enable/disable Next
+            if (nextBtn) {
+                if (count >= MIN_REQUIRED) {
+                    nextBtn.disabled = false;
+                    nextBtn.classList.remove('disabled');
+                } else {
+                    nextBtn.disabled = true;
+                    nextBtn.classList.add('disabled');
+                }
+            }
+        }
+
+        // initial render/state
+        renderThumbs();
+        updateNextState();
+
+        // Optional: intercept Next click to prevent navigation if not enough images
+        if (nextBtn) {
+            nextBtn.addEventListener('click', (e) => {
+                if (images.length < MIN_REQUIRED) {
+                    // prevent default behavior and show small feedback
+                    e.preventDefault();
+                    // simple visual feedback
+                    nextBtn.classList.add('shake');
+                    setTimeout(() => nextBtn.classList.remove('shake'), 400);
+                } else {
+                    // proceed (default)
+                }
+            });
+        }
+
+        // optional CSS for .shake inserted dynamically if not present
+        const style = document.createElement('style');
+        style.textContent = `
+    .note-min { font-size: 13px; color: #666; margin-top: 8px; }
+    .next-btn.shake { animation: shake 0.35s; }
+    @keyframes shake {
+      10% { transform: translateX(-6px); }
+      30% { transform: translateX(6px); }
+      50% { transform: translateX(-4px); }
+      70% { transform: translateX(4px); }
+      90% { transform: translateX(-2px); }
+      100% { transform: translateX(0); }
+    }
+  `;
+        document.head.appendChild(style);
+
+    })();
+</script>
+
+</html>
