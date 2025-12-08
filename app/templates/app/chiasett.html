@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Chia sẻ thông tin an toàn</title>
+    <link rel="stylesheet" href="{% static 'app/css/chiasett.css' %}">
+</head>
+<body>
+<div class="start-container">
+    <div class="start-header fixed-header">
+        <a href="{% url 'home' %}">
+            <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
+        </a>
+        <div class="header-actions">
+            <button class="btn btnThacMac">Bạn có thắc mắc?</button>
+            <button class="btn btnLuuThoat">Lưu và thoát</button>
+        </div>
+    </div>
+
+    <div class="step-main scroll-area centered">
+        <div class="step-content">
+            <h1 class="title">Chia sẻ thông tin an toàn</h1>
+            <p class="desc">Chủ của bạn có tiền nghi nào trong số sau đây không?</p>
+
+            <div class="safety-section">
+                <div class="safety-item">
+                    <label>
+                        <input type="checkbox" class="safety-check" value="camera">
+                        <span>Có camera an ninh ngoài nhà</span>
+                    </label>
+                </div>
+                <div class="safety-item">
+                    <label>
+                        <input type="checkbox" class="safety-check" value="smoke">
+                        <span>Có máy đo độ ôn</span>
+                    </label>
+                </div>
+                <div class="safety-item">
+                    <label>
+                        <input type="checkbox" class="safety-check" value="entry">
+                        <span>Vũ khí tại chỗ ở</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>Những điều quan trọng trong cần biết</h3>
+                <p>Không được phép lắp đặt camera an ninh giám sát các không gian trong nhà, ngay cả khi không bật. Phải cho biết về tất cả các camera an ninh ngoài nhà.</p>
+                <p style="margin-top: 12px;">Lưu ý tuân thủ <a href="#" class="link">luật pháp địa phương</a> và xem lại <a href="#" class="link">chính sách chống phân biệt</a> của Home Nest cũng như các loại <a href="#" class="link">phí cho Chủ nhà và khách</a>.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="start-footer fixed-footer">
+        <a href="{% url 'giacuoituan' %}" class="back-link">Quay lại</a>
+        <a href="#" class="next-btn" id="nextBtn">Tạo bài đăng</a>
+    </div>
+</div>
+
+</body>
+</html>

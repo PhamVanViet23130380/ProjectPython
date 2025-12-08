@@ -18,6 +18,15 @@ def chitietnoio(request):
 def buoc1(request):
     return render(request, 'app/buoc1.html')
 
+def thietlapgia(request):
+    return render(request, 'app/thietlapgia.html')
+
+def giacuoituan(request):
+    return render(request, 'app/giacuoituan.html')
+
+def chiasett(request):
+    return render(request, 'app/chiasett.html')
+
 def loaichoo(request):
     return render(request, 'app/loaichoo.html')
 
@@ -54,5 +63,8 @@ def tieude(request):
 def diachi(request):
     return render(request, 'app/diachi.html')
 
-def thongtindatcho(request):
-    return render(request, 'app/thongtindatcho.html')
+def buoc3(request):
+    return render(request, 'app/buoc3.html')
+
+def thietlapgia(request):
+    return render(request, 'app/thietlapgia.html')

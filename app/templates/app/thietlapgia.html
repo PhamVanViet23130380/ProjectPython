@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thiết lập giá</title>
+    <link rel="stylesheet" href="{% static 'app/css/thietlapgia.css' %}">
+</head>
+<body>
+<div class="start-container">
+    <div class="start-header fixed-header">
+        <a href="{% url 'home' %}">
+            <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
+        </a>
+        <div class="header-actions">
+            <button class="btn btnThacMac">Bạn có thắc mắc?</button>
+            <button class="btn btnLuuThoat">Lưu và thoát</button>
+        </div>
+    </div>
+
+    <div class="step-main scroll-area centered">
+        <div class="step-content">
+            <h1 class="title">Bây giờ, hãy đặt giá cơ sở cho ngày trong tuần</h1>
+            <p class="desc">Đặt giá cơ bản, phí dọn dẹp, áp dụng giảm giá và sẵn sàng đăng chỗ ở.</p>
+
+            <div class="field">
+                <label for="basePrice">Giá mỗi đêm (VND)</label>
+                <div class="input-wrap"><span class="prefix">₫</span><input type="number" id="basePrice" value="800000" min="100000" step="50000"></div>
+                <small>Giá bạn muốn thu cho 1 đêm lưu trú.</small>
+            </div>
+
+            <div class="field">
+                <label for="cleanFee">Phí dọn dẹp (tùy chọn)</label>
+                <div class="input-wrap"><span class="prefix">₫</span><input type="number" id="cleanFee" value="0" min="0" step="50000"></div>
+                <small>Khoản phí một lần để dọn dẹp giữa các lượt đặt.</small>
+            </div>
+
+            <div class="field">
+                <label for="discount">Giảm giá theo tuần</label>
+                <div class="input-wrap"><input type="number" id="discount" value="10" min="0" max="50" step="1"><span class="suffix">%</span></div>
+                <small>Khuyến khích khách ở lâu hơn với ưu đãi tuần.</small>
+            </div>
+
+            <div class="summary">
+                <div class="summary-line"><span>Tạm tính mỗi đêm</span><span id="sumNight">₫800,000</span></div>
+                <div class="summary-line"><span>Phí dọn dẹp</span><span id="sumClean">₫0</span></div>
+                <div class="summary-line total"><span>Tổng ước tính</span><span id="sumTotal">₫800,000</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="start-footer fixed-footer">
+        <a href="{% url 'buoc3' %}" class="back-link">Quay lại</a>
+        <a href="{% url 'giacuoituan' %}" class="next-btn" id="nextBtn">Tiếp theo</a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const fmt = (n) => new Intl.NumberFormat('vi-VN').format(Math.max(0, Math.round(n)));
+        const baseInput = document.getElementById('basePrice');
+        const cleanInput = document.getElementById('cleanFee');
+        const discountInput = document.getElementById('discount');
+        const sumNight = document.getElementById('sumNight');
+        const sumClean = document.getElementById('sumClean');
+        const sumTotal = document.getElementById('sumTotal');
+
+        function updateSummary() {
+            const base = Number(baseInput.value) || 0;
+            const clean = Number(cleanInput.value) || 0;
+            const disc = Math.min(50, Math.max(0, Number(discountInput.value) || 0));
+            const baseAfter = base * (1 - disc / 100);
+            sumNight.textContent = `₫${fmt(baseAfter)}`;
+            sumClean.textContent = `₫${fmt(clean)}`;
+            sumTotal.textContent = `₫${fmt(baseAfter + clean)}`;
+        }
+
+        ['input', 'change'].forEach(evt => {
+            baseInput.addEventListener(evt, updateSummary);
+            cleanInput.addEventListener(evt, updateSummary);
+            discountInput.addEventListener(evt, updateSummary);
+        });
+        updateSummary();
+
+        document.querySelector('.publish-btn').addEventListener('click', () => alert('Đã lưu cấu hình giá. Bạn có thể xuất bản trong bản phát hành thật.'));
+        document.getElementById('nextBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('Hoàn tất thiết lập! (Trang đích tùy chỉnh chưa được nối)');
+        });
+    });
+</script>
+</body>
+</html>

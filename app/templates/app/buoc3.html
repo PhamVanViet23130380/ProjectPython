@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bước 1</title>
+    <link rel="stylesheet" href="{% static 'app/css/buoc1.css' %}">
+</head>
+<body>
+<div class="start-container">
+
+    <div class="start-header fixed-header">
+        <a href="{% url 'home' %}">
+            <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
+        </a>
+        <div class="header-actions">
+            <button class="btn btnThacMac">Bạn có thắc mắc?</button>
+            <button class="btn btnLuuThoat">Lưu và thoát</button>
+        </div>
+
+    </div>
+
+    <div class="step-main scroll-area">
+
+        <div class="step-left">
+            <p class="step-number">Bước 3</p>
+            <h1 class="title">Hoàn thiện và đăng</h1>
+
+            <p class="desc">
+                Cuối cùng, bạn sẽ chọn cài đặt đặt phòng, thiết lập giá và đăng bài đăng lên.
+            </p>
+        </div>
+
+        <div class="step-right">
+            <div class="video-wrapper">
+                <video autoplay loop muted playsinline>
+                    <source src="https://stream.media.muscache.com/KeNKUpa01dRaT5g00SSBV95FqXYkqf01DJdzn01F1aT00vCI.mp4?v_q=high" type="video/mp4">
+                </video>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <div class="start-footer fixed-footer">
+        <a href="{% url 'tieude' %}" class="back-link">Quay lại</a>
+
+        <a href="{% url 'thietlapgia' %}" class="next-btn">Tiếp theo</a>
+    </div>
+</div>
+
+</body>
+</html>
