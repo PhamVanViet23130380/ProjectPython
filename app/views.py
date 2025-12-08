@@ -53,3 +53,6 @@ def tieude(request):
 
 def diachi(request):
     return render(request, 'app/diachi.html')
+
+def thongtindatcho(request):
+    return render(request, 'app/thongtindatcho.html')

@@ -20,7 +20,7 @@
     <section class="hero-section">
         <div class="container">
             <div class="hero-content">
-                <h1 class="hero-title">Chào Nguyễn Văn Anh Hàn! Chúng tôi có thể giúp gì cho bạn?</h1>
+                <h1 class="hero-title">Chào bạn! Chúng tôi có thể giúp gì cho bạn?</h1>
                 
                 <!-- Search Box -->
                 <div class="search-container">
@@ -40,9 +40,6 @@
             <nav class="help-tabs">
                 <button class="tab-btn active" data-tab="guest">Khách</button>
                 <button class="tab-btn" data-tab="host">Host cho thuê chỗ ở</button>
-                <button class="tab-btn" data-tab="experience">Host trải nghiệm</button>
-                <button class="tab-btn" data-tab="services">Nhà cung cấp dịch vụ</button>
-                <button class="tab-btn" data-tab="manage">Quản trị viên chuyên công tác</button>
             </nav>
 
             <!-- Tab Content -->
@@ -50,27 +47,8 @@
                 <h2 class="section-title">Đề xuất cho bạn</h2>
                 
                 <div class="help-cards">
+
                     <!-- Card 1 -->
-                    <div class="help-card featured">
-                        <div class="card-icon">
-                            <i class="fa-solid fa-shield-halved"></i>
-                        </div>
-                        <h3>Danh tính của bạn chưa được xác minh đầy đủ</h3>
-                        <p>Quy trình xác minh danh tính giúp chúng tôi xác nhận rằng đó đúng là bạn. Đây là một trong những cách giúp chúng tôi đảm bảo an toàn trên Airbnb.</p>
-                        <a href="#" class="card-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-
-                    <!-- Card 2 -->
-                    <div class="help-card">
-                        <div class="card-icon">
-                            <i class="fa-solid fa-link"></i>
-                        </div>
-                        <h3>Tìm thông tin đặt phòng/đặt chỗ</h3>
-                        <p>Tab Chuyến đi có đầy đủ thông tin chi tiết, biên lai và thông tin liên hệ của Chủ nhà/Người tổ chức cho mỗi đặt phòng/đặt chỗ của bạn.</p>
-                        <a href="#" class="card-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-
-                    <!-- Card 3 -->
                     <div class="help-card">
                         <div class="card-icon">
                             <i class="fa-solid fa-calendar-check"></i>
@@ -80,7 +58,7 @@
                         <a href="#" class="card-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
 
-                    <!-- Card 4 -->
+                    <!-- Card 2 -->
                     <div class="help-card">
                         <div class="card-icon">
                             <i class="fa-solid fa-credit-card"></i>
@@ -90,17 +68,7 @@
                         <a href="{% url 'phuongthucthanhtoan' %}" class="card-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
 
-                    <!-- Card 5 -->
-                    <div class="help-card">
-                        <div class="card-icon">
-                            <i class="fa-solid fa-headset"></i>
-                        </div>
-                        <h3>Liên hệ hỗ trợ</h3>
-                        <p>Đội ngũ hỗ trợ của chúng tôi luôn sẵn sàng giúp đỡ bạn 24/7. Liên hệ với chúng tôi qua điện thoại, email hoặc chat trực tuyến.</p>
-                        <a href="#" class="card-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-
-                    <!-- Card 6 -->
+                    <!-- Card 3 -->
                     <div class="help-card">
                         <div class="card-icon">
                             <i class="fa-solid fa-file-contract"></i>
@@ -123,10 +91,7 @@
                             <i class="fa-solid fa-money-bill-wave"></i>
                             <span>Thanh toán và hoàn tiền</span>
                         </a>
-                        <a href="#" class="topic-link">
-                            <i class="fa-solid fa-user-shield"></i>
-                            <span>Tài khoản và bảo mật</span>
-                        </a>
+
                         <a href="#" class="topic-link">
                             <i class="fa-solid fa-comments"></i>
                             <span>Đánh giá và phản hồi</span>
@@ -135,16 +100,13 @@
                             <i class="fa-solid fa-xmark"></i>
                             <span>Hủy và thay đổi đặt phòng</span>
                         </a>
-                        <a href="#" class="topic-link">
-                            <i class="fa-solid fa-circle-question"></i>
-                            <span>Câu hỏi thường gặp</span>
-                        </a>
+
                     </div>
                 </section>
 
                 <!-- Contact Section -->
                 <section class="contact-section">
-                    <h2 class="section-title">Cần thêm trợ giúp?</h2>
+                    <h2 class="section-title">Liên hệ hỗ trợ</h2>
                     <p class="contact-desc">Đội ngũ hỗ trợ của chúng tôi luôn sẵn sàng giúp bạn 24/7</p>
                     <div class="contact-methods">
                         <div class="contact-card">
@@ -169,22 +131,58 @@
             <!-- Other tab contents (hidden by default) -->
             <div class="tab-content" id="host-content">
                 <h2 class="section-title">Hướng dẫn cho Host</h2>
-                <p>Nội dung dành cho chủ nhà đang được cập nhật...</p>
-            </div>
+                <p class="section-desc">Những mục thường gặp khi cho thuê: đăng tin, nhận tiền, chính sách và an toàn.</p>
 
-            <div class="tab-content" id="experience-content">
-                <h2 class="section-title">Hướng dẫn cho Host trải nghiệm</h2>
-                <p>Nội dung dành cho host trải nghiệm đang được cập nhật...</p>
-            </div>
+                <div class="help-cards">
+                    <div class="help-card">
+                        <div class="card-icon"><i class="fa-solid fa-pen-to-square"></i></div>
+                        <h3>Đăng và quản lý chỗ ở</h3>
+                        <p>Tạo bài đăng rõ ràng, thêm ảnh, tiện nghi và cập nhật lịch.</p>
+                        <a href="{% url 'taobaidang' %}" class="card-link"><i class="fa-solid fa-plus"></i> Tạo bài đăng mới</a><br>
+                        <a href="{% url 'tieude' %}" class="card-link"><i class="fa-solid fa-pen"></i> Viết tiêu đề & mô tả</a><br>
+                        <a href="{% url 'tiennghii' %}" class="card-link"><i class="fa-solid fa-couch"></i> Cập nhật tiện nghi & hình ảnh</a>
+                    </div>
 
-            <div class="tab-content" id="services-content">
-                <h2 class="section-title">Hướng dẫn cho nhà cung cấp dịch vụ</h2>
-                <p>Nội dung dành cho nhà cung cấp dịch vụ đang được cập nhật...</p>
-            </div>
+                    <div class="help-card">
+                        <div class="card-icon"><i class="fa-solid fa-credit-card"></i></div>
+                        <h3>Giá, thanh toán, hoàn tiền</h3>
+                        <p>Đặt giá, nhận tiền, nắm rõ chính sách hủy/hoàn tiền.</p>
+                        <a href="{% url 'phuongthucthanhtoan' %}" class="card-link"><i class="fa-solid fa-wallet"></i> Phương thức nhận tiền</a><br>
+                        <a href="{% url 'chinhsachdieukhoan' %}" class="card-link"><i class="fa-solid fa-scale-balanced"></i> Chính sách hủy & hoàn tiền</a><br>
+                        <a href="{% url 'diachi' %}" class="card-link"><i class="fa-solid fa-location-dot"></i> Địa chỉ & phí phụ thu</a>
+                    </div>
 
-            <div class="tab-content" id="manage-content">
-                <h2 class="section-title">Hướng dẫn cho quản trị viên</h2>
-                <p>Nội dung dành cho quản trị viên đang được cập nhật...</p>
+                    <div class="help-card">
+                        <div class="card-icon"><i class="fa-solid fa-shield-heart"></i></div>
+                        <h3>An toàn và vận hành</h3>
+                        <p>Quy tắc nhà, xác minh, xử lý sự cố và liên hệ hỗ trợ.</p>
+                        <a href="{% url 'duocuse' %}" class="card-link"><i class="fa-solid fa-list-check"></i> Quy tắc & yêu cầu khách</a><br>
+                        <a href="{% url 'thongtincb' %}" class="card-link"><i class="fa-solid fa-id-card"></i> Hồ sơ host & xác minh</a><br>
+                        <a href="#host-contact" class="card-link"><i class="fa-solid fa-headset"></i> Liên hệ hỗ trợ 24/7</a>
+                    </div>
+                </div>
+
+                <section class="contact-section" id="host-contact">
+                    <h2 class="section-title">Hỗ trợ dành cho Host</h2>
+                    <p class="contact-desc">Cần trợ giúp nhanh? Liên hệ đội ngũ Home Nest.</p>
+                    <div class="contact-methods">
+                        <div class="contact-card">
+                            <i class="fa-solid fa-phone"></i>
+                            <h4>Gọi 1900-xxxx</h4>
+                            <p>Đường dây ưu tiên cho Host</p>
+                        </div>
+                        <div class="contact-card">
+                            <i class="fa-solid fa-envelope"></i>
+                            <h4>Email hỗ trợ</h4>
+                            <p>support@homenest.vn</p>
+                        </div>
+                        <div class="contact-card">
+                            <i class="fa-solid fa-message"></i>
+                            <h4>Chat trực tuyến</h4>
+                            <p>Phản hồi nhanh trong giờ làm việc</p>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
     </main>
