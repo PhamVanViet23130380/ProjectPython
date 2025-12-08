@@ -386,4 +386,288 @@ main { padding-top: calc(var(--header-height) + var(--search-height)); }
     height: auto;
 }
 
+/* =====================================
+   SEARCH DROPDOWNS (địa điểm / ngày / khách)
+   ===================================== */
+.search-trigger {
+    cursor: pointer;
+    position: relative;
+}
+
+.search-trigger:focus-visible {
+    outline: 2px solid var(--brown);
+    outline-offset: 2px;
+}
+
+.search-trigger.active,
+.search-trigger:hover {
+    background: #fdf7f2;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.search-trigger.active {
+    border: 1px solid #e5d7ca;
+}
+
+.ab-search-panels {
+    display: none;
+    position: fixed;
+    top: calc(var(--header-height) + var(--search-height) + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(960px, calc(100% - 40px));
+    z-index: 1400;
+}
+
+.ab-search-panels.open { display: block; }
+
+.search-panel {
+    display: none;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.16);
+    padding: 18px 20px 22px;
+}
+
+.search-panel.active { display: block; }
+
+.panel-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.panel-header p {
+    margin: 4px 0 12px;
+    color: #666;
+    font-size: 14px;
+}
+
+.panel-body { display: flex; flex-direction: column; gap: 14px; }
+
+/* LOCATION */
+.location-panel { gap: 18px; }
+
+.location-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #e6e6e6;
+    border-radius: 14px;
+    padding: 10px 12px;
+    background: #fafafa;
+}
+
+.location-input input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    background: transparent;
+}
+
+.suggestions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 10px;
+}
+
+.suggestion-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+    border: 1px solid #f1f1f1;
+    background: #fff;
+    padding: 10px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border 0.16s ease, box-shadow 0.16s ease, transform 0.12s ease;
+}
+
+.suggestion-item:hover {
+    border-color: #e0d6cc;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    transform: translateY(-1px);
+}
+
+.suggestion-item .icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #f8efe6;
+    color: #9c7355;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.suggestion-item .text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+
+.suggestion-item .title { font-weight: 700; color: #333; }
+.suggestion-item .desc { font-size: 13px; color: #666; }
+
+/* DATES */
+.dates-panel { gap: 16px; }
+
+.date-tabs {
+    display: inline-flex;
+    gap: 8px;
+    background: #f7f7f7;
+    padding: 6px;
+    border-radius: 14px;
+    width: fit-content;
+}
+
+.date-tabs .tab {
+    border: none;
+    background: transparent;
+    padding: 8px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #555;
+}
+
+.date-tabs .tab.active {
+    background: #fff;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    color: #9c7355;
+}
+
+.calendar-wrap {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.calendar-month {
+    border: 1px solid #f0f0f0;
+    border-radius: 14px;
+    padding: 10px 12px;
+    background: #fff;
+}
+
+.calendar-heading {
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    font-size: 13px;
+}
+
+.calendar-grid span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    border-radius: 8px;
+    background: #fafafa;
+    color: #333;
+}
+
+.calendar-grid span.muted { color: #9a9a9a; background: transparent; }
+
+.quick-range {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #fdfaf7;
+    border: 1px solid #f0e6db;
+    padding: 12px;
+    border-radius: 14px;
+}
+
+.quick-range span { font-weight: 600; color: #444; }
+
+.range-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.range-btn {
+    border: 1px solid #e2d6ca;
+    background: #fff;
+    border-radius: 12px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background 0.16s ease, border 0.16s ease;
+}
+
+.range-btn:hover { background: #f7f2ec; border-color: #d6c6b8; }
+
+/* GUESTS */
+.guests-panel { gap: 12px; }
+
+.guest-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 10px 0;
+}
+
+.guest-row:last-child { border-bottom: none; }
+
+.guest-info .title { font-weight: 700; color: #333; }
+.guest-info .desc { color: #777; font-size: 13px; }
+
+.counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.count-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid #d9d9d9;
+    background: #fff;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.16s ease, border 0.16s ease, color 0.16s ease;
+}
+
+.count-btn:hover { background: #f7f7f7; border-color: #cfcfcf; }
+.count-btn:disabled { cursor: not-allowed; opacity: 0.4; }
+
+.count { width: 20px; text-align: center; font-weight: 700; }
+
+.search-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.25);
+    z-index: 1100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.search-backdrop.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+@media (max-width: 720px) {
+    .ab-search-panels {
+        width: calc(100% - 24px);
+        top: calc(var(--header-height) + var(--search-height) + 12px);
+    }
+
+    .suggestions { grid-template-columns: 1fr; }
+    .calendar-wrap { grid-template-columns: 1fr; }
+}
+
 
