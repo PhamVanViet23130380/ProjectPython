@@ -12,7 +12,9 @@
 
 
     <div class="start-header fixed-header">
-        <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
+        <a href="{% url 'home' %}">
+            <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
+        </a>
         <a href="{% url 'home' %}" class="btnThoat">Thoát</a>
     </div>
 

@@ -11,7 +11,9 @@
 
 
     <div class="start-header fixed-header">
-        <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
+        <a href="{% url 'home' %}">
+            <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
+        </a>
         <div class="header-actions">
             <button class="btn btnThacMac">Bạn có thắc mắc?</button>
             <button class="btn btnLuuThoat">Lưu và thoát</button>

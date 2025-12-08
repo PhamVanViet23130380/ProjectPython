@@ -3,7 +3,9 @@
     <nav class="ab-header">
         <div class="ab-left">
             <div class="logo-wrap">
-                <img src="{% static 'app/images/logo.jpg' %}" class="ab-logo">
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'app/images/logo.jpg' %}" class="ab-logo" alt="Home Nest">
+                </a>
             </div>
         </div>
 
@@ -39,7 +41,6 @@
     <a href="{% url 'login' %}" class="md-item">Đăng nhập hoặc đăng ký</a>
 
 </div>
-
 
     <nav class="ab-footer">
         <div class="ab-search">
