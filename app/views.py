@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 # Create your views here.
@@ -68,3 +68,32 @@ def buoc3(request):
 
 def thietlapgia(request):
     return render(request, 'app/thietlapgia.html')
+
+
+from .models import Room, Review
+from .sentiment import analyze_sentiment
+
+def room_detail(request, room_id):
+    room = Room.objects.get(id=room_id)
+    reviews = Review.objects.filter(room=room)
+
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return redirect("login")
+
+        text = request.POST.get("review_text")
+        senti = analyze_sentiment(text)
+
+        Review.objects.create(
+            user=request.user,
+            room=room,
+            text=text,
+            sentiment=senti,
+        )
+
+        return redirect("room_detail", room_id=room_id)
+
+    return render(request, "app/room_detail.html", {
+        "room": room,
+        "reviews": reviews
+    })
