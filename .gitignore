@@ -20,3 +20,5 @@ Thumbs.db
 # Django
 *.sqlite3
 staticfiles/
+
+app/models/visobert/model.safetensors
