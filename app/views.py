@@ -8,7 +8,7 @@ User = get_user_model()
 
 # Create your views here.
 def home(request):
-    return render(request, 'app/home.html')
+    return render(request, 'app/components/home.html')
 
 def login_view(request):
     if request.method == 'POST':
@@ -21,7 +21,6 @@ def login_view(request):
             user = authenticate(request, username=email, password=password)
             if user is not None:
                 login(request, user)
-                messages.success(request, f'Đăng nhập thành công! Xin chào {user.full_name}')
                 return redirect('home')
             else:
                 messages.error(request, 'Email hoặc mật khẩu không chính xác')
@@ -56,89 +55,95 @@ def login_view(request):
                     username=email,
                     email=email,
                     password=password,
-                    first_name=full_name
+                    full_name=full_name,
+                    role='guest'
                 )
-                user.save()
                 print(f"✅ User created: {user.username}, ID: {user.id}")
                 messages.success(request, 'Đăng ký thành công! Vui lòng đăng nhập')
                 return redirect('login')
             except Exception as e:
-                print(f"❌ Registration error: {str(e)}")
+                print(f"Registration error: {str(e)}")
                 messages.error(request, f'Lỗi đăng ký: {str(e)}')
     
-    return render(request, 'app/login.html')
+    return render(request, 'app/components/login.html')
+
+def logout_view(request):
+    """Đăng xuất người dùng"""
+    logout(request)
+    messages.success(request, 'Đã đăng xuất thành công')
+    return redirect('login')
 
 def taobaidang(request):
     # Kiểm tra đăng nhập
     if not request.user.is_authenticated:
         messages.error(request, 'Vui lòng đăng nhập trước')
         return redirect('login')
-    return render(request, 'app/taobaidang.html')
+    return render(request, 'app/host/taobaidang.html')
 
 def chitietnoio(request):
     """Render the detail page template created by the user."""
-    return render(request, 'app/chitietnoio.html')
+    return render(request, 'app/guest/chitietnoio.html')
 
 def buoc1(request):
-    return render(request, 'app/buoc1.html')
+    return render(request, 'app/host/buoc1.html')
 
 def thietlapgia(request):
-    return render(request, 'app/thietlapgia.html')
+    return render(request, 'app/host/thietlapgia.html')
 
 def giacuoituan(request):
-    return render(request, 'app/giacuoituan.html')
+    return render(request, 'app/host/giacuoituan.html')
 
 def chiasett(request):
-    return render(request, 'app/chiasett.html')
+    return render(request, 'app/host/chiasett.html')
 
 def loaichoo(request):
-    return render(request, 'app/loaichoo.html')
+    return render(request, 'app/host/loaichoo.html')
 
 def trungtamtrogiup(request):
-    return render(request, 'app/trungtamtrogiup.html')
+    return render(request, 'app/guest/trungtamtrogiup.html')
 
 def datphong(request):
-    return render(request, 'app/datphong.html')
+    return render(request, 'app/guest/datphong.html')
 
 def phuongthucthanhtoan(request):
-    return render(request, 'app/phuongthucthanhtoan.html')
+    return render(request, 'app/guest/phuongthucthanhtoan.html')
 
 def chinhsachdieukhoan(request):
-    return render(request, 'app/chinhsachdieukhoan.html')
+    return render(request, 'app/guest/chinhsachdieukhoan.html')
 
 def buoc2(request):
-    return render(request, 'app/buoc2.html')
+    return render(request, 'app/host/buoc2.html')
 
 def duocuse(request):
-    return render(request, 'app/duocuse.html')
+    return render(request, 'app/host/duocuse.html')
 
 def themanh(request):
-    return render(request, 'app/themanh.html')
+    return render(request, 'app/host/themanh.html')
 
 def thongtincb(request):
-    return render(request, 'app/thongtincb.html')
+    return render(request, 'app/host/thongtincb.html')
 
 def tiennghii(request):
-    return render(request, 'app/tiennghii.html')
+    return render(request, 'app/host/tiennghii.html')
 
 def tieude(request):
-    return render(request, 'app/tieude.html')
+    return render(request, 'app/host/tieude.html')
 
 def diachi(request):
-    return render(request, 'app/diachi.html')
+    return render(request, 'app/host/diachi.html')
 
 def buoc3(request):
-    return render(request, 'app/buoc3.html')
+    return render(request, 'app/host/buoc3.html')
 
 def thietlapgia(request):
-    return render(request, 'app/thietlapgia.html')
+    return render(request, 'app/host/thietlapgia.html')
 
 
-def logout_view(request):
-    # Django's logout function - xóa session automatically
-    logout(request)
-    messages.success(request, 'Đăng xuất thành công')
-    return redirect('home')
+def profile_view(request):
+    if not request.user.is_authenticated:
+        messages.error(request, 'Vui lòng đăng nhập để xem hồ sơ')
+        return redirect('login')
+    return render(request, 'app/components/profile.html')
 
 
 # from .models import Listing, Review

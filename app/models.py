@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 # Khai báo các lựa chọn (Choices) cho các trường ENUM
 # Trong Django, chúng ta định nghĩa các ENUM bằng cách sử dụng Tuple of Tuples
@@ -12,7 +13,7 @@ ROLE_CHOICES = [
 BOOKING_STATUS_CHOICES = [
     ('pending', 'Chờ xác nhận'),
     ('confirmed', 'Đã xác nhận'),
-    ('cancelled', 'Đã hủy'), # Thường có thêm trạng thái hủy
+    ('cancelled', 'Đã hủy'), 
 ]
 
 PAYMENT_STATUS_CHOICES = [
@@ -28,7 +29,7 @@ MEDIA_TYPE_CHOICES = [
 SENTIMENT_CHOICES = [
     ('positive', 'Tích cực'),
     ('negative', 'Tiêu cực'),
-    ('neutral', 'Trung tính'), # Thường có thêm trung tính
+    ('neutral', 'Trung tính'), 
 ]
 
 COMPLAINT_STATUS_CHOICES = [
@@ -37,7 +38,31 @@ COMPLAINT_STATUS_CHOICES = [
 ]
 
 # --- 1. USERS ---
-# Sử dụng User mặc định của Django (auth_user). Các model bên dưới tham chiếu qua settings.AUTH_USER_MODEL.
+from django.contrib.auth.models import AbstractUser
+
+class User(AbstractUser):
+    """Custom User model kế thừa AbstractUser để có đầy đủ tính năng auth của Django"""
+    
+    # Ghi đè để bắt buộc email unique
+    email = models.EmailField(unique=True, verbose_name='Email đăng nhập')
+    
+    # Thêm các trường tùy chỉnh
+    full_name = models.CharField(max_length=150, blank=True, verbose_name='Họ tên đầy đủ')
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='guest', verbose_name='Phân quyền')
+    phone_number = models.CharField(max_length=20, null=True, blank=True, verbose_name='Số điện thoại')
+    avatar_url = models.URLField(max_length=255, null=True, blank=True, verbose_name='Ảnh đại diện')
+    
+    # Đăng nhập bằng email thay vì username
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username'] 
+    
+    def __str__(self):
+        return self.email
+    
+    class Meta:
+        db_table = 'users'
+        verbose_name = "Người dùng"
+        verbose_name_plural = "Người dùng"
 
 # --- 2. LISTINGS ---
 class Listing(models.Model):

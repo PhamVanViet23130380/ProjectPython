@@ -17,6 +17,9 @@
         </div>
 
         <div class="ab-right">
+            {% if user.is_authenticated %}
+            <span class="user-greeting">Xin chào, {% firstof user.full_name user.username user.email %}!</span>
+            {% endif %}
             <a href="{% url 'taobaidang' %}" class="host-btn"><i class="fa-solid fa-user-plus"></i> Trở thành host</a>
             <button class="ab-icon" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
         </div>
@@ -38,7 +41,12 @@
         </div>
     </a>
 
+    {% if user.is_authenticated %}
+    <a href="{% url 'profile' %}" class="md-item"><i class="fa-regular fa-user"></i> Hồ sơ người dùng</a>
+    <a href="{% url 'logout' %}" class="md-item"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
+    {% else %}
     <a href="{% url 'login' %}" class="md-item">Đăng nhập hoặc đăng ký</a>
+    {% endif %}
 
 </div>
 

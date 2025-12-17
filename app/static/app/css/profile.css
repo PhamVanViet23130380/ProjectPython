@@ -1,0 +1,211 @@
+:root {
+    --primary-brown: #8d6e63;
+    --dark-brown: #5d4037;
+    --light-beige: #f5f5f0;
+    --white: #ffffff;
+    --text-color: #4e342e;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #eaddca; /* Màu nền kem nhạt */
+    margin: 0;
+    padding: 20px;
+    color: var(--text-color);
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: var(--light-beige);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: var(--white);
+    border-bottom: 1px solid #ddd;
+}
+
+.logo {
+    font-size: 24px;
+    color: var(--dark-brown);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.user-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    position: relative;
+}
+
+.nav-avatar {
+    border-radius: 50%;
+}
+
+.fa-chevron-down {
+    cursor: pointer;
+}
+
+/* User Dropdown */
+#userDropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    min-width: 150px;
+    margin-top: 10px;
+    z-index: 1000;
+}
+
+#userDropdown a {
+    display: block;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: #333;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+#userDropdown a:hover {
+    background: var(--light-beige);
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    background: var(--white);
+    padding: 0 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.tab-item {
+    padding: 15px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-weight: 600;
+    color: #888;
+}
+
+.tab-item.active {
+    color: var(--dark-brown);
+    border-bottom: 3px solid var(--dark-brown);
+}
+
+/* Layout */
+.profile-content {
+    display: flex;
+    padding: 30px;
+    gap: 30px;
+}
+
+.sidebar {
+    flex: 1;
+}
+
+.profile-card {
+    background: #d7ccc8; /* Màu nâu nhạt cho card bên trái */
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.avatar-container {
+    margin-bottom: 20px;
+}
+
+.main-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 5px solid var(--white);
+    object-fit: cover;
+}
+
+.info-list {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+    margin: 20px 0;
+}
+
+.info-list li {
+    margin-bottom: 12px;
+    font-size: 0.9em;
+}
+
+.info-list i {
+    width: 25px;
+    color: var(--dark-brown);
+}
+
+.btn-edit {
+    background: var(--dark-brown);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-edit:hover {
+    background: #3e2723;
+}
+
+/* History Section */
+.history-section {
+    flex: 2;
+}
+
+.history-item {
+    background: var(--white);
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.history-item img {
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.item-details h4 {
+    margin: 0 0 5px 0;
+    color: var(--dark-brown);
+}
+
+.item-details p {
+    margin: 0;
+    font-size: 0.85em;
+    color: #666;
+}
+
+.status {
+    font-size: 0.8em;
+    color: #888;
+}
+
+.icon-right {
+    position: absolute;
+    right: 20px;
+    color: #d7ccc8;
+}

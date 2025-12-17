@@ -247,3 +247,47 @@
         color: var(--brown-dark, #4a2f1e);
         text-decoration: none;
     }
+
+/* Alert Messages */
+.messages {
+    margin: 15px 0 !important;
+    width: 100% !important;
+}
+
+.alert {
+    padding: 12px 20px !important;
+    border-radius: 8px !important;
+    margin-bottom: 10px !important;
+    font-size: 14px !important;
+    position: relative !important;
+    border: 1px solid !important;
+}
+
+.alert-error, .alert-danger {
+    background-color: #ffebee !important;
+    color: #c62828 !important;
+    border-color: #ef5350 !important;
+}
+
+.alert-success {
+    background-color: #e8f5e9 !important;
+    color: #2e7d32 !important;
+    border-color: #66bb6a !important;
+}
+
+.btn-close {
+    background: transparent !important;
+    border: none !important;
+    font-size: 20px !important;
+    line-height: 1 !important;
+    color: #000 !important;
+    opacity: 0.5 !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    margin-left: 10px !important;
+}
+
+.btn-close:hover {
+    opacity: 1 !important;
+}
+    
