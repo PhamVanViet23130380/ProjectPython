@@ -1,7 +1,9 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth.models import Group
 from .models import *
 
 User = get_user_model()
@@ -21,7 +23,7 @@ def login_view(request):
             user = authenticate(request, username=email, password=password)
             if user is not None:
                 login(request, user)
-                messages.success(request, f'Đăng nhập thành công! Xin chào {user.full_name}')
+                messages.success(request, f'Đăng nhập thành công! Xin chào {user.first_name}')
                 return redirect('home')
             else:
                 messages.error(request, 'Email hoặc mật khẩu không chính xác')
@@ -58,6 +60,10 @@ def login_view(request):
                     password=password,
                     first_name=full_name
                 )
+
+                guest_group = Group.objects.get(name='guest')
+                user.groups.add(guest_group)
+
                 user.save()
                 print(f"✅ User created: {user.username}, ID: {user.id}")
                 messages.success(request, 'Đăng ký thành công! Vui lòng đăng nhập')
@@ -69,11 +75,43 @@ def login_view(request):
     return render(request, 'app/login.html')
 
 def taobaidang(request):
-    # Kiểm tra đăng nhập
+    # 1. Chưa đăng nhập
     if not request.user.is_authenticated:
         messages.error(request, 'Vui lòng đăng nhập trước')
         return redirect('login')
+
+    # 2. Đã đăng nhập nhưng KHÔNG phải host
+    if not request.user.groups.filter(name='host').exists():
+        messages.error(request, 'Bạn phải là Host để tạo bài đăng')
+        return redirect('home')
+
+    # 3. Là host → cho vào
     return render(request, 'app/taobaidang.html')
+
+
+
+
+@login_required(login_url='login')
+def become_host(request):
+    user = request.user
+
+    # Nếu đã là host rồi thì thôi
+    if user.groups.filter(name='host').exists():
+        return redirect('home')
+
+    guest_group = Group.objects.get(name='guest')
+    host_group = Group.objects.get(name='host')
+
+    user.groups.remove(guest_group)
+    user.groups.add(host_group)
+
+    messages.success(request, 'Bạn đã trở thành Host 🎉')
+    return redirect('home')
+
+
+
+
+
 
 def chitietnoio(request):
     """Render the detail page template created by the user."""

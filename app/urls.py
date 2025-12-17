@@ -26,6 +26,8 @@ urlpatterns = [
     path('thietlapgia/', views.thietlapgia, name='thietlapgia'),
     path('giacuoituan/', views.giacuoituan, name='giacuoituan'),
     path('chiasett/', views.chiasett, name='chiasett'),
+    path('become-host/', views.become_host, name='become_host'),
+
 #     path('room/<int:room_id>/', views.room_detail, name="room_detail"),
 
 ]
