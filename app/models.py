@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 # Khai báo các lựa chọn (Choices) cho các trường ENUM
@@ -36,39 +37,7 @@ COMPLAINT_STATUS_CHOICES = [
 ]
 
 # --- 1. USERS ---
-class User(models.Model):
-    # user_id (PK): BIGINT (BigAutoField)
-    user_id = models.BigAutoField(primary_key=True, verbose_name='Khóa chính')
-
-    # full_name: VARCHAR(150) (CharField)
-    full_name = models.CharField(max_length=150, verbose_name='Họ tên người dùng')
-
-    # email: VARCHAR(150) (EmailField) - Thường là UNIQUE
-    email = models.EmailField(max_length=150, unique=True, verbose_name='Email đăng nhập')
-
-    # password: VARCHAR(255) (CharField) - Mật khẩu đã hash
-    password = models.CharField(max_length=255, verbose_name='Mật khẩu đã hash')
-
-    # role: ENUM (CharField)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='guest', verbose_name='Phân quyền')
-
-    # phone_number: VARCHAR(20) (CharField)
-    phone_number = models.CharField(max_length=20, null=True, blank=True, verbose_name='SĐT')
-
-    # avatar_url: VARCHAR(255) (URLField)
-    avatar_url = models.URLField(max_length=255, null=True, blank=True, verbose_name='Ảnh đại diện')
-
-    # created_at: DATETIME (DateTimeField)
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Ngày tạo')
-
-    def __str__(self):
-        return self.email
-
-    class Meta:
-        db_table = 'users'
-        verbose_name = "Người dùng"
-        verbose_name_plural = "Người dùng"
-
+# Sử dụng User mặc định của Django (auth_user). Các model bên dưới tham chiếu qua settings.AUTH_USER_MODEL.
 
 # --- 2. LISTINGS ---
 class Listing(models.Model):
@@ -77,7 +46,7 @@ class Listing(models.Model):
 
     # host_id (FK): BIGINT (ForeignKey(User))
     # Quan hệ: 1 USERS -> N LISTINGS
-    host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='listings', verbose_name='Chủ nhà')
+    host = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='listings', verbose_name='Chủ nhà')
 
     # title: VARCHAR(255) (CharField)
     title = models.CharField(max_length=255, verbose_name='Tiêu đề')
@@ -218,7 +187,7 @@ class Booking(models.Model):
 
     # user_id (FK): Khách
     # Quan hệ: 1 USERS -> N BOOKINGS
-    user = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='bookings', verbose_name='Khách')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.RESTRICT, related_name='bookings', verbose_name='Khách')
 
     # listing_id (FK): Phòng
     listing = models.ForeignKey(Listing, on_delete=models.RESTRICT, related_name='bookings', verbose_name='Phòng')
@@ -290,7 +259,7 @@ class Review(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='reviews')
 
     # user_id (FK)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reviews')
 
     # rating: INT (IntegerField) - CHECK 1-5
     rating = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)], verbose_name='Điểm (1-5)')
@@ -368,8 +337,8 @@ class Message(models.Model):
 
     # sender_id (FK) & receiver_id (FK)
     # Quan hệ: 1 USERS -> N MESSAGES
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_messages')
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_messages')
 
     # content: TEXT (TextField)
     content = models.TextField()
@@ -393,7 +362,7 @@ class Complaint(models.Model):
 
     # user_id (FK)
     # Quan hệ: 1 USERS -> N COMPLAINTS
-    user = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='complaints', verbose_name='Người khiếu nại')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.RESTRICT, related_name='complaints', verbose_name='Người khiếu nại')
 
     # listing_id (FK)
     listing = models.ForeignKey(Listing, on_delete=models.RESTRICT, related_name='complaints', verbose_name='Chỗ ở bị khiếu nại')
@@ -423,7 +392,7 @@ class HostPolicy(models.Model):
 
     # host_id (FK): OneToOneField
     # Quan hệ: 1 USERS -> 1 HOST_POLICIES (chỉ áp dụng cho user có role 'host')
-    host = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=False, related_name='policy')
+    host = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=False, related_name='policy')
 
     # warning_count: INT (IntegerField)
     warning_count = models.IntegerField(default=0)
