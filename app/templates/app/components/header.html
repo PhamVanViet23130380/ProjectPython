@@ -17,10 +17,14 @@
         </div>
 
         <div class="ab-right">
+<<<<<<< HEAD:app/templates/app/components/header.html
             {% if user.is_authenticated %}
             <span class="user-greeting">Xin chào, {% firstof user.full_name user.username user.email %}!</span>
             {% endif %}
             <a href="{% url 'taobaidang' %}" class="host-btn"><i class="fa-solid fa-user-plus"></i> Trở thành host</a>
+=======
+            <a href="{% url 'become_host' %}" class="host-btn"><i class="fa-solid fa-user-plus"></i> Trở thành host</a>
+>>>>>>> 114ca0588b9949224b74be0f04f585fa570bc996:app/templates/app/header.html
             <button class="ab-icon" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
         </div>
     </nav>
