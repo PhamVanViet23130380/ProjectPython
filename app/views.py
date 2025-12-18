@@ -1,7 +1,9 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth.models import Group
 from .models import *
 
 User = get_user_model()
@@ -74,7 +76,7 @@ def logout_view(request):
     return redirect('login')
 
 def taobaidang(request):
-    # Kiểm tra đăng nhập
+    # 1. Chưa đăng nhập
     if not request.user.is_authenticated:
         messages.error(request, 'Vui lòng đăng nhập trước')
         return redirect('login')
