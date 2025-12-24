@@ -1,0 +1,27 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Kết quả tìm kiếm{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'app/css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+  <main>
+    <section class="section cards-section popular-city">
+      <div class="section-header">
+        <h2>Kết quả tìm kiếm</h2>
+      </div>
+      <div class="cards-wrapper">
+        <div class="cards-row">
+          <!-- Repeat card items (reuse same markup as home cards) -->
+        </div>
+      </div>
+    </section>
+  </main>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'app/js/luotcard.js' %}"></script>
+{% endblock %}

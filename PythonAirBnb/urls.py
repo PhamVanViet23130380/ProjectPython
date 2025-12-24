@@ -21,3 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('app.urls')),
 ]
+
+# Custom error handlers (point to views in the app)
+handler404 = 'app.views.error_404'
+handler500 = 'app.views.error_500'

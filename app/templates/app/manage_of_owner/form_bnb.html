@@ -1,0 +1,87 @@
+{% extends 'app/manage_of_owner/base.html' %}
+
+{% block owner_content %}
+<div class="container">
+  <h2>Tạo / Chỉnh sửa chỗ ở</h2>
+
+  <form method="post" action="{% url 'add_new_bnb' %}">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label for="title" class="form-label">Tiêu đề</label>
+      <input type="text" class="form-control" id="title" name="title" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Mô tả</label>
+      <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
+    </div>
+
+    <div class="row">
+      <div class="col-md-3 mb-3">
+        <label for="price_per_night" class="form-label">Giá / đêm</label>
+        <input type="number" step="0.01" class="form-control" id="price_per_night" name="price_per_night">
+      </div>
+      <div class="col-md-3 mb-3">
+        <label for="max_adults" class="form-label">Số người lớn</label>
+        <input type="number" class="form-control" id="max_adults" name="max_adults" value="1">
+      </div>
+      <div class="col-md-3 mb-3">
+        <label for="max_children" class="form-label">Số trẻ em</label>
+        <input type="number" class="form-control" id="max_children" name="max_children" value="0">
+      </div>
+      <div class="col-md-3 mb-3">
+        <label for="max_pets" class="form-label">Số thú cưng</label>
+        <input type="number" class="form-control" id="max_pets" name="max_pets" value="0">
+      </div>
+    </div>
+
+    <h4>Địa chỉ</h4>
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <label for="city" class="form-label">Thành phố</label>
+        <input type="text" class="form-control" id="city" name="city">
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="district" class="form-label">Quận / Huyện</label>
+        <input type="text" class="form-control" id="district" name="district">
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="street" class="form-label">Đường / Địa chỉ</label>
+        <input type="text" class="form-control" id="street" name="street">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-3 mb-3">
+        <label for="latitude" class="form-label">Vĩ độ</label>
+        <input type="text" class="form-control" id="latitude" name="latitude">
+      </div>
+      <div class="col-md-3 mb-3">
+        <label for="longitude" class="form-label">Kinh độ</label>
+        <input type="text" class="form-control" id="longitude" name="longitude">
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="amenities" class="form-label">Tiện nghi (nhập tên, phân cách bởi dấu phẩy)</label>
+      <input type="text" class="form-control" id="amenities" name="amenities" placeholder="WiFi, Bãi đỗ xe, Hồ bơi">
+      <div class="form-text">Hoặc dùng nhiều input `amenities` (ví dụ trong JS/JSX).</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="images" class="form-label">Ảnh (URLs, phân cách bởi dấu phẩy)</label>
+      <input type="text" class="form-control" id="images" name="images" placeholder="https://... , https://...">
+    </div>
+
+    <div class="mb-3 form-check">
+      <input type="checkbox" class="form-check-input" id="is_active" name="is_active" checked>
+      <label class="form-check-label" for="is_active">Công khai / Hiển thị</label>
+    </div>
+
+    <button type="submit" class="btn btn-success">Lưu</button>
+    <a class="btn btn-secondary" href="{% url 'owner_listings' %}">Hủy</a>
+  </form>
+
+</div>
+{% endblock %}

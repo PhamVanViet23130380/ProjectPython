@@ -1,0 +1,30 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Đặt phòng{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'app/css/datphong.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h2>Đặt phòng</h2>
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">Ngày nhận</label>
+        <input type="date" name="checkin" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Ngày trả</label>
+        <input type="date" name="checkout" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Số khách</label>
+        <input type="number" name="guests" class="form-control" min="1" value="2">
+      </div>
+      <button class="btn btn-success">Xác nhận đặt</button>
+    </form>
+  </div>
+{% endblock %}

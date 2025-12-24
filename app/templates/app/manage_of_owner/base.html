@@ -1,0 +1,30 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <nav id="sidebar" class="col-md-2 d-none d-md-block bg-light sidebar">
+      <div class="position-sticky pt-3">
+        <ul class="nav flex-column">
+          <li class="nav-item"><a class="nav-link" href="{% url 'owner_dashboard' %}">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'owner_listings' %}">Danh sách chỗ ở</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'owner_bookings' %}">Đơn đặt phòng</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'add_new_bnb' %}">Tạo chỗ ở mới</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'user_wishlist' %}">Yêu thích</a></li>
+          <li class="nav-item"><a class="nav-link text-danger" href="{% url 'logout' %}">Đăng xuất</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-4">
+      <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Khu Quản lý Chủ nhà</h1>
+      </header>
+
+      {% block owner_content %}
+      <!-- Nội dung chuyên biệt cho từng trang owner sẽ hiển thị ở đây -->
+      {% endblock %}
+    </main>
+  </div>
+</div>
+{% endblock %}
