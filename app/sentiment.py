@@ -24,7 +24,6 @@ def analyze_sentiment(text: str):
         outputs = _model(**inputs)
 
     logits = outputs.logits
-    probs = torch.softmax(logits, dim=1)[0]
     label = logits.argmax(dim=1).item()
 
     # Mapping theo mô hình local

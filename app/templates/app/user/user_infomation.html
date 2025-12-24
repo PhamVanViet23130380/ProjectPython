@@ -1,0 +1,89 @@
+{% load static %}
+{% load humanize %}
+{% extends 'app/base.html' %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'app/css/profile.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <a href="{% url 'home' %}" class="logo"><i class="fas fa-home"></i> Trang chủ</a>
+        {% if request.user.is_authenticated %}
+            <div style="display:flex;align-items:center;gap:8px;">
+                <img src="{{ request.user.avatar_url|default:'https://i.pinimg.com/736x/ed/57/43/ed574383727c119220c3934c79a191fb.jpg' }}" width="36" alt="Avatar" style="border-radius:50%;">
+                <span>{{ request.user.get_full_name|default:request.user.username }}</span>
+            </div>
+        {% endif %}
+    </nav>
+
+    <div class="profile-layout">
+        <nav class="tabs">
+            <button class="tab-item active">Thông tin tài khoản</button>
+            <button class="tab-item">Lịch sử thuê nhà</button>
+            <button class="tab-item">Tin nhắn</button>
+            <button class="tab-item">Yêu thích</button>
+        </nav>
+
+        <main class="profile-content">
+            <aside class="sidebar">
+                <div class="profile-card">
+                    <div class="avatar-container">
+                        <img src="{{ profile_user.avatar_url|default:'https://i.pinimg.com/736x/ed/57/43/ed574383727c119220c3934c79a191fb.jpg' }}" alt="User Avatar" class="main-avatar">
+                    </div>
+                    <h3>Xin chào, {{ profile_user.full_name|default:profile_user.username }}!</h3>
+                    <ul class="info-list">
+                        <li><i class="fas fa-envelope"></i> {{ profile_user.email }}</li>
+                        <li><i class="fas fa-phone"></i> {{ profile_user.phone_number|default:'Chưa cập nhật số điện thoại' }}</li>
+                        <li><i class="fas fa-user-tag"></i> Vai trò: {{ profile_user.role|default:'Khách' }}</li>
+                    </ul>
+                    {% if request.user.is_authenticated and request.user.id == profile_user.id %}
+                        <a href="{% url 'profile_edit' %}" class="btn-edit">Chỉnh sửa hồ sơ</a>
+                    {% endif %}
+                </div>
+            </aside>
+
+            <section class="history-section">
+                <h2>Lịch sử thuê nhà</h2>
+
+                {% if profile_user.rentals.exists %}
+                    {% for r in profile_user.rentals.all %}
+                        <div class="history-item">
+                            <img src="{{ r.listing.image_url|default:'https://via.placeholder.com/100x80' }}" alt="House">
+                            <div class="item-details">
+                                <h4>{{ r.listing.title }}</h4>
+                                <p>Thời gian thuê: {{ r.start_date }} - {{ r.end_date }}</p>
+                                <span class="status">{{ r.status|default:'Đã kết thúc' }}</span>
+                            </div>
+                            <i class="fas fa-home icon-right"></i>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>Không có lịch sử thuê nào.</p>
+                {% endif %}
+
+            </section>
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        if (!dropdown) return;
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    }
+
+    window.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('userDropdown');
+        if (!dropdown) return;
+        if (!event.target.closest('.fa-chevron-down')) {
+            if (dropdown.style.display === 'block') dropdown.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}

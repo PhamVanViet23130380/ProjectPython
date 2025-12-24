@@ -1,0 +1,56 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+<div class="container user-viewed">
+  <h1>Lịch sử đã xem</h1>
+
+  {% if viewed %}
+    <div class="row">
+      {% for item in viewed %}
+        <div class="col-md-4 mb-3">
+          <div class="card">
+            {% if item.listing and item.listing.images.all|length > 0 %}
+              <img src="{{ item.listing.images.all.0.image_url }}" class="card-img-top" alt="{{ item.listing.title }}">
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">
+                {% if item.listing %}
+                  <a href="{% url 'listing_detail' listing_id=item.listing.listing_id %}">{{ item.listing.title }}</a>
+                {% else %}
+                  (Chỗ ở đã xóa)
+                {% endif %}
+              </h5>
+              {% if item.listing and item.listing.price_per_night %}
+                <p class="card-text">Giá: {{ item.listing.price_per_night }} / đêm</p>
+              {% endif %}
+              <p class="text-muted small">Đã xem: {{ item.viewed_at|date:"Y-m-d H:i" }}</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if viewed.has_other_pages %}
+      <nav aria-label="Page navigation">
+        <ul class="pagination">
+          {% if viewed.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ viewed.previous_page_number }}">Trước</a></li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Trước</span></li>
+          {% endif %}
+          <li class="page-item active"><span class="page-link">{{ viewed.number }} / {{ viewed.paginator.num_pages }}</span></li>
+          {% if viewed.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ viewed.next_page_number }}">Sau</a></li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Sau</span></li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+
+  {% else %}
+    <p>Bạn chưa xem chỗ ở nào gần đây.</p>
+  {% endif %}
+
+</div>
+{% endblock %}

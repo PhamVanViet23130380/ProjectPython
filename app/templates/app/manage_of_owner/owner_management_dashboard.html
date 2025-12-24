@@ -1,0 +1,100 @@
+{% extends 'app/manage_of_owner/base.html' %}
+
+{% block owner_content %}
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Bảng điều khiển Chủ nhà</h2>
+    <div>
+      <a class="btn btn-sm btn-outline-primary" href="{% url 'add_new_bnb' %}">Tạo chỗ ở mới</a>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Tổng chỗ ở</h5>
+          <p class="display-6">{{ stats.total_listings|default:0 }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Tổng đơn đặt</h5>
+          <p class="display-6">{{ stats.total_bookings|default:0 }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Doanh thu ước tính</h5>
+          <p class="display-6">{{ total_earnings|default:0 }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">Chỗ ở gần đây</div>
+        <ul class="list-group list-group-flush">
+          {% for l in recent_listings %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <a href="{% url 'listing_detail' listing_id=l.listing_id %}">{{ l.title }}</a>
+                <div class="small text-muted">{{ l.created_at|date:"Y-m-d" }}</div>
+              </div>
+              <span class="badge bg-secondary">{{ l.price_per_night }}</span>
+            </li>
+          {% empty %}
+            <li class="list-group-item text-muted">Chưa có chỗ ở gần đây.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">Booking gần đây</div>
+        <ul class="list-group list-group-flush">
+          {% for b in recent_bookings %}
+            <li class="list-group-item">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <a href="{% url 'booking_detail' booking_id=b.booking_id %}">#{{ b.booking_id }}</a>
+                  <div class="small text-muted">{{ b.check_in }} → {{ b.check_out }}</div>
+                </div>
+                <div class="text-end small">
+                  <div>{{ b.user.get_full_name|default:b.user.username }}</div>
+                  <div class="text-muted">{{ b.total_price }}</div>
+                </div>
+              </div>
+            </li>
+          {% empty %}
+            <li class="list-group-item text-muted">Không có booking gần đây.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Tin nhắn gần đây</div>
+    <ul class="list-group list-group-flush">
+      {% for m in recent_messages %}
+        <li class="list-group-item">
+          <strong>{{ m.sender.get_full_name|default:m.sender.username }}</strong>
+          <div class="small text-muted">{{ m.created_at|default:m.created_at }}</div>
+          <div>{{ m.content|truncatechars:150 }}</div>
+        </li>
+      {% empty %}
+        <li class="list-group-item text-muted">Không có tin nhắn.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+</div>
+{% endblock %}

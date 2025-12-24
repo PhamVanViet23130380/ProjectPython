@@ -82,7 +82,9 @@ header {
     flex: 1;
 }
 
-main { padding-top: calc(var(--header-height) + var(--search-height)); }
+/* Ensure page content clears the fixed header + search bar.
+    Increase extra gap slightly so floating search bar doesn't cover content. */
+main { padding-top: calc(var(--header-height) + var(--search-height) + 56px); }
 
 .ab-footer {
     display: flex;

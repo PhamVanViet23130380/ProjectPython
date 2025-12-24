@@ -1,0 +1,202 @@
+/* 1. NỀN TỔNG THỂ & CHỮ CHÍNH */
+body, .content-wrapper, .main-footer {
+    background-color: #fafafa !important;
+    color: #2c2c2c !important; /* Chữ đen đậm rõ ràng */
+    font-family: 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* 2. SIDEBAR (THANH BÊN) - Nâu Mocha ấm */
+.main-sidebar {
+    background-color: #3e2f28 !important; 
+}
+.brand-link {
+    background-color: #352822 !important;
+    border-bottom: 1px solid #4a3a32 !important;
+    color: #ffffff !important;
+}
+.nav-sidebar .nav-link {
+    color: #d1c7c2 !important;
+}
+.nav-sidebar .nav-link:hover, .nav-sidebar .nav-item.menu-open > .nav-link {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: #ffffff !important;
+}
+.nav-sidebar .nav-item > .nav-link.active {
+    background-color: #8d7767 !important; /* Điểm nhấn nâu sáng */
+    color: #ffffff !important;
+}
+
+/* 3. HEADER (THANH TRÊN) - Trắng sứ sạch sẽ */
+.main-header {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #eee !important;
+}
+.main-header .nav-link {
+    color: #3e2f28 !important;
+}
+
+/* 4. LOẠI BỎ CHỮ VÀNG (Fix lỗi màu vàng bạn đang gặp) */
+.card-primary.card-outline, 
+.text-warning, 
+.content-header h1,
+.breadcrumb-item a,
+.card-title,
+table thead th a {
+    color: #3e2f28 !important; /* Chuyển hết chữ vàng sang nâu đậm/đen */
+}
+
+/* 5. CÁC NÚT BẤM (BUTTONS) - Bo tròn & Màu Nâu nhạt sang trọng */
+.btn-primary, .btn-warning, .btn-info, .btn-success, .btn-default, .btn-sm {
+    background-color: #8d7767 !important; /* Màu nâu cafe sữa */
+    border: none !important;
+    border-radius: 25px !important; /* Bo tròn mềm mại */
+    color: #ffffff !important;
+    padding: 6px 20px !important;
+    font-weight: 500 !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+}
+.btn:hover {
+    background-color: #7a6659 !important;
+    transform: translateY(-1px);
+}
+
+/* 6. BẢNG DỮ LIỆU (TABLES) */
+.table thead th {
+    background-color: #f4f1ef !important; /* Nền xám kem nhạt */
+    color: #555 !important;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+    border-top: none !important;
+}
+.table tbody td {
+    color: #333 !important;
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+}
+.table-hover tbody tr:hover {
+    background-color: #fdfaf8 !important;
+}
+
+/* 7. Ô TÌM KIẾM & FORM */
+.form-control, .select2-container--default .select2-selection--single {
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 8px !important;
+}
+.input-group-append .btn {
+    border-radius: 0 25px 25px 0 !important;
+}
+
+/* Loại bỏ màu nền xám của các dòng lẻ trong bảng */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #ffffff !important;
+}
+
+/* Đảm bảo tất cả các ô dữ liệu đều có nền trắng */
+.table td {
+    background-color: #ffffff !important;
+}
+
+/* (Tùy chọn) Thêm hiệu ứng đổi màu nhẹ khi di chuột qua để vẫn dễ nhìn */
+.table tbody tr:hover td {
+    background-color: #fdfaf8 !important;
+}
+
+/* 1. Hiện chữ khi nhập và chỉnh lại màu Placeholder */
+.navbar-search-block .form-control-navbar,
+.form-inline .form-control {
+    background-color: #ffffff !important; /* Đảm bảo nền trắng sạch */
+    color: #3e2723 !important;           /* CHỮ ĐEN NÂU ĐẬM KHI NHẬP - QUAN TRỌNG */
+    border: none !important;
+    padding: 8px 15px !important;
+    height: 38px !important;
+}
+
+/* 2. Hiện lại chữ gợi ý (Placeholder) */
+.navbar-search-block .form-control-navbar::placeholder,
+.form-inline .form-control::placeholder {
+    color: #8d7767 !important;           /* MÀU CHỮ GỢI Ý - Hiện rõ để biết tìm cái gì */
+    opacity: 0.8 !important;
+    font-size: 0.9rem !important;
+}
+
+/* 3. Đảm bảo nút kính lúp hiển thị rõ */
+.navbar-search-block .btn-navbar,
+.form-inline .input-group-append .btn {
+    background-color: #5d4037 !important;
+    color: #ffffff !important;           /* Kính lúp màu trắng nổi bật */
+    border: none !important;
+    width: 45px !important;
+}
+
+/* 4. Viền mỏng bao quanh để phân biệt ô search với nền header */
+.navbar-search-block .input-group, 
+.form-inline .input-group {
+    border: 1px solid #d7ccc8 !important; /* Viền nâu nhạt tinh tế */
+    border-radius: 25px !important;
+    overflow: hidden !important;
+    background-color: #ffffff !important;
+}
+
+/* 1. ÉP CHỮ TRẮNG 100% TRONG TẤT CẢ CÁC Ô CÓ NỀN NÂU */
+/* Nhắm vào nút Add, Change, các nhãn vai trò Admin/Khách hàng, nút tìm kiếm */
+.btn-primary, .btn-info, .btn-success, .btn-warning, .btn-sm,
+.badge, 
+.btn-navbar,
+.btn-flat,
+span[style*="background-color"],
+.nav-pills .nav-link.active {
+    color: #ffffff !important;      /* BẮT BUỘC CHỮ TRẮNG */
+    font-weight: 700 !important;    /* ĐẬM LÊN CHO RÕ */
+    background-color: #8d7767 !important; /* Đảm bảo nền nâu cafe sữa */
+    border: none !important;
+    border-radius: 20px !important;
+}
+
+/* 2. KHI DI CHUỘT VÀO NÚT: Vẫn phải giữ chữ trắng */
+.btn:hover, .btn:focus, .btn:active {
+    color: #ffffff !important;
+    background-color: #5d4037 !important; /* Nâu đậm hơn khi di chuột */
+}
+
+/* Đảm bảo mọi nút nền nâu hiển thị chữ trắng, kể cả thẻ a bên trong */
+.btn,
+.btn:visited,
+.btn a,
+.btn:visited a {
+    color: #ffffff !important;
+}
+
+/* Nếu trong nút có span/i/small... thì ép toàn bộ con cũng màu trắng */
+.btn *,
+.btn:visited * {
+    color: #ffffff !important;
+}
+
+/* Bắt mọi biến thể nút (kể cả Jazzmin/Django admin) phải dùng chữ trắng */
+[class*="btn"],
+[class*="btn"] *,
+.btn-default,
+.btn-default *,
+.btn-block,
+.btn-block *,
+.btn-flat,
+.btn-flat *,
+.object-tools a,
+.object-tools a * {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    text-shadow: none !important;
+}
+
+/* 3. CÁC CHỮ BÊN NGOÀI (Model names, Email, Groups): Chuyển thành ĐEN ĐẬM */
+.card-body table.table td:first-child a, 
+.card-body table.table td a,
+.model-name a,
+.text-warning,
+.timeline-header a,
+.card-title {
+    color: #212529 !important; /* Đen đậm chuẩn */
+    font-weight: 700 !important;
+    text-decoration: none !important;
+}

@@ -1,0 +1,46 @@
+{% load static %}
+{% extends 'app/base.html' %}
+
+{% block title %}Hồ sơ người dùng{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'app/css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="card p-3 text-center">
+          <img src="{% static 'app/images/avatar-placeholder.png' %}" class="img-fluid rounded-circle" alt="avatar">
+          <h5>Người dùng</h5>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <h3>Đánh giá phòng</h3>
+        <form method="POST" style="margin-bottom:20px;">
+          {% csrf_token %}
+          <textarea name="review_text" required placeholder="Nhập đánh giá của bạn..." style="width:100%; height:100px; padding:10px; border-radius:6px; border:1px solid #aaa;"></textarea>
+          <button type="submit" class="btn btn-primary mt-2">Gửi đánh giá</button>
+        </form>
+
+        {% if reviews %}
+          {% for review in reviews %}
+            <div class="card mb-2 p-2">
+              <p class="mb-1">{{ review.text }}</p>
+              {% if review.sentiment == 'positive' %}
+                <span class="text-success fw-bold">Positive</span>
+              {% elif review.sentiment == 'negative' %}
+                <span class="text-danger fw-bold">Negative</span>
+              {% else %}
+                <span class="text-muted fw-bold">Neutral</span>
+              {% endif %}
+            </div>
+          {% endfor %}
+        {% else %}
+          <p>Chưa có đánh giá nào.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

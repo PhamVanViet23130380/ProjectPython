@@ -1,0 +1,15 @@
+{% extends 'app/auth_template/base.html' %}
+{% load static %}
+
+{% block title %}Đăng Ký{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'app/css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h2>Trang Đăng Ký</h2>
+  <p>Form đăng ký có thể đặt ở đây (tái sử dụng layout từ `login.html`).</p>
+</div>
+{% endblock %}
