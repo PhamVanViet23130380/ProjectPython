@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from ..auth_views import login_view, logout_view
 
 # Import submodules from this package
-from .home_views import home
+from .home_views import home_view
 from .category_views import category_view
 from .bnb_information import listing_detail
 from .result_view import search_results
@@ -17,6 +17,10 @@ from .add_new_bnb import create_listing
 from .owner_management_view import owner_dashboard, owner_listings, owner_bookings, suspend_host, reinstate_host
 from .info_owner_bnb_view import owner_listing_info
 from .contact_view import contact, contact_host
+from .create_listing_views import (
+    step_loaichoo, step_duocuse, step_diachi, step_thongtincb,
+    step_tiennghii, step_themanh, step_tieude, step_thietlapgia, step_chiasett
+)
 
 
 def forgot_password(request):
@@ -60,20 +64,52 @@ def buoc1(request):
     return render(request, 'app/host/buoc1.html')
 
 
-def thietlapgia(request):
-    return render(request, 'app/host/thietlapgia.html')
+def buoc2(request):
+    return render(request, 'app/host/buoc2.html')
+
+
+def buoc3(request):
+    return render(request, 'app/host/buoc3.html')
 
 
 def giacuoituan(request):
     return render(request, 'app/host/giacuoituan.html')
 
 
-def chiasett(request):
-    return render(request, 'app/host/chiasett.html')
-
-
 def loaichoo(request):
-    return render(request, 'app/host/loaichoo.html')
+    return step_loaichoo(request)
+
+
+def duocuse(request):
+    return step_duocuse(request)
+
+
+def diachi(request):
+    return step_diachi(request)
+
+
+def thongtincb(request):
+    return step_thongtincb(request)
+
+
+def tiennghii(request):
+    return step_tiennghii(request)
+
+
+def themanh(request):
+    return step_themanh(request)
+
+
+def tieude(request):
+    return step_tieude(request)
+
+
+def thietlapgia(request):
+    return step_thietlapgia(request)
+
+
+def chiasett(request):
+    return step_chiasett(request)
 
 
 def trungtamtrogiup(request):
@@ -90,40 +126,6 @@ def phuongthucthanhtoan(request):
 
 def chinhsachdieukhoan(request):
     return render(request, 'app/other_templates/chinhsachdieukhoan.html')
-
-
-def buoc2(request):
-    return render(request, 'app/host/buoc2.html')
-
-
-def duocuse(request):
-    return render(request, 'app/host/duocuse.html')
-
-
-def themanh(request):
-    return render(request, 'app/host/themanh.html')
-
-
-def thongtincb(request):
-    return render(request, 'app/host/thongtincb.html')
-
-
-def tiennghii(request):
-    return render(request, 'app/host/tiennghii.html')
-
-
-def tieude(request):
-    return render(request, 'app/host/tieude.html')
-
-
-def diachi(request):
-    return render(request, 'app/host/diachi.html')
-
-
-def buoc3(request):
-    return render(request, 'app/host/buoc3.html')
-
-
 
 def profile_view(request):
     if not request.user.is_authenticated:

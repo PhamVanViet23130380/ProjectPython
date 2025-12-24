@@ -101,6 +101,12 @@ html, body {
     width: 40px;
 }
 
+.option-item .icon {
+    font-size: 40px;
+    color: #111;
+    line-height: 1;
+}
+
 .start-footer {
     margin-top: 20px;
     padding: 20px 60px;

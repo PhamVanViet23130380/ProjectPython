@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Loại chỗ ở</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{% static 'app/css/loaichoo.css' %}">
 </head>
 <body>
 <div class="start-container">
-
     <div class="start-header fixed-header">
         <a href="{% url 'home' %}">
             <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
@@ -27,159 +27,63 @@
         <div class="options-grid">
 
             <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Nhà</p>
+                <i class="fa-solid fa-house-chimney icon" aria-hidden="true"></i>
+                <p>Nhà riêng / nguyên căn</p>
             </div>
 
             <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Căn hộ</p>
+                <i class="fa-solid fa-building icon" aria-hidden="true"></i>
+                <p>Căn hộ / chung cư</p>
             </div>
 
             <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Nhà nông trại</p>
+                <i class="fa-solid fa-bed icon" aria-hidden="true"></i>
+                <p>Phòng riêng</p>
             </div>
 
             <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Chỗ nghỉ phục vụ bữa sáng</p>
+                <i class="fa-solid fa-house-user icon" aria-hidden="true"></i>
+                <p>Biệt thự</p>
             </div>
 
             <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Thuyền</p>
+                <i class="fa-solid fa-hotel icon" aria-hidden="true"></i>
+                <p>Khách sạn / resort</p>
             </div>
 
             <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Cabin</p>
+                <i class="fa-solid fa-people-roof icon" aria-hidden="true"></i>
+                <p>Nhà khách / nhà nghỉ</p>
             </div>
 
             <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Xe cắm trại/RV</p>
+                <i class="fa-solid fa-mountain icon" aria-hidden="true"></i>
+                <p>Cabin / nhà gỗ</p>
             </div>
 
             <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Casa particular</p>
+                <i class="fa-solid fa-house icon" aria-hidden="true"></i>
+                <p>Tiny house</p>
             </div>
 
             <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Lâu đài</p>
-            </div>
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Hang</p>
-            </div>
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Nhà container</p>
-            </div>
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Nhà theo phong cách Cycladic</p>
-            </div>
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Dammuso</p>
-            </div>
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Nhà vòm</p>
-            </div>
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Nhà dưới lòng đất</p>
-            </div>
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Nông trai</p>
-            </div>
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Nhà khách</p>
-            </div>
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Khách sạn</p>
-            </div>
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Nhà thuyền</p>
-            </div>
-
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Kezhan</p>
-            </div>
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Minsu</p>
-            </div>
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Riad</p>
-            </div>
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Ryokan</p>
-            </div>
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Liều mục đồng</p>
-            </div>
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Liều vải</p>
-            </div>
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Nhà nhỏ</p>
-            </div>
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Tháp</p>
-            </div>
-
-            <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
+                <i class="fa-solid fa-tree icon" aria-hidden="true"></i>
                 <p>Nhà trên cây</p>
             </div>
 
             <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Nhà chỏm nón</p>
+                <i class="fa-solid fa-ship icon" aria-hidden="true"></i>
+                <p>Nhà thuyền</p>
             </div>
 
             <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Cối xoay gió</p>
+                <i class="fa-solid fa-campground icon" aria-hidden="true"></i>
+                <p>Glamping / lều</p>
             </div>
 
             <div class="option-item">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="icon">
-                <p>Liều yurt</p>
+                <i class="fa-solid fa-tractor icon" aria-hidden="true"></i>
+                <p>Nông trại / farmstay</p>
             </div>
 
         </div>

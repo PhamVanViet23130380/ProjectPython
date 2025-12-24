@@ -83,7 +83,11 @@ html, body {
     height: 50px;
 }
 
-
+.option-item .icon {
+    font-size: 60px;
+    color: #111;
+    line-height: 1;
+}
 
 .start-footer {
     margin-top: 20px;
