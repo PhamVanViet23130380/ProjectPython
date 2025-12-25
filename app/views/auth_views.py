@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.utils import timezone
+from django.contrib.auth.forms import PasswordResetForm
 
 User = get_user_model()
 
@@ -72,3 +73,34 @@ def logout_view(request):
     logout(request)
     messages.success(request, 'Đã đăng xuất thành công')
     return redirect('login')
+
+
+
+
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+
+        # 1. Kiểm tra email có trong DB không
+        if not User.objects.filter(email=email).exists():
+            messages.error(request, 'Email không tồn tại trong hệ thống')
+            return redirect('forgot_password')
+
+        # 2. Có email → gửi mail reset
+        form = PasswordResetForm({'email': email})
+        if form.is_valid():
+            form.save(
+                request=request,
+                email_template_name='registration/password_reset_email.html',
+            )
+            messages.success(
+                request,
+                'Hướng dẫn đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra email.'
+            )
+        else:
+            messages.error(request, 'Có lỗi xảy ra, vui lòng thử lại.')
+
+        return redirect('forgot_password')
+
+    return render(request, 'app/auth_template/forgot-password.html')
