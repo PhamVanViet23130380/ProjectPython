@@ -102,6 +102,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Custom User Model
 AUTH_USER_MODEL = 'app.User'
 
+
 # --- JAZZMIN CONFIGURATION ---
 JAZZMIN_SETTINGS = {
     "site_title": "Homnest Admin",
@@ -137,3 +138,10 @@ JAZZMIN_UI_TWEAKS = {
         "success": "btn-success"
     }
 }
+
+
+
+# Email Backend
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'webmaster@localhost'
+
