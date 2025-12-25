@@ -21,107 +21,92 @@
     </div>
 
 
+<form method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="property_type" id="property_type_input">
     <div class="start-main scroll-area">
         <h1 class="question">Điều nào sau đây mô tả chính xác nhất về chỗ ở của bạn?</h1>
-
         <div class="options-grid">
-
-            <div class="option-item">
-                <i class="fa-solid fa-house-chimney icon" aria-hidden="true"></i>
+            <div class="option-item" onclick="selectOption('Nhà riêng')">
+                <i class="fa-solid fa-house-chimney icon"></i>
                 <p>Nhà riêng / nguyên căn</p>
             </div>
-
-            <div class="option-item">
-                <i class="fa-solid fa-building icon" aria-hidden="true"></i>
+            <div class="option-item" onclick="selectOption('Căn hộ')">
+                <i class="fa-solid fa-building icon"></i>
                 <p>Căn hộ / chung cư</p>
             </div>
+            </div>
 
-            <div class="option-item">
-                <i class="fa-solid fa-bed icon" aria-hidden="true"></i>
+            <div class="option-item" onclick="selectOption('Phòng riêng')">
+                <i class="fa-solid fa-bed icon"></i>
                 <p>Phòng riêng</p>
             </div>
 
-            <div class="option-item">
-                <i class="fa-solid fa-house-user icon" aria-hidden="true"></i>
+            <div class="option-item" onclick="selectOption('Biệt thự')">
+                <i class="fa-solid fa-house-user icon"></i>
                 <p>Biệt thự</p>
             </div>
 
-            <div class="option-item">
-                <i class="fa-solid fa-hotel icon" aria-hidden="true"></i>
+            <div class="option-item" onclick="selectOption('Khách sạn / resort')">
+                <i class="fa-solid fa-hotel icon"></i>
                 <p>Khách sạn / resort</p>
             </div>
 
-            <div class="option-item">
-                <i class="fa-solid fa-people-roof icon" aria-hidden="true"></i>
+            <div class="option-item" onclick="selectOption('Nhà khách / nhà nghỉ')">
+                <i class="fa-solid fa-people-roof icon"></i>
                 <p>Nhà khách / nhà nghỉ</p>
             </div>
 
-            <div class="option-item">
-                <i class="fa-solid fa-mountain icon" aria-hidden="true"></i>
+            <div class="option-item" onclick="selectOption('Cabin / nhà gỗ')">
+                <i class="fa-solid fa-mountain icon"></i>
                 <p>Cabin / nhà gỗ</p>
             </div>
 
-            <div class="option-item">
-                <i class="fa-solid fa-house icon" aria-hidden="true"></i>
+            <div class="option-item" onclick="selectOption('Tiny house')">
+                <i class="fa-solid fa-house icon"></i>
                 <p>Tiny house</p>
             </div>
 
-            <div class="option-item">
-                <i class="fa-solid fa-tree icon" aria-hidden="true"></i>
+            <div class="option-item" onclick="selectOption('Nhà trên cây')">
+                <i class="fa-solid fa-tree icon"></i>
                 <p>Nhà trên cây</p>
             </div>
 
-            <div class="option-item">
-                <i class="fa-solid fa-ship icon" aria-hidden="true"></i>
+            <div class="option-item" onclick="selectOption('Nhà thuyền')">
+                <i class="fa-solid fa-ship icon"></i>
                 <p>Nhà thuyền</p>
             </div>
 
-            <div class="option-item">
-                <i class="fa-solid fa-campground icon" aria-hidden="true"></i>
+            <div class="option-item" onclick="selectOption('Glamping / lều')">
+                <i class="fa-solid fa-campground icon"></i>
                 <p>Glamping / lều</p>
             </div>
 
-            <div class="option-item">
-                <i class="fa-solid fa-tractor icon" aria-hidden="true"></i>
+            <div class="option-item" onclick="selectOption('Nông trại / farmstay')">
+                <i class="fa-solid fa-tractor icon"></i>
                 <p>Nông trại / farmstay</p>
             </div>
 
         </div>
     </div>
 
-    <div class="start-footer fixed-footer">
+ <div class="start-footer fixed-footer">
         <a href="{% url 'buoc1' %}" class="back-link">Quay lại</a>
-
-         <a href="{% url 'duocuse' %}" class="next-btn">Tiếp theo</a>
+        <button type="submit" class="next-btn disabled" id="nextBtn" disabled>Tiếp theo</button>
     </div>
-</div>
+</form>
 
 </body>
 <script>
-    const items = document.querySelectorAll('.option-item');
-    const nextBtn = document.querySelector('.next-btn');
-
-    let selectedItem = null;
-
-    items.forEach(item => {
-        item.addEventListener('click', () => {
-
-            // Bỏ chọn tất cả
-            items.forEach(i => i.classList.remove('selected'));
-
-            // Chọn ô hiện tại
-            item.classList.add('selected');
-            selectedItem = item;
-
-            // Bật nút "Tiếp theo"
-            nextBtn.classList.remove('disabled');
-            nextBtn.disabled = false;
-        });
-    });
-
-    // Trạng thái ban đầu
-    nextBtn.classList.add('disabled');
-    nextBtn.disabled = true;
+    function selectOption(val) {
+        document.getElementById('property_type_input').value = val;
+        const nextBtn = document.getElementById('nextBtn');
+        nextBtn.disabled = false;
+        nextBtn.classList.remove('disabled');
+        // Thêm code CSS để highlight ô được chọn
+        document.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
+        event.currentTarget.classList.add('selected');
+    }
 </script>
 
 </html>
