@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
+from app.views.bnb_information import listing_detail
 
 
 urlpatterns = [
@@ -10,7 +11,7 @@ urlpatterns = [
     path('profile/', views.profile_view, name='profile'),
     path('become-host/', views.taobaidang, name='become_host'),
     path('taobaidang/', views.taobaidang, name='taobaidang'),
-    path('chitietnoio/', views.chitietnoio, name='chitietnoio'),
+
     path('buoc1/', views.buoc1, name='buoc1'),
     path('loaichoo/', views.loaichoo, name='loaichoo'),
     path('trungtamtrogiup/', views.trungtamtrogiup, name='trungtamtrogiup'),
@@ -19,6 +20,7 @@ urlpatterns = [
     path('chinhsachdieukhoan/', views.chinhsachdieukhoan, name='chinhsachdieukhoan'),
 
 
+    path("chitietnoio/<int:listing_id>/", listing_detail, name="chitietnoio"),
 
  
 
@@ -48,7 +50,7 @@ urlpatterns = [
     path('giacuoituan/', views.giacuoituan, name='giacuoituan'),
     path('chiasett/', views.chiasett, name='chiasett'),
     
-#     path('room/<int:room_id>/', views.room_detail, name="room_detail"),
+
 
 
     # Của quên mk
@@ -67,5 +69,7 @@ urlpatterns = [
         ),
         name='password_reset_complete'
     ),
+
+
 
 ]

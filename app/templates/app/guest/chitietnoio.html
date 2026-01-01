@@ -50,14 +50,14 @@
                 <section class="mb-4 pb-4 border-bottom">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h1 class="h2 fw-bold mb-2" id="room-title">Tên phòng</h1>
+                            <h1 class="h2 fw-bold mb-2" id="room-title">{{ listing.title }}</h1>
                             <p class="text-muted mb-2">
                                 <i class="fa-solid fa-star" style="color: #ff385c;"></i>
-                                <strong id="room-rating">5,0</strong>
-                                <span class="text-decoration-underline" id="room-reviews">13 đánh giá</span>
+                                <strong>{{ avg_rating|floatformat:1 }}</strong>
+                                <span class="text-decoration-underline">{{ reviews|length }} đánh giá</span>
                                 · Được khách yêu thích · Tự nhận phòng
                             </p>
-                            <p class="text-muted" id="room-location">Phòng tại Quận 1, Thành phố Hồ Chí Minh, Việt Nam</p>
+                            <p class="text-muted" id="room-location">{{ address.street }}, {{ address.district }}, {{ address.city }}</p>
                         </div>
                         <button class="btn btn-light"><i class="fa-regular fa-heart"></i></button>
                     </div>
@@ -191,47 +191,97 @@
 
                 <!-- Reviews Section -->
                 <section class="mb-5 pb-5 border-bottom">
+                    {% if review_status == "pending_review" %}
+                    <div class="alert alert-warning mb-4">
+                        <strong>🟡 Bạn đã ở xong chỗ này</strong><br>
+                        Hãy để lại đánh giá để giúp những khách khác nhé!
+                    </div>
+                    {% elif review_status == "reviewed" %}
+                    <div class="alert alert-success mb-4">
+                        ✅ Bạn đã đánh giá chỗ ở này
+                    </div>
+                    {% endif %}
+
                     <h2 class="h5 fw-bold mb-4">
                         <i class="fa-solid fa-star" style="color: #ff385c;"></i>
-                        <span id="reviews-header-rating">5,0</span> · <span id="reviews-header-count">13</span> đánh giá
+                        {{ avg_rating|floatformat:1 }} · {{ reviews|length }} đánh giá
                     </h2>
                     
+                    {% for r in reviews %}
                     <div class="mb-4">
                         <div class="d-flex align-items-start mb-3">
-                            <img src="https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg" class="rounded-circle me-3" width="48" height="48" alt="Ben">
+                            <img src="https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg?u={{ r.user.id }}" class="rounded-circle me-3" width="48" height="48" alt="Angus">
+                            
                             <div class="flex-grow-1">
-                                <p class="fw-bold mb-1">Ben</p>
-                                <p class="text-muted small mb-2">Tháng 2, 2025</p>
-                                <p class="mb-0">Chỗ ở tuyệt vời ngay ngoài đường chính. Rất sạch sẽ, rẻ và khá yên tĩnh. Host rất thân thiện và hỗ trợ nhanh chóng.</p>
+                                <p class="fw-bold mb-1">{{ r.user.get_full_name|default:r.user.username }}</p>
+                                <p class="text-muted small mb-2">{{ r.created_at|date:"m/Y" }}</p>
+                                <div class="mb-1">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= r.rating %}
+                                            <i class="fa-solid fa-star" style="color:#FFD700;font-size:12px;"></i>
+                                        {% else %}
+                                            <i class="fa-regular fa-star" style="color:#E0E0E0;font-size:12px;"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <p class="mb-0">{{ r.comment }}</p>
+
+                                {% if r.analysis %}
+                                    <div class="mt-1">
+                                        {% if r.analysis.sentiment == "positive" %}
+                                            <span class="badge bg-success">Tích cực</span>
+                                        {% elif r.analysis.sentiment == "negative" %}
+                                            <span class="badge bg-danger">Tiêu cực</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Trung tính</span>
+                                        {% endif %}
+                                        <small class="text-muted ms-1">
+                                            (AI {{ r.analysis.confidence_score }})
+                                        </small>
+                                    </div>
+                                {% endif %}
+
                             </div>
                         </div>
                     </div>
-
-                    <div class="mb-4">
-                        <div class="d-flex align-items-start mb-3">
-                            <img src="https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg" class="rounded-circle me-3" width="48" height="48" alt="Angus">
-                            <div class="flex-grow-1">
-                                <p class="fw-bold mb-1">Angus</p>
-                                <p class="text-muted small mb-2">Tháng 11, 2025</p>
-                                <p class="mb-0">Phòng tuyệt vời ở vị trí tuyệt vời để khám phá thành phố. Tiện nghi đầy đủ, an toàn và sạch sẽ.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <div class="d-flex align-items-start mb-3">
-                            <img src="https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg" class="rounded-circle me-3" width="48" height="48" alt="Sarah">
-                            <div class="flex-grow-1">
-                                <p class="fw-bold mb-1">Sarah</p>
-                                <p class="text-muted small mb-2">Tháng 10, 2025</p>
-                                <p class="mb-0">Không gian rất thoải mái, host chu đáo. Tất cả mọi thứ đều hoàn hảo, sẽ quay lại lần sau!</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button class="btn btn-outline-dark" id="btn-show-reviews">Xem tất cả đánh giá</button>
+                    {% empty %}
+                        <p class="text-muted">Chưa có đánh giá nào cho phòng này.</p>
+                    {% endfor %}
                 </section>
+                {% if can_review %}
+                <section class="mb-5 pb-5 border-bottom">
+                    <h4 class="fw-bold mb-3">Đánh giá của bạn</h4>
 
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Số sao</label>
+                            <select name="rating" class="form-select" required>
+                                <option value="5">⭐⭐⭐⭐⭐ Rất tốt</option>
+                                <option value="4">⭐⭐⭐⭐ Tốt</option>
+                                <option value="3">⭐⭐⭐ Bình thường</option>
+                                <option value="2">⭐⭐ Tệ</option>
+                                <option value="1">⭐ Rất tệ</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nhận xét</label>
+                            <textarea
+                                name="comment"
+                                class="form-control"
+                                rows="4"
+                                placeholder="Chia sẻ trải nghiệm của bạn..."
+                                required></textarea>
+                        </div>
+
+                        <button class="btn btn-danger fw-bold">
+                            Gửi đánh giá
+                        </button>
+                    </form>
+                </section>
+                {% endif %}
                 <!-- Location section -->
                 <section class="mb-5 pb-5 border-bottom">
                     <h2 class="h5 fw-bold mb-3">Nơi bạn sẽ đến</h2>
@@ -442,794 +492,11 @@
         integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
         crossorigin="anonymous"></script>
 
-    <script>
-        // Database của tất cả 48 phòng từ home.html
-        const rooms = [
-            // Section 1: Nơi lưu trú được ưa chuộng tại Hồ Chí Minh (8 phòng)
-            { 
-                id: 1, 
-                title: "Phòng tại Thành phố Hồ Chí Minh", 
-                price: 798000, 
-                rating: 5.0, 
-                reviews: 13, 
-                image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1496408576612343725/original/0bbb91de-5c32-46ce-b2aa-4914c331fc13.jpeg?im_w=1440", 
-                location: "Quận 1, Thành phố Hồ Chí Minh", 
-                guests: 2, 
-                description: "Phòng tuyệt vời tại vị trí chiến lược trong trung tâm thành phố. Sạch sẽ, rẻ và khá yên tĩnh.",
-                fullDescription: "Chào mừng bạn đến với phòng ấm cúng tại trung tâm Sài Gòn!\n\n🏠 Không gian:\n- Phòng ngủ riêng biệt với giường đôi thoải mái\n- Nhà bếp đầy đủ đồ dùng nấu nướng\n- Phòng tắm riêng với nước nóng 24/7\n- Ban công nhỏ để thư giãn\n\n📍 Vị trí:\n- Cách Bến Thành Market chỉ 5 phút đi bộ\n- Gần phố đi bộ Nguyễn Huệ\n- Nhiều quán ăn, cà phê xung quanh\n- Dễ dàng di chuyển đến các điểm tham quan\n\n✨ Tiện nghi:\n- Wi-Fi tốc độ cao miễn phí\n- Điều hòa không khí\n- Tivi màn hình phẳng\n- Máy giặt chung\n\n🎯 Lưu ý:\n- Check-in linh hoạt với hướng dẫn tự nhận phòng\n- Phù hợp cho du khách, cặp đôi hoặc người công tác\n- Khu vực an toàn, yên tĩnh vào ban đêm",
-                amenities: [
-                    {icon: "fa-wifi", name: "Wi-fi", available: true},
-                    {icon: "fa-snowflake", name: "Điều hòa nhiệt độ", available: true},
-                    {icon: "fa-kitchen-set", name: "Bếp", available: true},
-                    {icon: "fa-shirt", name: "Máy giặt", available: true},
-                    {icon: "fa-lock", name: "Khóa ở cửa phòng ngủ", available: true},
-                    {icon: "fa-tv", name: "TV", available: true},
-                    {icon: "fa-wind", name: "Quạt trần", available: true},
-                    {icon: "fa-utensils", name: "Đồ dùng nhà bếp", available: true},
-                    {icon: "fa-hot-tub-person", name: "Nước nóng", available: true},
-                    {icon: "fa-person-booth", name: "Cửa ra vào riêng", available: true},
-                    {icon: "fa-paw", name: "Cho phép mang thú cưng", available: false},
-                    {icon: "fa-smoking", name: "Được phép hút thuốc", available: false}
-                ]
-            },
-            { 
-                id: 2, 
-                title: "Căn hộ tại Thành phố Hồ Chí Minh", 
-                price: 911800, 
-                rating: 4.98, 
-                reviews: 12, 
-                image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1386690223982968237/original/4df20859-007e-4a86-8db1-7a008298e23e.jpeg?im_w=1200", 
-                location: "Quận 3, Thành phố Hồ Chí Minh", 
-                guests: 2, 
-                description: "Căn hộ hiện đại với đầy đủ tiện nghi tại Quận 3.",
-                fullDescription: "Căn hộ studio hiện đại ngay trung tâm Quận 3!\n\n🏢 Căn hộ:\n- Diện tích 35m2, thiết kế thông minh\n- Phòng ngủ kết hợp phòng khách sang trọng\n- Bếp đầy đủ tiện nghi: tủ lạnh, lò vi sóng, bếp từ\n- Phòng tắm hiện đại với vòi sen massage\n\n🌆 View & Vị trí:\n- Tầng cao, view thành phố tuyệt đẹp\n- Gần công viên Tao Đàn\n- 10 phút đến Landmark 81\n- Nhiều nhà hàng, cafe trendy xung quanh\n\n🎁 Đặc biệt:\n- Bể bơi vô cực trên sân thượng\n- Phòng gym 24/7\n- An ninh nghiêm ngặt với thẻ từ\n- Chỗ đỗ xe miễn phí\n\n💼 Lý tưởng cho:\n- Dân văn phòng làm việc từ xa\n- Cặp đôi muốn không gian riêng tư\n- Du khách yêu thích sự tiện nghi",
-                amenities: [
-                    {icon: "fa-wifi", name: "Wi-fi tốc độ cao", available: true},
-                    {icon: "fa-snowflake", name: "Điều hòa nhiệt độ", available: true},
-                    {icon: "fa-kitchen-set", name: "Bếp đầy đủ tiện nghi", available: true},
-                    {icon: "fa-shirt", name: "Máy giặt", available: true},
-                    {icon: "fa-tv", name: "Smart TV", available: true},
-                    {icon: "fa-swimming-pool", name: "Bể bơi vô cực", available: true},
-                    {icon: "fa-dumbbell", name: "Phòng gym 24/7", available: true},
-                    {icon: "fa-car", name: "Chỗ đỗ xe miễn phí", available: true},
-                    {icon: "fa-elevator", name: "Thang máy", available: true},
-                    {icon: "fa-hot-tub-person", name: "Nước nóng 24/7", available: true},
-                    {icon: "fa-shield-halved", name: "An ninh 24/7", available: true},
-                    {icon: "fa-utensils", name: "Đồ dùng nhà bếp", available: true},
-                    {icon: "fa-wind", name: "Máy sấy tóc", available: true},
-                    {icon: "fa-mug-hot", name: "Máy pha cà phê", available: true},
-                    {icon: "fa-fire-extinguisher", name: "Bình cứu hỏa", available: true},
-                    {icon: "fa-paw", name: "Cho phép mang thú cưng", available: false},
-                    {icon: "fa-smoking", name: "Được phép hút thuốc", available: false}
-                ]
-            },
-            { 
-                id: 3, 
-                title: "Căn hộ tại Thành phố Hồ Chí Minh", 
-                price: 1751860, 
-                rating: 4.82, 
-                reviews: 11, 
-                image: "https://a0.muscache.com/im/pictures/miso/Hosting-1425899556206659577/original/140dc752-7bb4-49f7-b47f-69ef266c1d47.jpeg?im_w=1200", 
-                location: "Quận 4, Thành phố Hồ Chí Minh", 
-                guests: 3, 
-                description: "Căn hộ sang trọng với view đẹp tại Quận 4.",
-                fullDescription: "Căn hộ cao cấp view sông Sài Gòn tuyệt đẹp!\n\n🌊 View độc đáo:\n- Nhìn ra sông Sài Gòn và Landmark 81\n- Ban công rộng để ngắm hoàng hôn\n- Tầng 18, không khí trong lành\n\n🏠 Không gian:\n- 2 phòng ngủ rộng rãi\n- Phòng khách hiện đại 30m2\n- Bếp Mỹ đầy đủ thiết bị cao cấp\n- 2 phòng tắm với bồn tắm massage\n\n🎯 Tiện ích:\n- Smart TV 55 inch với Netflix\n- Hệ thống âm thanh Bose\n- Máy giặt-sấy LG inverter\n- Điều hòa multi trong tất cả phòng\n\n🚗 Giao thông:\n- 5 phút đến cầu Thủ Thiêm\n- Gần bến phà Bạch Đằng\n- Dễ dàng di chuyển toàn thành phố\n\n👨‍👩‍👧 Phù hợp:\n- Gia đình có trẻ nhỏ\n- Nhóm bạn 3-4 người\n- Người cần không gian làm việc yên tĩnh",
-                amenities: [
-                    {icon: "fa-wifi", name: "Wi-fi", available: true},
-                    {icon: "fa-snowflake", name: "Điều hòa multi", available: true},
-                    {icon: "fa-kitchen-set", name: "Bếp Mỹ cao cấp", available: true},
-                    {icon: "fa-shirt", name: "Máy giặt-sấy", available: true},
-                    {icon: "fa-tv", name: "Smart TV 55 inch", available: true},
-                    {icon: "fa-bath", name: "Bồn tắm massage", available: true},
-                    {icon: "fa-hot-tub-person", name: "Nước nóng", available: true},
-                    {icon: "fa-volume-high", name: "Hệ thống âm thanh Bose", available: true},
-                    {icon: "fa-umbrella-beach", name: "Ban công view sông", available: true},
-                    {icon: "fa-elevator", name: "Thang máy", available: true},
-                    {icon: "fa-car", name: "Chỗ đỗ xe", available: true},
-                    {icon: "fa-shield-halved", name: "An ninh 24/7", available: true},
-                    {icon: "fa-utensils", name: "Đồ dùng nhà bếp đầy đủ", available: true},
-                    {icon: "fa-wind", name: "Máy sấy tóc", available: true},
-                    {icon: "fa-mug-hot", name: "Máy pha cà phê Nespresso", available: true},
-                    {icon: "fa-baby", name: "Giường cũi cho bé", available: true},
-                    {icon: "fa-paw", name: "Cho phép mang thú cưng", available: false},
-                    {icon: "fa-smoking", name: "Được phép hút thuốc", available: false}
-                ]
-            },
-            { 
-                id: 4, 
-                title: "Căn hộ chung cư cao cấp tại Thành phố Hồ Chí Minh", 
-                price: 2360000, 
-                rating: 4.96, 
-                reviews: 14, 
-                image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1462849377191931233/original/081e4730-71e3-43f9-a70e-3b21842046f8.jpeg?im_w=1200", 
-                location: "Quận 1, Thành phố Hồ Chí Minh", 
-                guests: 4, 
-                description: "Căn hộ cao cấp tại khu trung tâm với đầy đủ tiện nghi.",
-                fullDescription: "Căn hộ penthouse sang trọng bậc nhất Quận 1!\n\n✨ Đẳng cấp 5 sao:\n- Diện tích 120m2, 3 phòng ngủ master\n- Nội thất nhập khẩu từ Italy\n- Sàn gỗ tự nhiên cao cấp\n- Trần thạch cao đèn LED âm trần\n\n🍽️ Bếp & Phòng ăn:\n- Bếp mở hiện đại với đảo bếp marble\n- Thiết bị Bosch, Electrolux cao cấp\n- Bàn ăn 6 người view panorama\n- Tủ rượu điện tử\n\n🛁 Phòng tắm:\n- 3 phòng tắm en-suite\n- Bồn tắm Jacuzzi trong phòng master\n- Thiết bị vệ sinh Toto Nhật Bản\n- Máy sấy tóc Dyson\n\n🏋️ Tiện ích toà nhà:\n- Hồ bơi infinity 4 mùa\n- Gym & Yoga studio\n- Sky lounge & BBQ area\n- Concierge 24/7\n- Valet parking\n\n📍 Vị trí vàng:\n- Trung tâm phố đi bộ Nguyễn Huệ\n- Bên cạnh Vincom Center\n- 2 phút đến Nhà hát Thành phố\n\n👥 Lý tưởng:\n- Gia đình cao cấp\n- Doanh nhân, CEO\n- Nhóm bạn muốn trải nghiệm sang trọng"
-            },
-            { 
-                id: 5, 
-                title: "Phòng tại Thành phố Hồ Chí Minh", 
-                price: 935765, 
-                rating: 4.93, 
-                reviews: 10, 
-                image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1418059956711068789/original/ed9cbbbf-14b4-4c38-9624-8f6a7930f7a9.jpeg?im_w=1200", 
-                location: "Quận 5, Thành phố Hồ Chí Minh", 
-                guests: 2, 
-                description: "Phòng thoải mái và yên tĩnh tại Quận 5.",
-                fullDescription: "Phòng ấm cúng trong khu phố Tàu Chợ Lớn!\n\n🏮 Không gian văn hóa:\n- Nằm trong khu Chợ Lớn lịch sử\n- Kiến trúc kết hợp Á - Âu độc đáo\n- Phòng riêng biệt 25m2\n- Giường queen size êm ái\n\n🍜 Ẩm thực:\n- Trung tâm ẩm thực Hoa nổi tiếng\n- Dim sum, bánh bao, mì Quảng Đông chính gốc\n- Chợ An Đông gần bên\n- Nhiều quán ăn đêm\n\n🎨 Văn hóa:\n- Gần chùa Bà Thiên Hậu\n- Nhà thờ Cha Tam\n- Chợ Bình Tây - kiến trúc Pháp cổ\n- Các hội quán người Hoa\n\n🚇 Di chuyển:\n- Gần bến xe Chợ Lớn\n- Nhiều tuyến bus đi khắp thành phố\n- Grab/taxi dễ dàng\n\n✅ Tiện ích:\n- Wi-Fi tốc độ cao\n- Điều hòa mát lạnh\n- Tủ lạnh mini\n- Ấm đun nước & pha trà miễn phí\n\n👤 Phù hợp:\n- Du khách yêu văn hóa Hoa\n- Người muốn khám phá ẩm thực\n- Backpacker với budget hợp lý"
-            },
-            { 
-                id: 6, 
-                title: "Căn hộ tại Thành phố Hồ Chí Minh", 
-                price: 3388343, 
-                rating: 4.93, 
-                reviews: 12, 
-                image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1235381201807167628/original/b1da5d38-c543-47bf-ba92-cc07d6f1b4d5.jpeg?im_w=1200", 
-                location: "Quận 1, Thành phố Hồ Chí Minh", 
-                guests: 5, 
-                description: "Căn hộ rộng rãi với 3 phòng ngủ tại Quận 1.",
-                fullDescription: "Căn hộ gia đình rộng rãi giữa lòng Sài Gòn!\n\n👨‍👩‍👧‍👦 Không gian sống:\n- 3 phòng ngủ đầy đủ nội thất\n- 2 phòng tắm hiện đại\n- Phòng khách 40m2 với sofa lớn\n- Bàn ăn 6-8 người\n- Ban công thoáng mát\n\n🧒 Thân thiện trẻ em:\n- Nôi cũi & ghế ăn dặm\n- Đồ chơi & sách thiếu nhi\n- Khu vui chơi tầng 5\n- An toàn với cửa sổ có lưới chắn\n\n🍳 Bếp đầy đủ:\n- Tủ lạnh 2 cánh Inverter\n- Máy rửa chén tự động\n- Lò nướng & lò vi sóng\n- Bộ nồi chảo cao cấp\n- Gia vị, dầu ăn cơ bản\n\n🏊 Tiện ích:\n- Hồ bơi trẻ em & người lớn\n- Khu BBQ ngoài trời\n- Sân chơi thiếu nhi\n- Mini mart tầng 1\n- Giặt ủi dịch vụ\n\n📚 Làm việc:\n- 2 bàn làm việc riêng\n- Wi-Fi 100Mbps\n- Góc đọc sách yên tĩnh\n- Máy in dùng chung\n\n🎯 Phù hợp:\n- Gia đình 5-6 người\n- Nhóm bạn thân\n- Kỳ nghỉ dài ngày\n- Khách nước ngoài có trẻ nhỏ"
-            },
-            { 
-                id: 7, 
-                title: "Phòng tại Quận Tân Phú", 
-                price: 899818, 
-                rating: 5.0, 
-                reviews: 15, 
-                image: "https://a0.muscache.com/im/pictures/hosting/Hosting-902740396149438067/original/e254a078-c5ed-43f9-888a-1ed7d79f708b.jpeg?im_w=1440", 
-                location: "Quận Tân Phú, Thành phố Hồ Chí Minh", 
-                guests: 2, 
-                description: "Phòng tuyệt vời tại Tân Phú với giá hợp lý.",
-                fullDescription: "Phòng tiện nghi với giá cả phải chăng tại Tân Phú!\n\n💰 Giá trị tốt nhất:\n- Giá rẻ nhất khu vực\n- Chất lượng vượt mong đợi\n- Không phí phát sinh\n- Giảm giá cho thuê dài ngày\n\n🏡 Phòng ở:\n- 20m2, gọn gàng sạch sẽ\n- Giường 1m6 với đệm Hanvico\n- Tủ quần áo rộng\n- Bàn làm việc & ghế ergonomic\n\n🚿 Phòng tắm:\n- Riêng biệt, khép kín\n- Máy nước nóng trực tiếp\n- Gương lớn & đèn LED\n- Sạch sẽ 100%\n\n🍳 Bếp chung:\n- Dùng chung với 2 phòng khác\n- Tủ lạnh riêng cho mỗi phòng\n- Bếp ga & đồ nấu ăn đầy đủ\n- Không gian thoáng mát\n\n🚌 Giao thông:\n- Gần bến xe Tân Phú\n- Nhiều tuyến bus\n- 15 phút đến Aeon Mall\n- 20 phút về Quận 1\n\n✨ Đặc biệt:\n- Chủ nhà thân thiện, nhiệt tình\n- Tư vấn địa điểm ăn uống\n- Cho mượn xe đạp miễn phí\n- Giặt là miễn phí\n\n👥 Phù hợp:\n- Sinh viên, người đi làm\n- Du khách tiết kiệm\n- Người ở dài ngày\n- Digital nomad"
-            },
-            { 
-                id: 8, 
-                title: "Nhà tại Thành phố Hồ Chí Minh", 
-                price: 4097079, 
-                rating: 5.0, 
-                reviews: 20, 
-                image: "https://a0.muscache.com/im/pictures/miso/Hosting-1326172669268706395/original/f14542ea-9530-4091-979e-27a913770892.jpeg?im_w=1200", 
-                location: "Quận 2, Thành phố Hồ Chí Minh", 
-                guests: 6, 
-                description: "Nhà rộng với sân vườn tại Quận 2.",
-                fullDescription: "Biệt thự sân vườn sang trọng tại Thảo Điền!\n\n🏡 Villa cao cấp:\n- Diện tích 200m2 x 3 tầng\n- 4 phòng ngủ suite với ban công riêng\n- 4 phòng tắm đầy đủ tiện nghi\n- Phòng khách rộng 50m2\n- Phòng ăn riêng biệt\n- Phòng giải trí với bi-a & karaoke\n\n🌳 Sân vườn:\n- 100m2 cây xanh mát mẻ\n- Hồ cá Koi\n- Khu BBQ ngoài trời\n- Bàn ghế ngoài trời\n- Xích đu cho trẻ em\n\n🏊 Hồ bơi riêng:\n- Hồ bơi 4x8m\n- Đèn LED đổi màu\n- Hệ thống lọc nước tự động\n- Ghế bơi & dù che nắng\n\n🚗 Tiện ích:\n- Gara 2 xe ô tô\n- Camera an ninh 24/7\n- Cổng tự động\n- Bảo vệ khu compound\n\n🌆 Khu vực Thảo Điền:\n- Khu nhà giàu an ninh cao\n- Gần trường quốc tế\n- Nhiều nhà hàng Âu-Á cao cấp\n- Metro An Phú 5 phút\n\n🎯 Đặc quyền:\n- Dịch vụ dọn dẹp 2 lần/tuần\n- Bảo trì sân vườn & hồ bơi\n- Concierge hỗ trợ 24/7\n- Đưa đón sân bay (có phí)\n\n👨‍👩‍👧‍👦 Lý tưởng:\n- Gia đình lớn\n- Nhóm bạn 6-8 người\n- Khách VIP\n- Tiệc sinh nhật, họp mặt"
-            },
-            
-            // Section 2: Còn phòng tại Hà Nội (8 phòng)
-            { 
-                id: 9, 
-                title: "Nơi ở tại Quận Đống Đa", 
-                price: 846820, 
-                rating: 5.0, 
-                reviews: 11, 
-                image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1543226481919602359/original/047057f9-0e77-429c-8cc6-9dddf4f653b3.jpeg?im_w=1200", 
-                location: "Quận Đống Đa, Hà Nội", 
-                guests: 2, 
-                description: "Phòng đẹp tại Hà Nội gần các điểm du lịch.",
-                fullDescription: "Phòng ấm áp giữa lòng Hà Nội cổ kính!\n\n🏛️ Vị trí đắc địa:\n- Cách Hồ Hoàn Kiếm 10 phút đi bộ\n- Gần Văn Miếu Quốc Tử Giám\n- Phố cổ 36 phố phường\n- Nhà hát Lớn Hà Nội\n\n🛏️ Phòng nghỉ:\n- 22m2, phong cách Á Đông\n- Giường king size\n- Trang trí tranh thêu truyền thống\n- Cửa sổ nhìn ra phố cổ\n\n☕ Trải nghiệm địa phương:\n- Cà phê trứng nổi tiếng gần nhà\n- Phở, bún chả hàng ngon xung quanh\n- Chợ đêm cuối tuần\n- Xe máy cho thuê\n\n❄️ Mùa đông Hà Nội:\n- Điều hòa sưởi ấm\n- Chăn mền dày dặn\n- Máy sưởi phụ\n- Nước nóng ổn định\n\n🎭 Văn hóa:\n- Hướng dẫn tham quan miễn phí\n- Bản đồ phố cổ\n- Gợi ý hàng quán ngon\n- Thuê áo dài chụp ảnh\n\n🚴 Di chuyển:\n- Xe đạp miễn phí\n- Gần nhiều tuyến bus\n- Grab dễ dàng\n\n👫 Phù hợp:\n- Cặp đôi yêu văn hóa\n- Nhiếp ảnh gia\n- Du khách lần đầu đến Hà Nội"
-            },
-            { id: 10, title: "Phòng tại Quận Hoàn Kiếm", price: 639059, rating: 4.75, reviews: 9, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1180221875142168010/original/abdf5717-8510-4c97-ac2f-302c058093df.jpeg?im_w=1200", location: "Quận Hoàn Kiếm, Hà Nội", guests: 2, description: "Phòng gần Hồ Hoàn Kiếm với giá rẻ.", fullDescription: "Phòng tiết kiệm cạnh Hồ Hoàn Kiếm!\n\n📍 Vị trí trung tâm:\n- 3 phút đi bộ đến Hồ Hoàn Kiếm\n- Phố cổ ngay trước mặt\n- Nhà thờ Lớn gần bên\n\n🛏️ Không gian:\n- 18m2 gọn gàng\n- Giường đôi thoải mái\n- Tủ quần áo\n\n💡 Tiện nghi:\n- Wi-Fi miễn phí\n- Điều hòa\n- Nước nóng\n\n🍜 Ẩm thực:\n- Phở Bát Đàn\n- Bún chả Hàng Mành\n- Café Giảng\n\n✨ Phù hợp backpacker và sinh viên" },
-            { id: 11, title: "Căn hộ tại Quận Hoàn Kiếm", price: 1539000, rating: 4.88, reviews: 13, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1151216889313926411/original/b165111c-9cbf-4bf7-984c-2bd0956150d6.jpeg?im_w=1440", location: "Quận Hoàn Kiếm, Hà Nội", guests: 3, description: "Căn hộ hiện đại tại Hà Nội.", fullDescription: "Căn hộ hiện đại view Hồ Hoàn Kiếm!\n\n🌅 View đẹp:\n- Nhìn thẳng ra Hồ Hoàn Kiếm\n- Tháp Rùa ngay trước mặt\n- Ngắm hoàng hôn từ ban công\n\n🏠 Căn hộ:\n- 45m2, 1 phòng ngủ\n- Phòng khách riêng\n- Bếp đầy đủ\n- Phòng tắm hiện đại\n\n✨ Nội thất:\n- Thiết kế tối giản\n- Đồ dùng cao cấp\n- Smart TV 43 inch\n\n🎯 Tiện ích:\n- Thang máy\n- An ninh 24/7\n- Giặt ủi dịch vụ\n\n👥 Lý tưởng cho 2-3 người" },
-            { id: 12, title: "Phòng tại Quận Hoàn Kiếm", price: 1111452, rating: 4.96, reviews: 14, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1207805086134572738/original/a151029a-2fd7-4aa7-baf8-569a3b32a24b.jpeg?im_w=1200", location: "Quận Hoàn Kiếm, Hà Nội", guests: 2, description: "Phòng thoải mái tại trung tâm Hà Nội.", fullDescription: "Phòng boutique phong cách Á Đông!\n\n🎨 Thiết kế:\n- Nội thất gỗ tự nhiên\n- Tranh lụa truyền thống\n- Đèn lồng đỏ\n\n🛏️ Giường ngủ:\n- King size cao cấp\n- Chăn gối Hanvico\n- Màn tuyn lãng mạn\n\n☕ Đặc biệt:\n- Bộ pha trà Việt Nam\n- Cà phê phin miễn phí\n- Bánh kẹo Hà Nội\n\n📚 Sách & Tạp chí:\n- Về văn hóa Hà Nội\n- Guide du lịch\n\n🎭 Trải nghiệm:\n- Áo dài cho thuê\n- Nón lá trang trí\n- Ảnh phố cổ" },
-            { id: 13, title: "Căn hộ tại Quận Tây Hồ", price: 2259530, rating: 4.78, reviews: 12, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1376847746179925424/original/a27f86c9-bd65-4ca4-8730-7e9fcbd8fc0e.jpeg?im_w=1200", location: "Quận Tây Hồ, Hà Nội", guests: 4, description: "Căn hộ gần Hồ Tây với tiện nghi.", fullDescription: "Căn hộ view Hồ Tây tuyệt đẹp!\n\n🌊 View Hồ Tây:\n- Tầng 12, view panorama\n- Ban công rộng 15m2\n- Ngắm hoàng hôn hàng ngày\n- Gió mát từ hồ\n\n🏠 Không gian:\n- 2 phòng ngủ\n- Phòng khách 30m2\n- Bếp Âu hiện đại\n- 2 phòng tắm\n\n🍴 Khu ẩm thực:\n- Nhiều nhà hàng Tây\n- Quán cafe view hồ\n- Chợ Tây Tạp hóa\n\n🚴 Hoạt động:\n- Đạp xe quanh hồ\n- Chùa Trấn Quốc\n- Chùa Quán Thánh\n\n👥 Phù hợp gia đình, nhóm bạn" },
-            { id: 14, title: "Căn hộ tại Quận Hoàn Kiếm", price: 1260000, rating: 4.81, reviews: 11, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1153423110798319101/original/d3d1dbca-0a22-4ae7-a6f3-406430d12830.jpeg?im_w=1200", location: "Quận Hoàn Kiếm, Hà Nội", guests: 2, description: "Căn hộ đẹp tại Hà Nội.", fullDescription: "Studio hiện đại giữa phố cổ!\n\n📍 Vị trí vàng:\n- Phố Hàng Bông\n- Cách Hồ Hoàn Kiếm 200m\n- Gần phố bia Tạ Hiện\n\n🏠 Studio:\n- 35m2 thông thoáng\n- Thiết kế mở\n- Giường sofa đa năng\n\n🍳 Bếp:\n- Bếp từ\n- Tủ lạnh inverter\n- Lò vi sóng\n- Đầy đủ đồ nấu\n\n📱 Smart home:\n- Khóa vân tay\n- Điều khiển điện tử\n- Voice control\n\n💼 Lý tưởng cho digital nomad" },
-            { id: 15, title: "Nơi ở tại Quận Hoàn Kiếm", price: 570546, rating: 4.83, reviews: 10, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTE0NjI0MjA3MjE0OTA3MTU5OA%3D%3D/original/65b04fdd-0592-480a-a41d-17ba4b851533.jpeg?im_w=1440", location: "Quận Hoàn Kiếm, Hà Nội", guests: 2, description: "Nơi ở rẻ tại Hà Nội.", fullDescription: "Phòng giá rẻ nhất phố cổ!\n\n💰 Tiết kiệm:\n- Giá tốt nhất khu vực\n- Không phí ẩn\n- Giảm giá thuê dài\n\n🛏️ Phòng:\n- 15m2 đủ dùng\n- Giường đơn sạch sẽ\n- Tủ nhỏ gọn\n\n🚿 Phòng tắm chung:\n- Sạch sẽ\n- Nước nóng\n- Chia sẻ 3 phòng\n\n🍜 Ăn uống:\n- Bếp chung\n- Nhiều quán rẻ\n- Chợ Đồng Xuân\n\n👥 Phù hợp:\n- Sinh viên\n- Backpacker\n- Budget traveler" },
-            { id: 16, title: "Phòng tại Quận Hoàn Kiếm", price: 1232125, rating: 4.93, reviews: 13, image: "https://a0.muscache.com/im/pictures/b4733660-8ec0-48dc-997c-cf620bc41626.jpg?im_w=1200", location: "Quận Hoàn Kiếm, Hà Nội", guests: 2, description: "Phòng tuyệt vời tại Hà Nội.", fullDescription: "Phòng cao cấp phố cổ!\n\n🏛️ Toà nhà cổ:\n- Kiến trúc Pháp 100 năm\n- Được trùng tu hiện đại\n- Giữ nét cổ kính\n\n🛏️ Phòng:\n- 28m2 sang trọng\n- Trần cao 4m\n- Cửa sổ kính lớn\n- Ánh sáng tự nhiên\n\n🎨 Nội thất:\n- Pha trộn cổ-hiện đại\n- Đồ gỗ quý\n- Tranh nghệ thuật\n\n☕ Minibar:\n- Trà Thái Nguyên\n- Cà phê Đà Lạt\n- Snack miễn phí\n\n📸 Perfect cho Instagram" },
-
-            // Section 3: Chỗ ở tại Quận 1 (8 phòng)
-            { id: 17, title: "Phòng tại Đa Kao", price: 1894354, rating: 4.76, reviews: 10, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1364503055472486650/original/b0a17453-354e-4982-b818-a16de0e8f0b2.jpeg?im_w=1440", location: "Đa Kao, Quận 1", guests: 2, description: "Phòng tại Đa Kao với vị trí tốt.", fullDescription: "Phòng sang trọng tại Đa Kao!\n\n📍 Vị trí:\n- Gần Thảo Cầm Viên\n- Công viên Tao Đàn\n- Nhiều quán cafe\n\n🏠 Phòng:\n- 25m2 thoáng mát\n- Nội thất hiện đại\n- View đẹp\n\n✨ Tiện nghi đầy đủ\n👥 Lý tưởng cho cặp đôi" },
-            { id: 18, title: "Căn hộ tại Cô Giang", price: 1609060, rating: 4.97, reviews: 12, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6ODAzOTc1MzU2NTEzNTcyNjkw/original/e171f451-ab0c-4497-b992-9105566402c8.jpeg?im_w=1440", location: "Cô Giang, Quận 1", guests: 3, description: "Căn hộ tại Cô Giang.", fullDescription: "Căn hộ ấm cúng Cô Giang!\n\n🏢 Căn hộ:\n- 40m2, 1 phòng ngủ\n- Phòng khách riêng\n- Bếp đầy đủ\n\n📍 Gần chợ Bến Thành\n🍜 Nhiều quán ăn ngon\n✨ Giá hợp lý" },
-            { id: 19, title: "Căn hộ tại Phạm Ngũ Lão", price: 1597648, rating: 4.83, reviews: 11, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1510945975797846368/original/e199fc98-b2cd-4ba4-8a9b-b2195ac4bbf1.jpeg?im_w=1440", location: "Phạm Ngũ Lão, Quận 1", guests: 2, description: "Căn hộ tại Phạm Ngũ Lão.", fullDescription: "Căn hộ backpacker Phạm Ngũ Lão!\n\n🎒 Khu vực sầm uất:\n- Phố Tây Bùi Viện\n- Nhiều bar, club\n- Du lịch bụi\n\n🏠 Căn hộ sạch sẽ\n💰 Giá tốt\n🌃 Nightlife tuyệt vời" },
-            { id: 20, title: "Phòng tại Đa Kao", price: 1386637, rating: 5.0, reviews: 15, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTI4NDc5NTYxODk1ODc0NDExNA%3D%3D/original/f6952b9a-32e0-41b9-888a-24d91c254f7b.jpeg?im_w=1440", location: "Đa Kao, Quận 1", guests: 2, description: "Phòng tuyệt vời tại Đa Kao.", fullDescription: "Phòng premium Đa Kao!\n\n⭐ Rating 5.0\n🏠 Sang trọng\n📍 Trung tâm Q1\n✨ Dịch vụ tốt nhất" },
-            { id: 21, title: "Nhà tại Cô Giang", price: 3195296, rating: 4.89, reviews: 14, image: "https://a0.muscache.com/im/pictures/miso/Hosting-54375504/original/8356ac8e-34db-49e2-85eb-3ebbcdcc7867.jpeg?im_w=1200", location: "Cô Giang, Quận 1", guests: 5, description: "Nhà rộng tại Cô Giang.", fullDescription: "Nhà phố rộng rãi!\n\n🏡 3 phòng ngủ\n👨‍👩‍👧‍👦 5-6 người\n🍳 Bếp đầy đủ\n🌳 Sân nhỏ\n💼 Phù hợp gia đình" },
-            { id: 22, title: "Nhà tại Cô Giang", price: 4097079, rating: 4.95, reviews: 13, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1326172669268706395/original/f14542ea-9530-4091-979e-27a913770892.jpeg?im_w=1200", location: "Cô Giang, Quận 1", guests: 6, description: "Nhà sang trọng tại Cô Giang.", fullDescription: "Villa cao cấp!\n\n🏰 Siêu sang trọng\n🛏️ 4 phòng ngủ\n👥 Đến 8 người\n🏊 Hồ bơi mini\n💎 Nội thất cao cấp" },
-            { id: 23, title: "Căn hộ chung cư cao cấp tại Phạm Ngũ Lão", price: 2063810, rating: 4.97, reviews: 12, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1396886973804448786/original/4f7d01fd-71cf-414b-84c0-160a0bcedd2e.jpeg?im_w=1200", location: "Phạm Ngũ Lão, Quận 1", guests: 3, description: "Căn hộ cao cấp tại Phạm Ngũ Lão.", fullDescription: "Căn hộ cao cấp Phạm Ngũ Lão!\n\n✨ Thiết kế hiện đại\n🏢 Tầng cao\n🌆 View thành phố\n🎯 Tiện ích 5 sao" },
-            { id: 24, title: "Căn hộ tại Quận 1", price: 1750000, rating: 4.85, reviews: 11, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1496408576612343725/original/0bbb91de-5c32-46ce-b2aa-4914c331fc13.jpeg?im_w=1200", location: "Quận 1, Thành phố Hồ Chí Minh", guests: 2, description: "Căn hộ đẹp tại Quận 1.", fullDescription: "Căn hộ trung tâm Q1!\n\n📍 Vị trí đắc địa\n🏠 Studio 30m2\n✨ Đầy đủ tiện nghi\n💰 Giá hợp lý" },
-
-            // Section 4: Còn phòng tại Đà Lạt (8 phòng)
-            { id: 25, title: "Phòng tại Phường 1", price: 867295, rating: 4.92, reviews: 10, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1031143726041246737/original/6d066100-9d1d-4fcf-b6fa-eb10695f1fb6.jpeg?im_w=1440", location: "Phường 1, Đà Lạt", guests: 2, description: "Phòng tại Đà Lạt.", fullDescription: "Phòng ấm áp Đà Lạt!\n\n🌲 Không khí mát mẻ\n☕ View đồi thông\n🛏️ Phòng ấm cúng\n🔥 Lò sưởi\n🌃 Đêm lạnh lãng mạn" },
-            { id: 26, title: "Nhà phố tại Dalat", price: 2371840, rating: 4.77, reviews: 11, image: "https://a0.muscache.com/im/pictures/bfdf27ab-ac56-49be-9c82-ae59313269a2.jpg?im_w=1200", location: "Dalat, Lâm Đồng", guests: 4, description: "Nhà phố tại Đà Lạt.", fullDescription: "Nhà phố xinh xắn!\n\n🏡 2 phòng ngủ\n🌺 Vườn hoa\n☕ Sân sau BBQ\n👨‍👩‍👧 Gia đình 4 người" },
-            { id: 27, title: "Phòng tại Dalat", price: 753177, rating: 4.76, reviews: 9, image: "https://a0.muscache.com/im/pictures/14c1f895-8d1e-4a14-96d6-8c52e9b8256d.jpg?im_w=1440", location: "Dalat, Lâm Đồng", guests: 2, description: "Phòng rẻ tại Đà Lạt.", fullDescription: "Phòng giá rẻ Đà Lạt!\n\n💰 Budget friendly\n🛏️ Sạch sẽ\n🌲 Gần chợ đêm\n🎯 Backpacker" },
-            { id: 28, title: "Phòng tại Dalat", price: 3469178, rating: 4.96, reviews: 14, image: "https://a0.muscache.com/im/pictures/miso/Hosting-563426164767978151/original/d7bff34f-807d-4f1d-b9ad-4293e203461c.png?im_w=1200", location: "Dalat, Lâm Đồng", guests: 2, description: "Phòng sang trọng tại Đà Lạt.", fullDescription: "Phòng cao cấp view thung lũng!\n\n🏔️ View núi đồi\n✨ Nội thất sang\n🔥 Lò sưởi cao cấp\n☕ Ban công riêng" },
-            { id: 29, title: "Căn hộ tại Dalat", price: 3780000, rating: 4.89, reviews: 12, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1353653864064161285/original/736f6de3-2004-4bab-b151-074c43995dd1.jpeg?im_w=1440", location: "Dalat, Lâm Đồng", guests: 3, description: "Căn hộ tại Đà Lạt.", fullDescription: "Căn hộ Đà Lạt!\n\n🏢 Căn hộ hiện đại\n🌲 View thông\n🍳 Bếp đầy đủ\n👥 3 người" },
-            { id: 30, title: "Phòng tại Dalat", price: 3105000, rating: 4.94, reviews: 13, image: "https://a0.muscache.com/im/pictures/832e961b-b328-4ad2-af23-6251715b890b.jpg?im_w=1440", location: "Dalat, Lâm Đồng", guests: 2, description: "Phòng tuyệt vời tại Đà Lạt.", fullDescription: "Phòng đẹp Đà Lạt!\n\n⭐ Rating cao\n🏠 Cozy\n🌺 Gần hồ Xuân Hương\n☕ Cafe sáng miễn phí" },
-            { id: 31, title: "Nhà tại Dalat", price: 2433447, rating: 4.89, reviews: 11, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1149852181500806941/original/527e47ac-a168-4f90-b8b5-096971bab757.jpeg?im_w=1440", location: "Dalat, Lâm Đồng", guests: 4, description: "Nhà tại Đà Lạt.", fullDescription: "Nhà vườn Đà Lạt!\n\n🏡 Nhà riêng\n🌳 Vườn rau\n🔥 Lò nướng\n👨‍👩‍👧‍👦 Gia đình" },
-            { id: 32, title: "Khách sạn tại Dalat", price: 420000, rating: 5.0, reviews: 16, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1312933678294802979/original/c876f1e5-7690-4a0a-a0dc-a57e703d5823.jpeg?im_w=1200", location: "Dalat, Lâm Đồng", guests: 2, description: "Khách sạn rẻ tại Đà Lạt.", fullDescription: "Khách sạn mini!\n\n💰 Rẻ nhất\n⭐ Rating 5.0\n🛏️ Sạch sẽ\n🍜 Gần chợ" },
-
-            // Section 5: Còn phòng tại Đà Nẵng (8 phòng)
-            { id: 33, title: "Phòng tại Quận Sơn Trà", price: 718942, rating: 4.9, reviews: 10, image: "https://a0.muscache.com/im/pictures/b5376fc0-3a3e-4802-8ef4-56a3baf587ba.jpg?im_w=1200", location: "Quận Sơn Trà, Đà Nẵng", guests: 2, description: "Phòng tại Đà Nẵng.", fullDescription: "Phòng gần biển Mỹ Khê!\n\n🏖️ 5 phút đến biển\n🌊 View biển\n🏄 Lướt sóng\n🍤 Hải sản tươi" },
-            { id: 34, title: "Phòng tại Quận Sơn Trà", price: 798824, rating: 4.92, reviews: 11, image: "https://a0.muscache.com/im/pictures/0a4bd2da-563b-4f49-8b75-5dfca64b3fc7.jpg?im_w=1200", location: "Quận Sơn Trà, Đà Nẵng", guests: 2, description: "Phòng đẹp tại Đà Nẵng.", fullDescription: "Phòng Sơn Trà!\n\n🏔️ Gần bán đảo Sơn Trà\n🐵 Xem khỉ\n🏖️ Bãi biển đẹp\n🌅 Hoàng hôn tuyệt" },
-            { id: 35, title: "Khách sạn tại Quận Sơn Trà", price: 1676924, rating: 5.0, reviews: 15, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1558413114768000235/original/5493b30c-c2a0-4048-9859-9012b3feca13.jpeg?im_w=1440", location: "Quận Sơn Trà, Đà Nẵng", guests: 3, description: "Khách sạn tại Đà Nẵng.", fullDescription: "Khách sạn view biển!\n\n🏨 3 sao\n🌊 Sát biển\n🏊 Hồ bơi\n🍽️ Nhà hàng" },
-            { id: 36, title: "Biệt thự tại Quận Sơn Trà", price: 10270593, rating: 5.0, reviews: 18, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1527350768979919060/original/3f12373f-6644-40e4-9a5b-4e48d4819b3d.jpeg?im_w=1440", location: "Quận Sơn Trà, Đà Nẵng", guests: 8, description: "Biệt thự sang trọng tại Đà Nẵng.", fullDescription: "Biệt thự biển siêu sang!\n\n🏰 Villa 5 sao\n🏊 Hồ bơi riêng\n🌊 Mặt tiền biển\n👥 8-10 người\n💎 Nội thất xa xỉ" },
-            { id: 37, title: "Biệt thự tại Quận Sơn Trà", price: 7680000, rating: 4.99, reviews: 16, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTM4NjU2MTg3NDUzMDU1NDQ2Nw==/original/d04b3b4b-50b9-4371-8911-6205206d126c.jpeg?im_w=1440", location: "Quận Sơn Trà, Đà Nẵng", guests: 6, description: "Biệt thự đẹp tại Đà Nẵng.", fullDescription: "Biệt thự cao cấp!\n\n🏡 4 phòng ngủ\n🏊 Bể bơi\n🌳 Sân vườn\n👨‍👩‍👧‍👦 Gia đình lớn" },
-            { id: 38, title: "Căn hộ tại Quận Ngũ Hành Sơn", price: 2054119, rating: 5.0, reviews: 14, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTQ1MDY5MjQxMzE0MDc5ODkyMg==/original/831a6189-2040-4b30-bebb-089a8e5714fd.jpeg?im_w=1440", location: "Quận Ngũ Hành Sơn, Đà Nẵng", guests: 3, description: "Căn hộ tại Đà Nẵng.", fullDescription: "Căn hộ Ngũ Hành Sơn!\n\n🏔️ Gần núi Thủy Sơn\n🏖️ Non Nước beach\n🗿 Làng nghề đá\n✨ Yên tĩnh" },
-            { id: 39, title: "Khách sạn tại Quận Sơn Trà", price: 1164378, rating: 4.95, reviews: 12, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-38285617/original/a3177364-73ea-4181-ac9c-ebd0d7630a84.jpeg?im_w=1440", location: "Quận Sơn Trà, Đà Nẵng", guests: 2, description: "Khách sạn tại Đà Nẵng.", fullDescription: "Khách sạn boutique!\n\n🏨 Thiết kế đẹp\n🌊 View biển\n☕ Cafe sáng\n🎯 Chất lượng cao" },
-            { id: 40, title: "Căn hộ tại Mân Thái", price: 2838048, rating: 4.95, reviews: 13, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTM2ODU5MTM2NjE2NDQyNzE3Nw==/original/d8ff4c9f-4499-4260-bdb9-9b18b85f5230.jpeg?im_w=1440", location: "Mân Thái, Đà Nẵng", guests: 3, description: "Căn hộ tại Mân Thái.", fullDescription: "Căn hộ Mân Thái!\n\n🏢 Khu cao cấp\n🏖️ Gần biển\n🏊 Tiện ích 5 sao\n👥 3 người" },
-
-            // Section 6: Vũng Tàu (8 phòng)
-            { id: 41, title: "Căn hộ tại Vũng Tàu", price: 935765, rating: 4.75, reviews: 10, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1324955592152429127/original/dbe1334d-c409-4c12-9586-4748fff5332f.jpeg?im_w=1200", location: "Vũng Tàu, Bà Rịa - Vũng Tàu", guests: 2, description: "Căn hộ tại Vũng Tàu.", fullDescription: "Căn hộ biển Vũng Tàu!\n\n🏖️ Gần bãi sau\n🌊 View biển\n🍤 Hải sản tươi\n🏊 Hồ bơi chung" },
-            { id: 42, title: "Phòng tại Vũng Tàu", price: 726750, rating: 5.0, reviews: 14, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1327307809472209250/original/192a9c3e-88f9-4ca3-a294-985f6ab5197b.jpeg?im_w=1440", location: "Vũng Tàu, Bà Rịa - Vũng Tàu", guests: 2, description: "Phòng tuyệt vời tại Vũng Tàu.", fullDescription: "Phòng Vũng Tàu!\n\n⭐ Rating 5.0\n🏖️ Gần biển\n💰 Giá tốt\n🎯 Sạch đẹp" },
-            { id: 43, title: "Căn hộ tại Vũng Tàu", price: 2031072, rating: 4.87, reviews: 12, image: "https://a0.muscache.com/im/pictures/prohost-api/Hosting-705602580862042057/original/195f641f-55fc-41dc-b9f7-1ddf962bd1d1.jpeg?im_w=1200", location: "Vũng Tàu, Bà Rịa - Vũng Tàu", guests: 3, description: "Căn hộ đẹp tại Vũng Tàu.", fullDescription: "Căn hộ cao cấp VT!\n\n🏢 Tầng cao\n🌊 View biển đẹp\n🏊 Hồ bơi infinity\n✨ Sang trọng" },
-            { id: 44, title: "Căn hộ tại Vũng Tàu", price: 1825883, rating: 5.0, reviews: 15, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-985452273027067097/original/b9a74264-4855-4755-8bb2-3d1c8614f721.jpeg?im_w=1440", location: "Vũng Tàu, Bà Rịa - Vũng Tàu", guests: 2, description: "Căn hộ tuyệt vời tại Vũng Tàu.", fullDescription: "Căn hộ 5 sao VT!\n\n⭐ Rating 5.0\n🌊 Sát biển\n✨ Đẹp nhất\n💎 Tiện nghi 5 sao" },
-            { id: 45, title: "Căn hộ tại Vũng Tàu", price: 1950271, rating: 4.93, reviews: 13, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1146327806519584685/original/3a21ad86-91e9-4157-a0b3-6d34679b98d2.jpeg?im_w=1440", location: "Vũng Tàu, Bà Rịa - Vũng Tàu", guests: 2, description: "Căn hộ sang trọng tại Vũng Tàu.", fullDescription: "Căn hộ VIP VT!\n\n💎 Sang trọng\n🏖️ Bãi trước\n🏊 Bể bơi\n☕ Cafe sáng" },
-            { id: 46, title: "Căn hộ tại Vũng Tàu", price: 2054119, rating: 4.93, reviews: 12, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-858131205689322602/original/06608599-e2ed-4868-8cfa-90da9fb5549c.jpeg?im_w=1440", location: "Vũng Tàu, Bà Rịa - Vũng Tàu", guests: 3, description: "Căn hộ tại Vũng Tàu.", fullDescription: "Căn hộ gia đình VT!\n\n👨‍👩‍👧 3 người\n🏖️ Gần biển\n🍳 Bếp đầy đủ\n🏊 Hồ bơi" },
-            { id: 47, title: "Căn hộ tại Vũng Tàu", price: 1997060, rating: 4.94, reviews: 11, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-925948523846924803/original/ae94ef43-743c-49d2-b4f1-9a2daf475e98.jpeg?im_w=1200", location: "Vũng Tàu, Bà Rịa - Vũng Tàu", guests: 2, description: "Căn hộ đẹp tại Vũng Tàu.", fullDescription: "Căn hộ đẹp VT!\n\n✨ Nội thất đẹp\n🌊 View biển\n🏊 Tiện ích\n💰 Giá tốt" },
-            { id: 48, title: "Căn hộ tại Vũng Tàu", price: 1848187, rating: 4.94, reviews: 12, image: "https://a0.muscache.com/im/pictures/miso/Hosting-968556098058240700/original/9b683bf4-1f1c-4af2-9296-534f68312cf2.jpeg?im_w=1440", location: "Vũng Tàu, Bà Rịa - Vũng Tàu", guests: 2, description: "Căn hộ tại Vũng Tàu.", fullDescription: "Căn hộ cozy VT!\n\n🏠 Ấm cúng\n🏖️ Gần bãi sau\n💰 Hợp lý\n👥 2 người" },
-
-            // Section 7: Văn Giang (8 phòng: 49-56)
-            { id: 49, title: "Căn hộ tại Văn Giang", price: 741765, rating: 4.92, reviews: 10, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1151351297822170295/original/6608e314-b668-4f60-b5b8-ce7ad148cff1.jpeg?im_w=1440", location: "Văn Giang, Hưng Yên", guests: 2, description: "Căn hộ tại Văn Giang.", fullDescription: "Căn hộ Văn Giang!\n\n🏢 Khu đô thị mới\n🚗 Gần cao tốc HN-HP\n💰 Giá tốt\n🏊 Hồ bơi chung" },
-            { id: 50, title: "Căn hộ tại Văn Giang", price: 1441979, rating: 4.94, reviews: 12, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1286736826121492741/original/08c1d595-7718-4004-85e9-fda37aa66df8.jpeg?im_w=1440", location: "Văn Giang, Hưng Yên", guests: 3, description: "Căn hộ đẹp tại Văn Giang.", fullDescription: "Căn hộ 2PN Văn Giang!\n\n🛏️ 2 phòng ngủ\n👨‍👩‍👧 3-4 người\n🏊 Hồ bơi\n💪 Gym miễn phí" },
-            { id: 51, title: "Căn hộ tại Văn Giang", price: 1951413, rating: 4.97, reviews: 13, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTI4NTExNjY0MzgwNDk2NDY2MA==/original/4cccfb0d-a188-405c-a0b9-da83f505d58b.jpeg?im_w=1440", location: "Văn Giang, Hưng Yên", guests: 4, description: "Căn hộ cao cấp tại Văn Giang.", fullDescription: "Căn hộ view hồ!\n\n🌊 View hồ Thiên Nga\n🌅 Ban công rộng\n✨ Nội thất đẹp\n🔒 An ninh 24/7" },
-            { id: 52, title: "Căn hộ tại Văn Giang", price: 1483530, rating: 5.0, reviews: 11, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1363415932540979884/original/d28c1567-d02f-4655-8164-b5ce703b1980.jpeg?im_w=1440", location: "Văn Giang, Hưng Yên", guests: 2, description: "Căn hộ studio tại Văn Giang.", fullDescription: "Studio Văn Giang!\n\n⭐ Rating 5.0\n🏠 Studio hiện đại\n📺 Smart TV\n🍳 Bếp mini" },
-            { id: 53, title: "Căn hộ tại Văn Giang", price: 1039092, rating: 4.95, reviews: 10, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1332956004603755686/original/88b48b5a-61cf-4a60-973f-d844334298a2.jpeg?im_w=1440", location: "Văn Giang, Hưng Yên", guests: 3, description: "Căn hộ gia đình tại Văn Giang.", fullDescription: "Căn hộ gia đình!\n\n👨‍👩‍👧 3 người\n🛏️ 2 phòng ngủ\n👶 Nôi trẻ em\n🧸 Khu vui chơi" },
-            { id: 54, title: "Căn hộ chung cư cao cấp tại Văn Giang", price: 1694646, rating: 4.97, reviews: 12, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1358709795835664748/original/2d80cec2-b1cb-494b-a61f-a0d1efe09cb0.jpeg?im_w=1440", location: "Văn Giang, Hưng Yên", guests: 4, description: "Căn hộ chung cư cao cấp.", fullDescription: "Căn hộ cao cấp!\n\n🏊 Hồ bơi 4 mùa\n💪 Phòng gym\n🎾 Sân tennis\n🌳 Công viên" },
-            { id: 55, title: "Căn hộ tại Hồ Thiên Nga", price: 2199343, rating: 4.97, reviews: 14, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1189731487467754109/original/beb1914a-015b-409c-b72d-ac368cf5c6df.jpeg?im_w=1200", location: "Hồ Thiên Nga, Văn Giang", guests: 5, description: "Căn hộ 3PN view hồ tuyệt đẹp.", fullDescription: "Căn hộ rộng view hồ!\n\n🏡 3 phòng ngủ\n🌊 View hồ Thiên Nga\n🍽️ Phòng ăn rộng\n👨‍👩‍👧‍👦 5 người" },
-            { id: 56, title: "Căn hộ tại Văn Giang", price: 1529177, rating: 5.0, reviews: 9, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1486889413234179338/original/2bb9bc2b-2f0d-448e-b392-fecd4d1771f0.jpeg?im_w=1440", location: "Văn Giang, Hưng Yên", guests: 2, description: "Căn hộ mới 100% tại Văn Giang.", fullDescription: "Căn hộ mới 100%!\n\n✨ Nội thất mới\n🛏️ Giường cao cấp\n📺 Smart TV 55 inch\n🌟 Rating 5.0" }
-        ];
-
-        // Lấy room ID từ URL query parameter
-        function getRoomIdFromURL() {
-            const params = new URLSearchParams(window.location.search);
-            return parseInt(params.get('room')) || 1;
-        }
-
-        // Load dữ liệu phòng
-        function loadRoom(roomId) {
-            const room = rooms.find(r => r.id === roomId);
-            if (!room) return;
-
-            // Update title
-            document.getElementById('page-title').textContent = room.title;
-            document.getElementById('room-title').textContent = room.title;
-            document.getElementById('room-location').textContent = room.location;
-            document.getElementById('room-rating').textContent = room.rating.toFixed(1);
-            document.getElementById('room-reviews').textContent = `${room.reviews} đánh giá`;
-            document.getElementById('room-guests').textContent = `${room.guests} khách`;
-            document.getElementById('guests-max').textContent = room.guests;
-            document.getElementById('room-description').textContent = room.description;
-            
-            // Card info
-            document.getElementById('card-price').textContent = `₫${room.price.toLocaleString('vi-VN')}`;
-            document.getElementById('card-rating').textContent = room.rating.toFixed(1);
-            document.getElementById('card-reviews').textContent = `${room.reviews} đánh giá`;
-            document.getElementById('price-per-night').textContent = `₫${room.price.toLocaleString('vi-VN')} x 2 đêm`;
-            document.getElementById('price-subtotal').textContent = `₫${(room.price * 2).toLocaleString('vi-VN')}`;
-            
-            // Calculate fees (roughly 32% service fee + 8% host protection)
-            const subtotal = room.price * 2;
-            const serviceFee = Math.round(subtotal * 0.32 / 100) * 100;
-            const hostFee = Math.round(subtotal * 0.08 / 100) * 100;
-            const total = subtotal + serviceFee + hostFee;
-            
-            document.getElementById('fee-service').textContent = `₫${serviceFee.toLocaleString('vi-VN')}`;
-            document.getElementById('fee-host').textContent = `₫${hostFee.toLocaleString('vi-VN')}`;
-            document.getElementById('price-total').textContent = `₫${total.toLocaleString('vi-VN')}`;
-            
-            // Gallery
-            document.getElementById('gallery-main-img').src = room.image;
-            document.getElementById('thumb-1').src = room.image;
-            document.getElementById('thumb-2').src = room.image;
-            document.getElementById('thumb-3').src = room.image;
-            document.getElementById('thumb-4').src = room.image;
-
-            // Reviews header
-            document.getElementById('reviews-header-rating').textContent = room.rating.toFixed(1);
-            document.getElementById('reviews-header-count').textContent = room.reviews;
-            
-            // Location
-            document.getElementById('location-text').textContent = room.location;
-
-            // Host info (placeholder)
-            const hostAvatarEl = document.getElementById('host-avatar');
-            hostAvatarEl.onerror = function() {
-                this.onerror = null;
-                this.src = 'https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg';
-            };
-            hostAvatarEl.src = "https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg";
-            document.getElementById('host-name').textContent = `Chủ nhà phòng ${room.id}`;
-            document.getElementById('host-info').textContent = "Chủ nhà siêu cấp · Tham gia vào năm 2020";
-            document.getElementById('host-reviews').textContent = Math.floor(Math.random() * 50) + 10;
-            document.getElementById('host-rating').textContent = (Math.random() * 0.1 + 4.9).toFixed(2);
-            document.getElementById('host-description').textContent = `Tôi yêu thích đón tiếp khách hàng tại phòng này. Phòng được chuẩn bị kỹ lưỡng để đảm bảo bạn có kỳ nghỉ thoải mái.`;
-
-            // Load amenities
-            loadAmenities(room);
-        }
-
-        // Load amenities preview (6 tiện nghi đầu tiên)
-        function loadAmenities(room) {
-            const amenities = room.amenities || generateDefaultAmenities(room);
-            const amenitiesList = document.getElementById('amenities-list');
-            
-            // Lấy 6 tiện nghi đầu tiên có available = true
-            const displayAmenities = amenities.filter(a => a.available !== false).slice(0, 6);
-            
-            // Clear và fill lại
-            amenitiesList.innerHTML = '';
-            displayAmenities.forEach(amenity => {
-                const col = document.createElement('div');
-                col.className = 'col-md-6 mb-3';
-                col.innerHTML = `
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="fa-solid ${amenity.icon}" style="color: #ff385c; font-size: 20px;"></i>
-                        <span class="ms-3">${amenity.name}</span>
-                    </div>
-                `;
-                amenitiesList.appendChild(col);
-            });
-
-            // Update số lượng tiện nghi
-            const totalAmenities = amenities.filter(a => a.available !== false).length;
-            document.getElementById('amenities-count').textContent = totalAmenities;
-        }
-
-        // Load room khi trang load
-        document.addEventListener('DOMContentLoaded', function() {
-            const roomId = getRoomIdFromURL();
-            loadRoom(roomId);
-            
-            // Xử lý nút "Xem thêm" mô tả
-            document.getElementById('btn-show-more').addEventListener('click', function(e) {
-                e.preventDefault();
-                const room = rooms.find(r => r.id === roomId);
-                if (room) {
-                    showDescriptionModal(room);
-                }
-            });
-
-            // Xử lý nút "Xem tất cả tiện nghi"
-            document.getElementById('btn-show-amenities').addEventListener('click', function(e) {
-                e.preventDefault();
-                const room = rooms.find(r => r.id === roomId);
-                if (room) {
-                    showAmenitiesModal(room);
-                }
-            });
-
-            // Xử lý nút "Hiển thị tất cả ảnh"
-            const galleryBtn = document.querySelector('.gallery-btn.view-all');
-            if (galleryBtn) {
-                galleryBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const room = rooms.find(r => r.id === roomId);
-                    if (room) {
-                        showGalleryModal(room);
-                    }
-                });
-            }
-
-            // Xử lý nút "Xem tất cả đánh giá"
-            const reviewsBtn = document.getElementById('btn-show-reviews');
-            if (reviewsBtn) {
-                reviewsBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const room = rooms.find(r => r.id === roomId);
-                    if (room) {
-                        showReviewsModal(room);
-                    }
-                });
-            }
-        });
-
-        // Thay emoji bằng icon Font Awesome và format mô tả
-        function formatDescription(text) {
-            const iconMap = {
-                '📍': 'fa-location-dot',
-                '📌': 'fa-location-dot',
-                '🏠': 'fa-house',
-                '🏡': 'fa-house-chimney',
-                '🏢': 'fa-building',
-                '🏰': 'fa-chess-rook',
-                '🏛️': 'fa-landmark',
-                '🏮': 'fa-landmark',
-                '🛏️': 'fa-bed',
-                '🛁': 'fa-bath',
-                '🚿': 'fa-shower',
-                '🔑': 'fa-key',
-                '☕': 'fa-mug-saucer',
-                '🍳': 'fa-utensils',
-                '🍜': 'fa-utensils',
-                '🍤': 'fa-fish',
-                '🍽️': 'fa-utensils',
-                '🎯': 'fa-bullseye',
-                '🎭': 'fa-masks-theater',
-                '🎒': 'fa-suitcase-rolling',
-                '🎁': 'fa-gift',
-                '🚴': 'fa-person-biking',
-                '🏄': 'fa-person-swimming',
-                '🏊': 'fa-person-swimming',
-                '🚌': 'fa-bus',
-                '🚇': 'fa-train-subway',
-                '🚗': 'fa-car-side',
-                '👥': 'fa-user-group',
-                '👫': 'fa-user-group',
-                '👨‍👩‍👧‍👦': 'fa-people-group',
-                '👨‍👩‍👧': 'fa-people-group',
-                '👶': 'fa-baby',
-                '🧒': 'fa-child',
-                '🧸': 'fa-paw',
-                '💰': 'fa-tag',
-                '💼': 'fa-briefcase',
-                '✅': 'fa-check',
-                '✔️': 'fa-check',
-                '💡': 'fa-lightbulb',
-                '✨': 'fa-wand-magic-sparkles',
-                '🌟': 'fa-star',
-                '⭐': 'fa-star',
-                '💎': 'fa-gem',
-                '🔥': 'fa-fire',
-                '🌊': 'fa-water',
-                '🏖️': 'fa-umbrella-beach',
-                '🌅': 'fa-sun',
-                '🏔️': 'fa-mountain',
-                '🌳': 'fa-tree',
-                '🌲': 'fa-tree',
-                '📚': 'fa-book',
-                '📱': 'fa-mobile-screen',
-                '🔒': 'fa-lock',
-                '🏨': 'fa-hotel',
-                '🏊‍♂️': 'fa-person-swimming'
-            };
-
-            const escapeForRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            let html = text || '';
-
-            // Chuyển từng emoji sang icon, cho phép variation selector
-            Object.entries(iconMap).forEach(([emoji, icon]) => {
-                const regex = new RegExp(`${escapeForRegex(emoji)}\uFE0F?`, 'g');
-                html = html.replace(regex, `<i class="fa-solid ${icon} icon-bullet"></i>`);
-            });
-
-            return html.replace(/\n/g, '<br>');
-        }
-
-        // Đảm bảo backdrop không bị kẹt sau khi đóng modal
-        function cleanupModalState() {
-            document.body.classList.remove('modal-open');
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '';
-            document.documentElement.style.paddingRight = '';
-            document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
-        }
-
-        function wireModalCleanup(modalId) {
-            const el = document.getElementById(modalId);
-            if (!el) return;
-            el.addEventListener('hidden.bs.modal', () => {
-                cleanupModalState();
-                // Force cleanup after Bootstrap finishes
-                setTimeout(() => {
-                    cleanupModalState();
-                    document.body.style.overflow = '';
-                    document.documentElement.style.overflow = '';
-                }, 100);
-            });
-        }
-
-        // Mở modal an toàn: dọn dẹp trước, setup cleanup sau
-        function safeShowModal(modalId) {
-            cleanupModalState();
-            const modalElement = document.getElementById(modalId);
-            if (!modalElement) return;
-            const modal = new bootstrap.Modal(modalElement);
-            wireModalCleanup(modalId);
-            modal.show();
-            // Remove Bootstrap's inline padding and add overflow hidden via JS
-            setTimeout(() => {
-                document.body.style.paddingRight = '';
-                document.documentElement.style.paddingRight = '';
-                document.body.style.overflow = 'hidden';
-            }, 10);
-        }
-
-        // Hiển thị modal mô tả
-        function showDescriptionModal(room) {
-            const modalContent = document.getElementById('modal-description-content');
-            const fullDesc = room.fullDescription || generateDefaultDescription(room);
-            const formattedDesc = formatDescription(fullDesc);
-            modalContent.innerHTML = formattedDesc;
-            safeShowModal('descriptionModal');
-        }
-
-        // Tạo mô tả mặc định cho các phòng chưa có fullDescription
-        function generateDefaultDescription(room) {
-            return `<strong>Chào mừng đến với ${room.title}!</strong><br><br>` +
-                   `📍 <strong>Vị trí:</strong><br>` +
-                   `- ${room.location}<br>` +
-                   `- Gần các điểm tham quan chính<br>` +
-                   `- Giao thông thuận tiện<br><br>` +
-                   `🏠 <strong>Không gian:</strong><br>` +
-                   `- Phòng rộng rãi, thoáng mát<br>` +
-                   `- Thiết kế hiện đại, sang trọng<br>` +
-                   `- Đầy đủ tiện nghi<br><br>` +
-                   `✨ <strong>Tiện nghi:</strong><br>` +
-                   `- Wi-Fi tốc độ cao miễn phí<br>` +
-                   `- Điều hòa nhiệt độ<br>` +
-                   `- TV màn hình phẳng<br>` +
-                   `- Bếp hoặc khu vực nấu ăn<br>` +
-                   `- Máy giặt<br><br>` +
-                   `🛏️ <strong>Giường ngủ:</strong><br>` +
-                   `- Giường thoải mái với ga trải sạch sẽ<br>` +
-                   `- Chăn gối đầy đủ<br><br>` +
-                   `🚿 <strong>Phòng tắm:</strong><br>` +
-                   `- Phòng tắm riêng biệt<br>` +
-                   `- Nước nóng 24/7<br>` +
-                   `- Đồ dùng vệ sinh cá nhân<br><br>` +
-                   `👥 <strong>Phù hợp cho:</strong><br>` +
-                   `- ${room.guests} khách<br>` +
-                   `- Gia đình, cặp đôi hoặc bạn bè<br>` +
-                   `- Du lịch hoặc công tác<br><br>` +
-                   `💰 <strong>Giá:</strong> ₫${room.price.toLocaleString('vi-VN')}/đêm<br><br>` +
-                   `<em>Chúng tôi luôn sẵn sàng đón tiếp bạn!</em>`;
-        }
-
-        // Hiển thị modal tiện nghi
-        function showAmenitiesModal(room) {
-            const modalContent = document.getElementById('modal-amenities-content');
-            const amenities = room.amenities || generateDefaultAmenities(room);
-            
-            // Tạo HTML cho danh sách tiện nghi
-            let html = '<div class="row">';
-            
-            amenities.forEach((amenity, index) => {
-                const iconClass = amenity.available !== false ? 'text-dark' : 'text-muted text-decoration-line-through';
-                const iconStyle = amenity.available !== false ? 'color: #222;' : 'color: #999;';
-                
-                html += `
-                    <div class="col-md-6 mb-4">
-                        <div class="d-flex align-items-center">
-                            <i class="fa-solid ${amenity.icon}" style="${iconStyle} font-size: 24px;"></i>
-                            <span class="ms-3 ${iconClass}">${amenity.name}</span>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            html += '</div>';
-            modalContent.innerHTML = html;
-            safeShowModal('amenitiesModal');
-        }
-
-        // Hiển thị modal gallery với tất cả ảnh
-        function showGalleryModal(room) {
-            const galleryContainer = document.getElementById('gallery-images-container');
-            const galleryTitle = document.getElementById('gallery-room-title');
-            
-            galleryTitle.textContent = room.title;
-            
-            // Tạo mảng 48 ảnh (ảnh chính + 47 ảnh duplicate để demo)
-            const allImages = [];
-            allImages.push(room.image); // Ảnh chính
-            
-            // Thêm 47 ảnh nữa (duplicate ảnh chính)
-            for (let i = 0; i < 47; i++) {
-                allImages.push(room.image);
-            }
-            
-            // Tạo HTML cho gallery
-            let html = '';
-            allImages.forEach((imgUrl, index) => {
-                html += `
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="gallery-img-wrapper" style="aspect-ratio: 4/3; overflow: hidden; border-radius: 8px; cursor: pointer;">
-                            <img src="${imgUrl}" alt="Ảnh ${index + 1}" 
-                                 style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;"
-                                 onmouseover="this.style.transform='scale(1.05)'"
-                                 onmouseout="this.style.transform='scale(1)'">
-                        </div>
-                    </div>
-                `;
-            });
-            
-            galleryContainer.innerHTML = html;
-            safeShowModal('galleryModal');
-        }
-
-        // Hiển thị modal đánh giá
-        function showReviewsModal(room) {
-            const modalRating = document.getElementById('reviews-modal-rating');
-            const modalCount = document.getElementById('reviews-modal-count');
-            const categoriesContainer = document.getElementById('reviews-rating-categories');
-            const reviewsContainer = document.getElementById('reviews-list-container');
-            
-            // Set rating and count
-            modalRating.textContent = room.rating.toFixed(1);
-            modalCount.textContent = `${room.reviews} lượt đánh giá`;
-            
-            // Generate rating categories
-            const categories = [
-                { name: 'Mức độ sạch sẽ', rating: (room.rating - 0.1 + Math.random() * 0.2).toFixed(1) },
-                { name: 'Độ chính xác', rating: (room.rating - 0.05 + Math.random() * 0.1).toFixed(1) },
-                { name: 'Nhận phòng', rating: (room.rating - 0.08 + Math.random() * 0.15).toFixed(1) },
-                { name: 'Giao tiếp', rating: room.rating.toFixed(1) },
-                { name: 'Địa điểm', rating: (room.rating - 0.12 + Math.random() * 0.2).toFixed(1) },
-                { name: 'Giá trị', rating: (room.rating - 0.15 + Math.random() * 0.25).toFixed(1) }
-            ];
-            
-            let categoriesHTML = '';
-            categories.forEach(cat => {
-                const ratingNum = parseFloat(cat.rating);
-                const barWidth = (ratingNum / 5 * 100).toFixed(0);
-                categoriesHTML += `
-                    <div class="col-md-6 mb-3">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span style="font-size: 14px;">${cat.name}</span>
-                            <span style="font-size: 14px; font-weight: 600;">${cat.rating}</span>
-                        </div>
-                        <div style="height: 4px; background: #e0e0e0; border-radius: 2px; overflow: hidden;">
-                            <div style="height: 100%; width: ${barWidth}%; background: #222; border-radius: 2px;"></div>
-                        </div>
-                    </div>
-                `;
-            });
-            categoriesContainer.innerHTML = categoriesHTML;
-            
-            // Generate reviews
-            const reviews = generateReviews(room);
-            let reviewsHTML = '';
-            reviews.forEach(review => {
-                reviewsHTML += `
-                    <div class="mb-4 pb-4 border-bottom">
-                        <div class="d-flex align-items-start">
-                            <img src="${review.avatar}" class="rounded-circle me-3" width="48" height="48" alt="${review.name}">
-                            <div class="flex-grow-1">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <div>
-                                        <p class="fw-bold mb-0">${review.name}</p>
-                                        <p class="text-muted small mb-0">${review.date}</p>
-                                    </div>
-                                    <div class="text-end">
-                                        ${generateStars(review.rating)}
-                                    </div>
-                                </div>
-                                <p class="mb-0" style="color: #222; line-height: 1.6;">${review.comment}</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            reviewsContainer.innerHTML = reviewsHTML;
-            safeShowModal('reviewsModal');
-        }
-
-        // Generate stars for rating
-        function generateStars(rating) {
-            let stars = '';
-            for (let i = 1; i <= 5; i++) {
-                if (i <= rating) {
-                    stars += '<i class="fa-solid fa-star" style="color: #FFD700; font-size: 12px;"></i> ';
-                } else {
-                    stars += '<i class="fa-regular fa-star" style="color: #E0E0E0; font-size: 12px;"></i> ';
-                }
-            }
-            return stars;
-        }
-
-        // Generate sample reviews based on room
-        function generateReviews(room) {
-            const reviewTemplates = [
-                {
-                    names: ['Chau', 'Minh', 'Hương', 'Tuấn', 'Linh'],
-                    comments: [
-                        'Tôi rất thích ngôi nhà ấm cùng gân gũi này, cho tôi cảm giác mộc mạc văn hóa của người Việt Nam giữa lòng phố Nightlife nhộn nhip. Nội này thuận tiện cho tôi đi bộ đao quanh các địa điểm du lịch.',
-                        'Phòng tuyệt vời ở vị trí tuyệt vời để khám phá thành phố. Tiện nghi đầy đủ, an toàn và sạch sẽ.',
-                        'Chỗ ở tuyệt vời ngay ngoài đường chính. Rất sạch sẽ, rẻ và khá yên tĩnh. Host rất thân thiện và hỗ trợ nhanh chóng.',
-                        'Không gian rất thoải mái, host chu đáo. Tất cả mọi thứ đều hoàn hảo, sẽ quay lại lần sau!',
-                        'Địa điểm tuyệt vời, gần trung tâm. Phòng sạch sẽ, tiện nghi đầy đủ. Chủ nhà nhiệt tình!'
-                    ]
-                },
-                {
-                    names: ['Ben', 'Sarah', 'David', 'Emma', 'Michael'],
-                    comments: [
-                        'Great location and very clean. Host was very helpful and responsive.',
-                        'Perfect place for exploring the city. Everything was as described.',
-                        'Wonderful experience! The apartment was spotless and well-equipped.',
-                        'Highly recommend! Great value for money and excellent location.',
-                        'Amazing stay! Will definitely come back again.'
-                    ]
-                },
-                {
-                    names: ['Angus', 'Sophie', 'James', 'Olivia', 'William'],
-                    comments: [
-                        'Fantastic apartment in a great location. Host was very accommodating.',
-                        'Clean, comfortable, and close to everything. Perfect!',
-                        'Exceeded expectations! Great communication with host.',
-                        'Lovely place, felt like home. Highly recommended!',
-                        'Best place I\'ve stayed in the city. Five stars!'
-                    ]
-                }
-            ];
-            
-            const months = ['tháng 1', 'tháng 2', 'tháng 3', 'tháng 4', 'tháng 5', 'tháng 6', 'tháng 7', 'tháng 8', 'tháng 9', 'tháng 10', 'tháng 11', 'tháng 12'];
-            const years = [2024, 2025];
-            
-            const reviews = [];
-            const numReviews = room.reviews || 14;
-            
-            for (let i = 0; i < numReviews; i++) {
-                const templateGroup = reviewTemplates[i % reviewTemplates.length];
-                const nameIndex = i % templateGroup.names.length;
-                const commentIndex = i % templateGroup.comments.length;
-                
-                reviews.push({
-                    name: templateGroup.names[nameIndex],
-                    avatar: `https://i.pravatar.cc/150?img=${(room.id * 10 + i) % 70}`,
-                    date: `${months[Math.floor(Math.random() * 12)]} năm ${years[Math.floor(Math.random() * years.length)]}`,
-                    rating: Math.random() > 0.3 ? 5 : 4,
-                    comment: templateGroup.comments[commentIndex]
-                });
-            }
-            
-            return reviews;
-        }
-
-        // Tạo danh sách tiện nghi mặc định cho các phòng
-        function generateDefaultAmenities(room) {
-            // Mỗi phòng có tiện nghi khác nhau dựa trên ID
-            const baseAmenities = [
-                {icon: "fa-wifi", name: "Wi-fi", available: true},
-                {icon: "fa-snowflake", name: "Điều hòa nhiệt độ", available: true},
-                {icon: "fa-tv", name: "TV", available: true},
-                {icon: "fa-hot-tub-person", name: "Nước nóng", available: true},
-            ];
-
-            // Thêm tiện nghi dựa trên giá phòng
-            if (room.price > 1500000) {
-                baseAmenities.push(
-                    {icon: "fa-kitchen-set", name: "Bếp đầy đủ", available: true},
-                    {icon: "fa-shirt", name: "Máy giặt", available: true},
-                    {icon: "fa-wind", name: "Máy sấy tóc", available: true},
-                    {icon: "fa-umbrella-beach", name: "Ban công", available: true},
-                    {icon: "fa-swimming-pool", name: "Hồ bơi", available: true},
-                    {icon: "fa-dumbbell", name: "Phòng gym", available: true},
-                    {icon: "fa-car", name: "Chỗ đỗ xe miễn phí", available: true},
-                    {icon: "fa-elevator", name: "Thang máy", available: true}
-                );
-            } else if (room.price > 1000000) {
-                baseAmenities.push(
-                    {icon: "fa-kitchen-set", name: "Bếp", available: true},
-                    {icon: "fa-shirt", name: "Máy giặt", available: true},
-                    {icon: "fa-lock", name: "Khóa ở cửa phòng ngủ", available: true},
-                    {icon: "fa-wind", name: "Quạt trần", available: true},
-                    {icon: "fa-utensils", name: "Đồ dùng nhà bếp", available: true},
-                    {icon: "fa-person-booth", name: "Cửa ra vào riêng", available: true}
-                );
-            } else {
-                baseAmenities.push(
-                    {icon: "fa-utensils", name: "Đồ dùng nhà bếp cơ bản", available: true},
-                    {icon: "fa-wind", name: "Quạt", available: true},
-                    {icon: "fa-lock", name: "Khóa cửa", available: true}
-                );
-            }
-
-            // Một số tiện nghi không có
-            baseAmenities.push(
-                {icon: "fa-paw", name: "Cho phép mang thú cưng", available: false},
-                {icon: "fa-smoking", name: "Được phép hút thuốc", available: false}
-            );
-
-            // Biến đổi một chút dựa trên room ID để có sự khác biệt
-            if (room.id % 3 === 0) {
-                baseAmenities.push({icon: "fa-mug-hot", name: "Máy pha cà phê", available: true});
-            }
-            if (room.id % 5 === 0) {
-                baseAmenities.push({icon: "fa-fire-extinguisher", name: "Bình cứu hỏa", available: true});
-            }
-            if (room.location.includes('Đà Lạt')) {
-                baseAmenities.push({icon: "fa-fire", name: "Lò sưởi", available: true});
-            }
-            if (room.location.includes('Đà Nẵng') || room.location.includes('Vũng Tàu')) {
-                baseAmenities.push({icon: "fa-person-swimming", name: "Gần bãi biển", available: true});
-            }
-
-            return baseAmenities;
-        }
-    </script>
+    
 
     <!-- External JavaScript -->
-    <script src="{% static 'app/js/chitietnoio-data.js' %}"></script>
-    <script src="{% static 'app/js/chitietnoio-main.js' %}"></script>
+    <!-- <script src="{% static 'app/js/chitietnoio-data.js' %}"></script>
+    <script src="{% static 'app/js/chitietnoio-main.js' %}"></script> -->
 </body>
 
 </html>

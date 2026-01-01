@@ -37,9 +37,37 @@ def taobaidang(request):
     return render(request, 'app/host/taobaidang.html')
 
 
+# def chitietnoio(request):
+#     """Render the detail page template created by the user."""
+#     from app.models import Listing
+#     room_param = request.GET.get('room')
+#     if not room_param:
+#         return render(request, 'app/guest/chitietnoio.html', {})
+
+#     try:
+#         room_id = int(room_param)
+#     except (TypeError, ValueError):
+#         room_id = None
+
+#     listing = None
+#     if room_id:
+#         try:
+#             listing = Listing.objects.select_related().prefetch_related('images', 'amenities').get(listing_id=room_id)
+#         except Listing.DoesNotExist:
+#             listing = None
+
+#     context = {'listing': listing}
+#     return render(request, 'app/guest/chitietnoio.html', context)
+
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Avg
+from app.models import Listing, Review, Booking, ReviewAnalysis
+from django.utils import timezone
+from app.sentiment import analyze_sentiment
+
 def chitietnoio(request):
     """Render the detail page template created by the user."""
-    from app.models import Listing
+
     room_param = request.GET.get('room')
     if not room_param:
         return render(request, 'app/guest/chitietnoio.html', {})
@@ -47,16 +75,77 @@ def chitietnoio(request):
     try:
         room_id = int(room_param)
     except (TypeError, ValueError):
-        room_id = None
+        return render(request, 'app/guest/chitietnoio.html', {})
 
-    listing = None
-    if room_id:
-        try:
-            listing = Listing.objects.select_related().prefetch_related('images', 'amenities').get(listing_id=room_id)
-        except Listing.DoesNotExist:
-            listing = None
+    listing = get_object_or_404(
+        Listing.objects
+        .select_related('listingaddress')
+        .prefetch_related('images', 'amenities', 'reviews__user', 'reviews__analysis'),
+        pk=room_id
+    )
 
-    context = {'listing': listing}
+    # ================== XỬ LÝ POST (GỬI ĐÁNH GIÁ) ==================
+    if request.method == "POST" and request.user.is_authenticated:
+        rating = int(request.POST.get("rating"))
+        comment = request.POST.get("comment", "").strip()
+
+        booking = Booking.objects.filter(
+            listing=listing,
+            user=request.user,
+            check_out__lt=timezone.now(),
+            booking_status="completed").order_by("-check_out").first()
+        if not booking:
+            return redirect(request.path)
+
+        if comment:
+            review = Review.objects.create(
+                listing=listing,
+                user=request.user,
+                rating=rating,
+                comment=comment
+            )
+
+            sentiment, confidence = analyze_sentiment(comment)
+            ReviewAnalysis.objects.create(
+                review=review,
+                sentiment=sentiment,
+                confidence_score=confidence
+            )
+    # ===============================================================
+
+    reviews = listing.reviews.all()
+    avg_rating = reviews.aggregate(avg=Avg('rating'))['avg']
+
+    
+
+    # ================== ĐIỀU KIỆN ĐƯỢC ĐÁNH GIÁ ==================
+    can_review = False
+    if request.user.is_authenticated:
+        has_completed_booking = Booking.objects.filter(
+            listing=listing,
+            user=request.user,
+            check_out__lt=timezone.now(),
+            booking_status="completed"
+        ).exists()
+
+        already_reviewed = Review.objects.filter(
+            listing=listing,
+            user=request.user
+        ).exists()
+
+        can_review = has_completed_booking and not already_reviewed
+    # =============================================================
+
+    context = {
+        'listing': listing,
+        'reviews': reviews,
+        'avg_rating': avg_rating,
+        'address': getattr(listing, 'listingaddress', None),
+        'images': listing.images.all(),
+        'amenities': listing.amenities.all(),
+        'can_review': can_review,
+    }
+
     return render(request, 'app/guest/chitietnoio.html', context)
 
 
