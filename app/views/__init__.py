@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from .user_view import user_profile
+
 
 # auth views live at top-level app/auth_views.py
 from ..auth_views import login_view, logout_view

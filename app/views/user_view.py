@@ -12,7 +12,7 @@ def user_profile(request, username=None):
     try:
         from .models import User
     except Exception:
-        return render(request, 'app/pages/user_profile.html', {'error': 'User model unavailable'})
+        return render(request, 'app/user/profile.html', {'error': 'User model unavailable'})
 
     if username is None:
         if not request.user.is_authenticated:
@@ -22,6 +22,8 @@ def user_profile(request, username=None):
     else:
         user = get_object_or_404(User, username=username)
 
+    is_owner = request.user.is_authenticated and request.user.id == user.id
+
     # expose a minimal public context
     public_info = {
         'username': getattr(user, 'username', ''),
@@ -30,7 +32,7 @@ def user_profile(request, username=None):
         'bio': getattr(user, 'bio', '') if hasattr(user, 'bio') else '',
     }
 
-    return render(request, 'app/pages/user_profile.html', {'profile_user': user, 'public': public_info})
+    return render(request, 'app/user/profile.html', {'profile_user': user, 'public': public_info, 'is_owner': is_owner})
 
 
 @login_required
@@ -41,24 +43,19 @@ def edit_profile(request):
     """
     user = request.user
     if request.method == 'POST':
-        full_name = request.POST.get('full_name')
-        phone = request.POST.get('phone')
-        bio = request.POST.get('bio')
+        user.full_name = request.POST.get('full_name')
+        user.phone_number = request.POST.get('phone_number')
+        
+        if 'avatar' in request.FILES:
+            user.avatar = request.FILES['avatar']
+            
 
-        try:
-            if full_name is not None and hasattr(user, 'full_name'):
-                user.full_name = full_name
-            if phone is not None and hasattr(user, 'phone'):
-                user.phone = phone
-            if bio is not None and hasattr(user, 'bio'):
-                user.bio = bio
-            user.save()
-            messages.success(request, 'Cập nhật hồ sơ thành công')
-            return redirect('profile')
-        except Exception as exc:
-            messages.error(request, f'Lỗi khi lưu: {exc}')
+        user.save()
+        return redirect('profile')    
 
-    return render(request, 'app/pages/user_edit.html', {'profile_user': user})
+        
+
+    return render(request, 'app/user/profile.html', {'edit_mode': True})
 
 
 def user_listings(request, username=None):

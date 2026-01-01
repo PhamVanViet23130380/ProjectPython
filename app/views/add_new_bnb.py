@@ -21,11 +21,16 @@ def create_listing(request):
         messages.error(request, 'Models unavailable')
         return redirect('home')
 
+    if getattr(request.user, 'role', None) == 'ADMIN':
+        messages.error(request, 'Admin không thể tạo listing')
+        return redirect('home')
+    
+
     if request.method == 'POST':
         title = request.POST.get('title', '').strip()
         description = request.POST.get('description', '').strip()
         price_raw = request.POST.get('price_per_night', '').strip()
-        max_adults = request.POST.get('max_adults') or 1
+        max_adults = request.POST.get('max_adults')
         max_children = request.POST.get('max_children') or 0
         max_pets = request.POST.get('max_pets') or 0
 
@@ -48,8 +53,15 @@ def create_listing(request):
             messages.error(request, 'Vui lòng cung cấp tiêu đề và mô tả')
             return redirect('add_new_bnb')
 
+
+        if not price_raw:
+            messages.error(request, 'Vui lòng nhập giá mỗi đêm')
+            return redirect('add_new_bnb')
+        
         try:
-            price_per_night = Decimal(price_raw) if price_raw else Decimal('0.00')
+            price_per_night = Decimal(price_raw) 
+            if price_per_night <= 0:
+                raise InvalidOperation
         except (InvalidOperation, TypeError):
             messages.error(request, 'Giá không hợp lệ')
             return redirect('add_new_bnb')
@@ -58,6 +70,8 @@ def create_listing(request):
             max_adults = int(max_adults)
             max_children = int(max_children)
             max_pets = int(max_pets)
+            if max_adults < 1 :
+                raise ValueError
         except Exception:
             messages.error(request, 'Số người/đồ không hợp lệ')
             return redirect('add_new_bnb')

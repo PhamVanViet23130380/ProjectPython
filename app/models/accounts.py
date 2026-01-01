@@ -19,7 +19,11 @@ class User(AbstractUser):
     full_name = models.CharField(max_length=150, blank=True, verbose_name='Họ tên đầy đủ')
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='guest', verbose_name='Phân quyền')
     phone_number = models.CharField(max_length=20, null=True, blank=True, verbose_name='Số điện thoại')
-    avatar_url = models.URLField(max_length=255, null=True, blank=True, verbose_name='Ảnh đại diện')
+    avatar = models.ImageField(
+    upload_to='avatars/',
+    null=True,
+    blank=True,
+    verbose_name='Ảnh đại diện')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

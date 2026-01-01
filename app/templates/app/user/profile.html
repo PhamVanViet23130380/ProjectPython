@@ -1,0 +1,207 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ sơ người dùng - Guest</title>
+    <link rel="stylesheet" href="{% static 'app/css/profile.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<div class="container">
+    <header class="header">
+        <a href="{% url 'home' %}" class="logo">
+            <i class="fas fa-home"></i>
+        </a>
+        <div class="user-nav">
+            {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" class="nav-avatar">
+            {% else %}
+                <img src="https://i.pinimg.com/736x/ed/57/43/ed574383727c119220c3934c79a191fb.jpg"
+                    class="nav-avatar">
+            {% endif %}
+
+            <span>{{ user.full_name|default:user.username }}</span>
+            <i class="fas fa-chevron-down" onclick="toggleDropdown()"></i>
+            
+            <!-- Dropdown menu -->
+            <div id="userDropdown">
+                <a href="{% url 'logout' %}">
+                    <i class="fas fa-right-from-bracket"></i> Đăng xuất
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        // Đóng dropdown khi click bên ngoài
+        window.onclick = function(event) {
+            if (!event.target.matches('.fa-chevron-down')) {
+                const dropdown = document.getElementById('userDropdown');
+                if (dropdown.style.display === 'block') {
+                    dropdown.style.display = 'none';
+                }
+            }
+        }
+    </script>
+
+    <nav class="tabs">
+        <button class="tab-item active">Thông tin tài khoản</button>
+        <button class="tab-item">Lịch sử thuê nhà</button>
+        <button class="tab-item">Tin nhắn</button>
+        <button class="tab-item">Yêu thích</button>
+    </nav>
+
+    <main class="profile-content">
+        <aside class="sidebar">
+            <div class="profile-card">
+
+                {% if edit_mode %}
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="avatar-container">
+                        <label for="avatarInput" class="avatar-label">
+                            <img
+                                id="avatarPreview"
+                                src="{% if user.avatar %}{{ user.avatar.url }}{% else %}https://i.pinimg.com/736x/ed/57/43/ed574383727c119220c3934c79a191fb.jpg{% endif %}"
+                                class="main-avatar"
+                            >
+                            <div class="avatar-overlay">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                        </label>
+
+                        <input
+                            type="file"
+                            id="avatarInput"
+                            name="avatar"
+                            accept="image/*"
+                            hidden
+                        >
+
+                        <small>Thay ảnh đại diện</small>
+                    </div>
+
+
+                    <input type="text"
+                        name="full_name"
+                        value="{{ user.full_name|default:user.username }}"
+                        placeholder="Họ và tên"
+                        class="input"
+                        required>
+
+                    <input type="text"
+                        name="phone_number"
+                        value="{{ user.phone_number }}"
+                        placeholder="Số điện thoại"
+                        class="input">
+
+                    <input type="email"
+                        value="{{ user.email }}"
+                        class="input"
+                        disabled>
+
+                    <div class="actions">
+                        <button type="submit" class="btn-save">Lưu thay đổi</button>
+                        <a href="{% url 'profile' %}" class="btn-cancel">Hủy</a>
+                    </div>
+                </form>
+
+                {% else %}
+                <div class="avatar-container">
+                    {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" class="main-avatar">
+                {% else %}
+                    <img src="https://i.pinimg.com/736x/ed/57/43/ed574383727c119220c3934c79a191fb.jpg"
+                        class="main-avatar">
+                {% endif %}
+
+                </div>
+
+                <h3>Xin chào, {{ user.full_name|default:user.username }}!</h3>
+
+                <ul class="info-list">
+                    <li><i class="fas fa-envelope"></i> {{ user.email }}</li>
+                    <li><i class="fas fa-phone"></i> {{ user.phone_number|default:'Chưa cập nhật số điện thoại' }}</li>
+                    <li>
+                        <i class="fas fa-user-tag"></i>
+                        Trạng thái:
+                        {% if profile_user.listings.exists %}
+                            Đang cho thuê nhà
+                        {% else %}
+                            Đang thuê nhà
+                        {% endif %}
+                    </li>
+                </ul>
+
+                <a href="{% url 'profile_edit' %}" class="btn-edit">
+                    Chỉnh sửa hồ sơ
+                </a>
+                {% endif %}
+
+                
+
+            </div>
+        </aside>
+
+        <section class="history-section {% if edit_mode %}disabled{% endif %}">
+            <h2>Lịch sử thuê nhà</h2>
+            
+            <div class="history-item">
+                <img src="https://via.placeholder.com/100x80" alt="House">
+                <div class="item-details">
+                    <h4>Căn hộ Elsu bắn hụt</h4>
+                    <p>Thời gian thuê: 01/01/2022 - 31/12/2023</p>
+                    <span class="status">Đã kết thúc</span>
+                </div>
+                <i class="fas fa-home icon-right"></i>
+            </div>
+
+            <div class="history-item">
+                <img src="https://via.placeholder.com/100x80" alt="House">
+                <div class="item-details">
+                    <h4>Nhà riêng Krixi đừng dẵm lên cỏ và hoa nhé</h4>
+                    <p>Thời gian thuê: 01/03/2019 - 28/02/2021</p>
+                    <span class="status">Đã kết thúc</span>
+                </div>
+                <i class="fas fa-home icon-right"></i>
+            </div>
+        </section>
+    </main>
+</div>
+
+
+<script>
+    const avatarInput = document.getElementById("avatarInput");
+    const avatarPreview = document.getElementById("avatarPreview");
+
+    if (avatarInput) {
+        avatarInput.addEventListener("change", function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith("image/")) {
+                alert("Vui lòng chọn file ảnh");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                avatarPreview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+</script>
+
+</body>
+</html>

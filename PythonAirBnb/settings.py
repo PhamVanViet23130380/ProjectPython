@@ -140,6 +140,11 @@ JAZZMIN_UI_TWEAKS = {
 }
 
 
+# Phần thay avtar
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
 
 # Email Backend
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
