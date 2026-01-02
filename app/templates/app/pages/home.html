@@ -12,7 +12,7 @@
 
     <section class="section cards-section popular-city">
         <div class="section-header">
-            <h2>Nơi lưu trú được ưa chuộng tại Hồ Chí Minh ›</h2>
+            <h2>Nơi lưu trú tại Hồ Chí Minh ›</h2>
             <div class="slider-controls">
                 <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
                 <button class="slide-btn right" onclick="slideRight(this)">❯</button>
@@ -25,8 +25,6 @@
                     {% with item.images.all|first as first_img %}
                         <img src="{{ first_img.image_url }}" alt="{{ item.title }}">
                     {% endwith %}
-                    <div class="popular-badge">Được khách yêu thích</div>
-                    <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
                     <h4>{{ item.title }}</h4>
                     <p class="meta">₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm · ★5,0</p>
                 </div>
@@ -37,7 +35,7 @@
 
     <section class="section cards-section">
         <div class="section-header">
-            <h2>Còn phòng tại Hà Nội vào tháng tới ›</h2>
+            <h2>Nơi lưu trú tại Hà Nội ›</h2>
             <div class="slider-controls">
                 <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
                 <button class="slide-btn right" onclick="slideRight(this)">❯</button>
@@ -50,8 +48,6 @@
                     {% with item.images.all|first as first_img %}
                         <img src="{{ first_img.image_url }}" alt="{{ item.title }}">
                     {% endwith %}
-                    <div class="popular-badge">Được khách yêu thích</div>
-                    <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
                     <h4>{{ item.title }}</h4>
                     <p class="meta">₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm · ★{{ item.rating|default:"5,0" }}</p>
                 </div>
@@ -62,7 +58,7 @@
 
     <section class="section cards-section">
         <div class="section-header">
-            <h2>Còn phòng tại Đà Lạt vào cuối tuần này ›</h2>
+            <h2>Nơi lưu trú tại Đà Lạt ›</h2>
             <div class="slider-controls">
                 <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
                 <button class="slide-btn right" onclick="slideRight(this)">❯</button>
@@ -75,8 +71,6 @@
                     {% with item.images.all|first as first_img %}
                         <img src="{{ first_img.image_url }}" alt="{{ item.title }}">
                     {% endwith %}
-                    <div class="popular-badge">Được khách yêu thích</div>
-                    <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
                     <h4>{{ item.title }}</h4>
                     <p class="meta">₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm · ★5,0</p>
                 </div>
@@ -87,7 +81,7 @@
 
     <section class="section cards-section">
         <div class="section-header">
-            <h2>Còn phòng tại Đà Nẵng vào tháng tới ›</h2>
+            <h2>Nơi lưu trú tại Đà Nẵng ›</h2>
             <div class="slider-controls">
                 <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
                 <button class="slide-btn right" onclick="slideRight(this)">❯</button>
@@ -100,8 +94,6 @@
                     {% with item.images.all|first as first_img %}
                         <img src="{{ first_img.image_url }}" alt="{{ item.title }}">
                     {% endwith %}
-                    <div class="popular-badge">Được khách yêu thích</div>
-                    <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
                     <h4>{{ item.title }}</h4>
                     <p class="meta">₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm · ★5,0</p>
                 </div>
@@ -112,7 +104,7 @@
 
     <section class="section cards-section">
         <div class="section-header">
-            <h2>Nơi lưu trú được ưa chuộng tại Huyện Văn Giang ›</h2>
+            <h2>Nơi lưu trú tại Vũng Tàu ›</h2>
             <div class="slider-controls">
                 <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
                 <button class="slide-btn right" onclick="slideRight(this)">❯</button>
@@ -125,8 +117,6 @@
                     {% with item.images.all|first as first_img %}
                         <img src="{{ first_img.image_url }}" alt="{{ item.title }}">
                     {% endwith %}
-                    <div class="popular-badge">Được khách yêu thích</div>
-                    <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
                     <h4>{{ item.title }}</h4>
                     <p class="meta">₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm · ★5,0</p>
                 </div>
@@ -150,8 +140,6 @@
                     {% with item.images.all|first as first_img %}
                         <img src="{{ first_img.image_url }}" alt="{{ item.title }}">
                     {% endwith %}
-                    <div class="popular-badge">Được khách yêu thích</div>
-                    <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
                     <h4>{{ item.title }}</h4>
                     <p class="meta">₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm · ★5,0</p>
                 </div>

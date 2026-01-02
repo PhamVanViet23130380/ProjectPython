@@ -10,10 +10,11 @@ def home_view(request):
         'hanoi_listings': listings.filter(listingaddress__city__icontains="Hà Nội"),
         'dalat_listings': listings.filter(listingaddress__city__icontains="Đà Lạt"),
         'danang_listings': listings.filter(listingaddress__city__icontains="Đà Nẵng"),
-        'vangiang_listings': listings.filter(listingaddress__district__icontains="Văn Giang"),
+        'vungtau_listings': listings.filter(listingaddress__city__icontains="Vũng Tàu"),
         'other_listings': listings.exclude(listingaddress__city__icontains="Hồ Chí Minh")
                                   .exclude(listingaddress__city__icontains="Hà Nội")
                                   .exclude(listingaddress__city__icontains="Đà Lạt")
-                                  .exclude(listingaddress__city__icontains="Đà Nẵng"),
+                                  .exclude(listingaddress__city__icontains="Đà Nẵng")
+                                  .exclude(listingaddress__city__icontains="Vũng Tàu"),
     }
     return render(request, 'app/pages/home.html', context)
