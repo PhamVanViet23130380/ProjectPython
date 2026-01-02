@@ -1,26 +1,35 @@
-// Get room data from URL
+// Get room data from URL or Django template context
 function getRoomDataFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     const roomId = parseInt(urlParams.get('room')) || 1;
     
-    // Try to get room from rooms array (loaded from chitietnoio-data.js)
-    if (typeof rooms !== 'undefined' && rooms.length > 0) {
-        const room = rooms.find(r => r.id === roomId);
-        if (room) {
-            return {
-                id: room.id,
-                image: room.image,
-                title: room.title,
-                rating: room.rating,
-                reviews: room.reviews,
-                pricePerNight: room.price,
-                nights: 2,
-                location: room.location
-            };
-        }
+    // Try to get data from Django template context first (if available)
+    const bodyEl = document.querySelector('body[data-listing-id]');
+    if (bodyEl) {
+        const listingId = bodyEl.getAttribute('data-listing-id');
+        const priceEl = document.getElementById('pricePerNight');
+        console.log('priceEl:', priceEl);
+        console.log('priceEl.textContent:', priceEl ? priceEl.textContent : 'null');
+        let priceText = priceEl ? priceEl.textContent : '0';
+        // Remove ₫ symbol and parse
+        priceText = priceText.replace(/[₫đ,\s]/g, '');
+        console.log('priceText after cleanup:', priceText);
+        const price = parseFloat(priceText) || 0;
+        console.log('Parsed price:', price);
+        
+        return {
+            id: parseInt(listingId) || roomId,
+            image: document.getElementById('roomImage')?.src || '/static/app/images/room1.jpg',
+            title: document.getElementById('roomTitle')?.textContent || 'Căn hộ',
+            rating: parseFloat(document.getElementById('roomRating')?.textContent) || 4.8,
+            reviews: parseInt(document.getElementById('roomReviews')?.textContent.match(/\d+/)?.[0]) || 12,
+            pricePerNight: price,
+            nights: 2,
+            location: 'Thành phố Hồ Chí Minh'
+        };
     }
     
-    // Fallback to default room data if rooms array not loaded
+    // Fallback to default room data if template data not available
     return {
         id: roomId,
         image: '/static/app/images/room1.jpg',
@@ -35,14 +44,25 @@ function getRoomDataFromURL() {
 
 // Format currency
 function formatCurrency(amount) {
-    return 'đ' + amount.toLocaleString('vi-VN');
+    if (amount === undefined || amount === null || isNaN(amount)) {
+        return 'đ0';
+    }
+    const num = typeof amount === 'string' ? parseFloat(amount) : amount;
+    if (isNaN(num)) return 'đ0';
+    return 'đ' + num.toLocaleString('vi-VN', { maximumFractionDigits: 0 });
 }
 
 // Calculate prices
 function calculatePrices(pricePerNight, nights) {
-    const subtotal = pricePerNight * nights;
-    const serviceFee = Math.round(subtotal * 0.32); // 32% service fee
-    const hostFee = Math.round(subtotal * 0.08); // 8% host protection fee
+    // Validate inputs
+    const price = parseFloat(pricePerNight) || 0;
+    const numNights = parseInt(nights) || 0;
+    
+    const subtotal = price * numNights;
+    // Hardcoded service fee (VND) — configurable later
+    const serviceFee = 350000;
+    // Host protection fee default 0 (hidden when 0)
+    const hostFee = 0;
     const total = subtotal + serviceFee + hostFee;
     
     return {
@@ -56,25 +76,168 @@ function calculatePrices(pricePerNight, nights) {
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
     const roomData = getRoomDataFromURL();
-    const prices = calculatePrices(roomData.pricePerNight, roomData.nights);
+    // Initialize from URL params if available
+    const params = new URLSearchParams(window.location.search);
+    const paramCheckIn = params.get('checkin');
+    const paramCheckOut = params.get('checkout');
+    const paramGuests = params.get('guests');
+    const roomFromParam = parseInt(params.get('room')) || roomData.id;
+
+    // If a room id provided by URL, use room data from template
+    let currentRoom = roomData;
+    console.log('Current room data:', currentRoom);
+
+    // Helper to parse YYYY-MM-DD into Date
+    function parseISODate(s) {
+        if (!s) return null;
+        const parts = s.split('-').map(p => parseInt(p, 10));
+        if (parts.length !== 3 || parts.some(isNaN)) return null;
+        return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+
+    // Format date with month name and year
+    function formatDateWithYear(date) {
+        if (!date) return '';
+        const months = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+                       'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+        return `${date.getDate()} ${months[date.getMonth()]}, ${date.getFullYear()}`;
+    }
+
+    // Determine initial dates
+    let checkInDateVal = paramCheckIn || document.getElementById('checkInDate').value || null;
+    let checkOutDateVal = paramCheckOut || document.getElementById('checkOutDate').value || null;
+
+    let checkInDateObj = parseISODate(checkInDateVal);
+    let checkOutDateObj = parseISODate(checkOutDateVal);
+
+    // If no dates provided, fall back to defaults in roomData (nights) and today
+    if (!checkInDateObj || !checkOutDateObj) {
+        // Default: tomorrow as check-in and tomorrow + roomData.nights as check-out
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        checkInDateObj = new Date(today);
+        checkInDateObj.setDate(checkInDateObj.getDate() + 1); // tomorrow
+        checkOutDateObj = new Date(checkInDateObj);
+        checkOutDateObj.setDate(checkOutDateObj.getDate() + (roomData.nights || 1));
+        // set inputs accordingly
+        document.getElementById('checkInDate').value = checkInDateObj.toISOString().slice(0,10);
+        document.getElementById('checkOutDate').value = checkOutDateObj.toISOString().slice(0,10);
+    } else {
+        // Populate inputs from URL
+        document.getElementById('checkInDate').value = checkInDateVal;
+        document.getElementById('checkOutDate').value = checkOutDateVal;
+    }
+
+    // Disable past dates: set min attributes so users cannot pick today or earlier
+    const checkInInput = document.getElementById('checkInDate');
+    const checkOutInput = document.getElementById('checkOutDate');
+    const nowForMin = new Date();
+    const todayForMin = new Date(nowForMin.getFullYear(), nowForMin.getMonth(), nowForMin.getDate());
+    const tomorrowForMin = new Date(todayForMin);
+    tomorrowForMin.setDate(tomorrowForMin.getDate() + 1);
+    const toISODate = (d) => d.toISOString().slice(0,10);
+
+    // Enforce check-in min = tomorrow
+    checkInInput.min = toISODate(tomorrowForMin);
+
+    // If the URL provided a check-in that's today or earlier, replace with tomorrow
+    let currentCheckIn = parseISODate(checkInInput.value);
+    if (!currentCheckIn || currentCheckIn <= todayForMin) {
+        checkInInput.value = toISODate(tomorrowForMin);
+        currentCheckIn = new Date(tomorrowForMin);
+    }
+
+    // Set check-out min to check-in + 1
+    const minCheckOut = new Date(currentCheckIn);
+    minCheckOut.setDate(minCheckOut.getDate() + 1);
+    checkOutInput.min = toISODate(minCheckOut);
+
+    // If URL provided check-out is <= check-in, set to minCheckOut
+    let currentCheckOut = parseISODate(checkOutInput.value);
+    if (!currentCheckOut || currentCheckOut <= currentCheckIn) {
+        checkOutInput.value = toISODate(minCheckOut);
+    }
+
+    // Keep check-out min in sync when user changes check-in
+    checkInInput.addEventListener('change', function() {
+        const ci = parseISODate(this.value);
+        if (!ci) return;
+        // ensure check-in is after today
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        if (ci <= today) {
+            // revert to tomorrow
+            this.value = toISODate(tomorrowForMin);
+            currentCheckIn = new Date(tomorrowForMin);
+        } else {
+            currentCheckIn = ci;
+        }
+
+        const newMinCo = new Date(currentCheckIn);
+        newMinCo.setDate(newMinCo.getDate() + 1);
+        checkOutInput.min = toISODate(newMinCo);
+
+        const co = parseISODate(checkOutInput.value);
+        if (!co || co <= currentCheckIn) {
+            checkOutInput.value = toISODate(newMinCo);
+        }
+    });
+
+    // compute nights correctly across year boundaries
+    const nights = Math.max(1, Math.ceil((checkOutDateObj - checkInDateObj) / (1000 * 60 * 60 * 24)));
+    const prices = calculatePrices(currentRoom.pricePerNight, nights);
     
     // Update room info
-    document.getElementById('roomImage').src = roomData.image;
-    document.getElementById('roomTitle').textContent = roomData.title;
-    document.getElementById('roomRating').textContent = roomData.rating;
-    document.getElementById('roomReviews').textContent = `(${roomData.reviews} đánh giá)`;
+    document.getElementById('roomImage').src = currentRoom.image;
+    document.getElementById('roomTitle').textContent = currentRoom.title;
+    document.getElementById('roomRating').textContent = currentRoom.rating;
+    document.getElementById('roomReviews').textContent = `(${currentRoom.reviews} đánh giá)`;
     
-    // Update price details
-    document.getElementById('pricePerNight').textContent = formatCurrency(roomData.pricePerNight);
-    document.getElementById('numNights').textContent = roomData.nights;
-    document.getElementById('subtotal').textContent = formatCurrency(prices.subtotal);
-    document.getElementById('serviceFee').textContent = formatCurrency(prices.serviceFee);
-    document.getElementById('hostFee').textContent = formatCurrency(prices.hostFee);
-    document.getElementById('totalPrice').textContent = formatCurrency(prices.total);
+    // Update price details - with null checks
+    const pricePerNightEl = document.getElementById('pricePerNight');
+    const numNightsEl = document.getElementById('numNights');
+    const subtotalEl = document.getElementById('subtotal');
+    const serviceFeeEl = document.getElementById('serviceFee');
+    const hostFeeEl = document.getElementById('hostFee');
+    const totalPriceEl = document.getElementById('totalPrice');
     
-    // Update review section dates
-    document.getElementById('reviewDates').textContent = document.getElementById('tripDates').textContent;
-    document.getElementById('reviewGuests').textContent = document.getElementById('tripGuests').textContent;
+    if (pricePerNightEl) pricePerNightEl.textContent = formatCurrency(currentRoom.pricePerNight);
+    if (numNightsEl) numNightsEl.textContent = nights;
+    if (subtotalEl) subtotalEl.textContent = formatCurrency(prices.subtotal);
+    if (serviceFeeEl) serviceFeeEl.textContent = formatCurrency(prices.serviceFee);
+    if (hostFeeEl) hostFeeEl.textContent = formatCurrency(prices.hostFee);
+    
+    // Hide host fee row if zero or element doesn't exist
+    if (prices.hostFee === 0 || !hostFeeEl) {
+        document.querySelectorAll('.price-row').forEach(row => {
+            const label = row.querySelector('.price-label');
+            if (label && label.textContent.trim().includes('Phí bảo vệ chủ nhà')) {
+                row.style.display = 'none';
+            }
+        });
+    }
+    
+    if (totalPriceEl) totalPriceEl.textContent = formatCurrency(prices.total);
+    
+    // Update review section dates and guests - with null checks
+    const tripDatesEl = document.getElementById('tripDates');
+    const reviewDatesEl = document.getElementById('reviewDates');
+    const tripGuestsEl = document.getElementById('tripGuests');
+    const reviewGuestsEl = document.getElementById('reviewGuests');
+    
+    if (tripDatesEl) {
+        tripDatesEl.textContent = `${formatDateWithYear(checkInDateObj)} — ${formatDateWithYear(checkOutDateObj)}`;
+        if (reviewDatesEl) reviewDatesEl.textContent = tripDatesEl.textContent;
+    }
+    
+    if (paramGuests) {
+        if (tripGuestsEl) tripGuestsEl.textContent = paramGuests + ' khách';
+        if (reviewGuestsEl) reviewGuestsEl.textContent = paramGuests + ' khách';
+    } else {
+        if (tripGuestsEl && reviewGuestsEl) {
+            reviewGuestsEl.textContent = tripGuestsEl.textContent;
+        }
+    }
     
     // Collapsible sections
     const sectionHeaders = document.querySelectorAll('.section-header[data-toggle="collapse"]');
@@ -128,51 +291,127 @@ document.addEventListener('DOMContentLoaded', function() {
     const editDatesBtn = document.getElementById('editDatesBtn');
     const editGuestsBtn = document.getElementById('editGuestsBtn');
     
+    console.log('Datphong.js loaded - editDatesBtn:', editDatesBtn);
+    
     // Date Modal
     function openDateModal() {
-        dateModal.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        console.log('Opening date modal');
+        if (dateModal) {
+            dateModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
     }
     
     function closeDateModal() {
-        dateModal.classList.remove('active');
-        document.body.style.overflow = 'auto';
+        console.log('Closing date modal');
+        if (dateModal) {
+            dateModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
     }
     
     function saveDates() {
         const checkIn = document.getElementById('checkInDate').value;
         const checkOut = document.getElementById('checkOutDate').value;
         
+        // helper to show inline date validation messages
+        function showDateError(msg) {
+            let err = document.getElementById('dateErrorMsg');
+            if (!err) {
+                err = document.createElement('div');
+                err.id = 'dateErrorMsg';
+                err.style.color = '#b00020';
+                err.style.marginTop = '8px';
+                err.style.fontSize = '0.95rem';
+                err.style.textAlign = 'left';
+                // insert before modal footer if possible
+                const footer = dateModal.querySelector('.modal-footer');
+                if (footer && footer.parentNode) footer.parentNode.insertBefore(err, footer);
+                else dateModal.appendChild(err);
+            }
+            err.textContent = msg;
+        }
+
+        function clearDateError() {
+            const err = document.getElementById('dateErrorMsg');
+            if (err) err.textContent = '';
+        }
+
+        // clear previous errors on input changes
+        document.getElementById('checkInDate').addEventListener('input', clearDateError);
+        document.getElementById('checkOutDate').addEventListener('input', clearDateError);
+
         if (checkIn && checkOut) {
-            const checkInDate = new Date(checkIn);
-            const checkOutDate = new Date(checkOut);
+            const checkInDate = parseISODate(checkIn);
+            const checkOutDate = parseISODate(checkOut);
             
+            // Ensure check-in is after today
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            if (checkInDate <= today) {
+                showDateError('Ngày nhận phòng phải sau ngày hôm nay. Vui lòng chọn ngày khác.');
+                return;
+            }
+
+            // Ensure check-out is after check-in
             if (checkOutDate <= checkInDate) {
-                alert('Ngày trả phòng phải sau ngày nhận phòng!');
+                showDateError('Ngày trả phòng phải sau ngày nhận phòng.');
                 return;
             }
             
-            const formattedCheckIn = formatDate(checkInDate);
-            const formattedCheckOut = formatDate(checkOutDate);
-            const dateText = `${formattedCheckIn} - ${formattedCheckOut}`;
+            const formattedCheckIn = formatDateWithYear(checkInDate);
+            const formattedCheckOut = formatDateWithYear(checkOutDate);
+            const dateText = `${formattedCheckIn} — ${formattedCheckOut}`;
+
+            const tripDatesEl = document.getElementById('tripDates');
+            if (tripDatesEl) tripDatesEl.textContent = dateText;
             
-            document.getElementById('tripDates').textContent = dateText;
-            document.getElementById('reviewDates').textContent = dateText;
-            
-            // Calculate nights
-            const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
-            const prices = calculatePrices(roomData.pricePerNight, nights);
-            
+            const reviewDatesEl = document.getElementById('reviewDates');
+            if (reviewDatesEl) reviewDatesEl.textContent = dateText;
+
+            // Calculate nights correctly across years
+            const nights = Math.max(1, Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)));
+            const prices = calculatePrices(currentRoom.pricePerNight, nights);
+
             // Update price details
-            document.getElementById('numNights').textContent = nights;
-            document.getElementById('subtotal').textContent = formatCurrency(prices.subtotal);
-            document.getElementById('serviceFee').textContent = formatCurrency(prices.serviceFee);
-            document.getElementById('hostFee').textContent = formatCurrency(prices.hostFee);
-            document.getElementById('totalPrice').textContent = formatCurrency(prices.total);
+            const numNightsEl = document.getElementById('numNights');
+            if (numNightsEl) numNightsEl.textContent = nights;
             
+            const subtotalEl = document.getElementById('subtotal');
+            if (subtotalEl) subtotalEl.textContent = formatCurrency(prices.subtotal);
+            
+            const serviceFeeEl = document.getElementById('serviceFee');
+            if (serviceFeeEl) serviceFeeEl.textContent = formatCurrency(prices.serviceFee);
+            
+            const hostFeeEl = document.getElementById('hostFee');
+            if (hostFeeEl) hostFeeEl.textContent = formatCurrency(prices.hostFee);
+            
+            const totalPriceEl = document.getElementById('totalPrice');
+            if (totalPriceEl) totalPriceEl.textContent = formatCurrency(prices.total);
+
+            // Hide host fee row if zero
+            if (prices.hostFee === 0) {
+                document.querySelectorAll('.price-row').forEach(row => {
+                    const label = row.querySelector('.price-label');
+                    if (label && label.textContent.trim().includes('Phí bảo vệ chủ nhà')) {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            // Update URL params so changes persist when sharing/refreshing
+            const newParams = new URLSearchParams(window.location.search);
+            newParams.set('checkin', checkIn);
+            newParams.set('checkout', checkOut);
+            // keep room param if present
+            if (roomFromParam) newParams.set('room', roomFromParam);
+            if (paramGuests) newParams.set('guests', paramGuests);
+            const newUrl = window.location.pathname + '?' + newParams.toString();
+            window.history.replaceState({}, '', newUrl);
+
             closeDateModal();
         } else {
-            alert('Vui lòng chọn cả ngày nhận và trả phòng!');
+            showDateError('Vui lòng chọn cả ngày nhận và trả phòng.');
         }
     }
     
@@ -180,6 +419,19 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('checkInDate').value = '';
         document.getElementById('checkOutDate').value = '';
     }
+
+    // Expose modal functions to global scope so inline `onclick` in templates work
+    window.openDateModal = openDateModal;
+    window.closeDateModal = closeDateModal;
+    window.saveDates = saveDates;
+    window.clearDates = clearDates;
+    // Expose guest modal functions too
+    window.openGuestsModal = openGuestsModal;
+    window.closeGuestsModal = closeGuestsModal;
+    window.saveGuests = saveGuests;
+    window.incrementGuests = incrementGuests;
+    window.decrementGuests = decrementGuests;
+    window.updateGuestCounters = updateGuestCounters;
     
     function formatDate(date) {
         const months = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
@@ -229,27 +481,54 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function updateGuestCounters() {
-        document.getElementById('adultsCount').textContent = guestCounts.adults;
-        document.getElementById('childrenCount').textContent = guestCounts.children;
-        document.getElementById('infantsCount').textContent = guestCounts.infants;
-        document.getElementById('petsCount').textContent = guestCounts.pets;
-        
-        // Update button states
-        document.querySelector('[data-type="adults"][data-action="decrement"]').disabled = guestCounts.adults <= 1;
-        document.querySelector('[data-type="children"][data-action="decrement"]').disabled = guestCounts.children <= 0;
-        document.querySelector('[data-type="infants"][data-action="decrement"]').disabled = guestCounts.infants <= 0;
-        document.querySelector('[data-type="pets"][data-action="decrement"]').disabled = guestCounts.pets <= 0;
-        
-        document.querySelector('[data-type="adults"][data-action="increment"]').disabled = guestCounts.adults >= 16;
-        document.querySelector('[data-type="children"][data-action="increment"]').disabled = guestCounts.children >= 5;
-        document.querySelector('[data-type="infants"][data-action="increment"]').disabled = guestCounts.infants >= 5;
-        document.querySelector('[data-type="pets"][data-action="increment"]').disabled = guestCounts.pets >= 5;
+        const safeSetText = (id, value) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+        };
+        safeSetText('adultsCount', guestCounts.adults);
+        safeSetText('childrenCount', guestCounts.children);
+        safeSetText('infantsCount', guestCounts.infants);
+        safeSetText('petsCount', guestCounts.pets);
+
+        // Helper to find increment/decrement buttons using several fallback selectors
+        function findBtn(type, action) {
+            // try data- attributes first
+            let sel = `[data-type="${type}"][data-action="${action}"]`;
+            let btn = document.querySelector(sel);
+            if (btn) return btn;
+            // try inline onclick attribute exact match
+            const onclickExact = action === 'decrement'
+                ? `decrementGuests('${type}')`
+                : `incrementGuests('${type}')`;
+            btn = document.querySelector(`[onclick="${onclickExact}"]`);
+            if (btn) return btn;
+            // try contains (lenient)
+            btn = Array.from(document.querySelectorAll('.counter-btn')).find(b => {
+                const o = b.getAttribute('onclick') || '';
+                return o.indexOf(type) !== -1 && o.indexOf(action === 'decrement' ? 'decrement' : 'increment') !== -1;
+            });
+            return btn || null;
+        }
+
+        const buttons = [
+            {t: 'adults', minDisabled: guestCounts.adults <= 1, maxDisabled: guestCounts.adults >= 16},
+            {t: 'children', minDisabled: guestCounts.children <= 0, maxDisabled: guestCounts.children >= 5},
+            {t: 'infants', minDisabled: guestCounts.infants <= 0, maxDisabled: guestCounts.infants >= 5},
+            {t: 'pets', minDisabled: guestCounts.pets <= 0, maxDisabled: guestCounts.pets >= 5},
+        ];
+
+        buttons.forEach(b => {
+            const dec = findBtn(b.t, 'decrement');
+            const inc = findBtn(b.t, 'increment');
+            if (dec) dec.disabled = !!b.minDisabled;
+            if (inc) inc.disabled = !!b.maxDisabled;
+        });
     }
     
     function saveGuests() {
         const totalGuests = guestCounts.adults + guestCounts.children;
         const parts = [];
-        
+
         if (totalGuests > 0) {
             parts.push(`${totalGuests} khách`);
         }
@@ -259,30 +538,45 @@ document.addEventListener('DOMContentLoaded', function() {
         if (guestCounts.pets > 0) {
             parts.push(`${guestCounts.pets} thú cưng`);
         }
-        
+
         const guestText = parts.join(', ');
-        document.getElementById('tripGuests').textContent = guestText;
-        document.getElementById('reviewGuests').textContent = guestText;
-        
+        const tripEl = document.getElementById('tripGuests');
+        const reviewEl = document.getElementById('reviewGuests');
+        if (tripEl) tripEl.textContent = guestText;
+        if (reviewEl) reviewEl.textContent = guestText;
+
+        // Persist guests in URL so selection survives reload/share
+        const newParams = new URLSearchParams(window.location.search);
+        newParams.set('guests', String(totalGuests));
+        const newUrl = window.location.pathname + '?' + newParams.toString();
+        window.history.replaceState({}, '', newUrl);
+
         closeGuestsModal();
     }
     
-    // Event listeners for modals
-    editDatesBtn.addEventListener('click', openDateModal);
-    editGuestsBtn.addEventListener('click', openGuestsModal);
+    // Event listeners for modals (attach only if elements exist)
+    if (editDatesBtn) {
+        console.log('Adding click listener to editDatesBtn');
+        editDatesBtn.addEventListener('click', openDateModal);
+    }
+    if (editGuestsBtn) editGuestsBtn.addEventListener('click', openGuestsModal);
     
     // Close modals on overlay click
-    dateModal.addEventListener('click', function(e) {
-        if (e.target === dateModal) {
-            closeDateModal();
-        }
-    });
+    if (dateModal) {
+        dateModal.addEventListener('click', function(e) {
+            if (e.target === dateModal) {
+                closeDateModal();
+            }
+        });
+    }
     
-    guestsModal.addEventListener('click', function(e) {
-        if (e.target === guestsModal) {
-            closeGuestsModal();
-        }
-    });
+    if (guestsModal) {
+        guestsModal.addEventListener('click', function(e) {
+            if (e.target === guestsModal) {
+                closeGuestsModal();
+            }
+        });
+    }
     
     // Close buttons
     document.querySelectorAll('.modal-close').forEach(btn => {
@@ -296,15 +590,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Save buttons
-    document.getElementById('saveDatesBtn').addEventListener('click', saveDates);
-    document.getElementById('saveGuestsBtn').addEventListener('click', saveGuests);
-    
+    // Save buttons (attach only if present)
+    const saveDatesBtnEl = document.getElementById('saveDatesBtn');
+    if (saveDatesBtnEl) saveDatesBtnEl.addEventListener('click', saveDates);
+    const saveGuestsBtnEl = document.getElementById('saveGuestsBtn');
+    if (saveGuestsBtnEl) saveGuestsBtnEl.addEventListener('click', saveGuests);
+
     // Clear dates button
-    document.getElementById('clearDatesBtn').addEventListener('click', clearDates);
-    
+    const clearDatesBtnEl = document.getElementById('clearDatesBtn');
+    if (clearDatesBtnEl) clearDatesBtnEl.addEventListener('click', clearDates);
+
     // Cancel guests button
-    document.getElementById('cancelGuestsBtn').addEventListener('click', closeGuestsModal);
+    const cancelGuestsBtnEl = document.getElementById('cancelGuestsBtn');
+    if (cancelGuestsBtnEl) cancelGuestsBtnEl.addEventListener('click', closeGuestsModal);
     
     // Guest counter buttons
     document.querySelectorAll('.counter-btn').forEach(btn => {
@@ -320,76 +618,344 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Submit booking
+    // Submit booking with inline validation
     const submitBtn = document.getElementById('submitBooking');
     const paymentForm = document.getElementById('paymentForm');
-    
-    submitBtn.addEventListener('click', function() {
-        // Validate form
-        if (!paymentForm.checkValidity()) {
+
+    function showFieldError(fieldEl, msg) {
+        if (!fieldEl) return;
+        let err = fieldEl.nextElementSibling;
+        if (!err || !err.classList || !err.classList.contains('field-error')) {
+            err = document.createElement('div');
+            err.className = 'field-error';
+            err.style.color = '#b00020';
+            err.style.fontSize = '0.9rem';
+            err.style.marginTop = '6px';
+            fieldEl.parentNode.insertBefore(err, fieldEl.nextSibling);
+        }
+        err.textContent = msg;
+    }
+
+    function clearFieldError(fieldEl) {
+        if (!fieldEl) return;
+        const err = fieldEl.nextElementSibling;
+        if (err && err.classList && err.classList.contains('field-error')) err.textContent = '';
+    }
+
+    function clearAllPaymentErrors() {
+        ['cardNumber','expiryDate','cvv','postalCode'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) clearFieldError(el);
+        });
+    }
+
+    // Form-level error (display below submit button)
+    function showFormError(msg) {
+        let formErr = document.getElementById('paymentFormError');
+        if (!formErr) {
+            formErr = document.createElement('div');
+            formErr.id = 'paymentFormError';
+            formErr.style.color = '#b00020';
+            formErr.style.marginTop = '12px';
+            formErr.style.fontSize = '1rem';
+            const submit = document.getElementById('submitBooking');
+            if (submit && submit.parentNode) submit.parentNode.insertBefore(formErr, submit.nextSibling);
+            else if (paymentForm) paymentForm.appendChild(formErr);
+            else document.body.appendChild(formErr);
+        }
+        formErr.textContent = msg;
+    }
+
+    function clearFormError() {
+        const formErr = document.getElementById('paymentFormError');
+        if (formErr) formErr.textContent = '';
+    }
+
+    if (submitBtn) submitBtn.addEventListener('click', function(ev) {
+        ev.preventDefault();
+        clearAllPaymentErrors();
+        clearFormError();
+
+        // Basic HTML5 validity first
+        if (paymentForm && !paymentForm.checkValidity()) {
             paymentForm.reportValidity();
             return;
         }
-        
-        const cardNumber = document.getElementById('cardNumber').value;
-        const expiryDate = document.getElementById('expiryDate').value;
-        const cvv = document.getElementById('cvv').value;
-        const postalCode = document.getElementById('postalCode').value;
-        const country = document.getElementById('country').value;
-        
-        // Basic validation
-        if (cardNumber.replace(/\s/g, '').length < 16) {
-            alert('Vui lòng nhập số thẻ hợp lệ (16 số)');
+
+        const cardNumberEl = document.getElementById('cardNumber');
+        const expiryEl = document.getElementById('expiryDate');
+        const cvvEl = document.getElementById('cvv');
+        const postalEl = document.getElementById('postalCode');
+
+        const cardNumber = cardNumberEl ? cardNumberEl.value.replace(/\s/g, '') : '';
+        const expiry = expiryEl ? expiryEl.value.trim() : '';
+        const cvv = cvvEl ? cvvEl.value.trim() : '';
+        const postal = postalEl ? postalEl.value.trim() : '';
+
+        let valid = true;
+
+        // Card number: exactly 16 digits
+        if (!/^\d{16}$/.test(cardNumber)) {
+            showFieldError(cardNumberEl, 'Số thẻ phải là 16 chữ số (không khoảng trắng, không chữ).');
+            if (valid) cardNumberEl.focus();
+            valid = false;
+        }
+
+        // Expiry: MM/YY or MM/YYYY, must be later than current month
+        if (!expiry) {
+            showFieldError(expiryEl, 'Vui lòng nhập ngày hết hạn (MM/YY).');
+            if (valid) expiryEl.focus();
+            valid = false;
+        } else {
+            const parts = expiry.split('/').map(p => p.trim());
+            if (parts.length !== 2) {
+                showFieldError(expiryEl, 'Định dạng phải là MM/YY.');
+                if (valid) expiryEl.focus();
+                valid = false;
+            } else {
+                const mm = parseInt(parts[0], 10);
+                let yy = parseInt(parts[1], 10);
+                if (isNaN(mm) || mm < 1 || mm > 12 || isNaN(yy)) {
+                    showFieldError(expiryEl, 'Tháng hoặc năm không hợp lệ.');
+                    if (valid) expiryEl.focus();
+                    valid = false;
+                } else {
+                    // normalize year
+                    if (yy < 100) yy += 2000;
+                    // expiry considered as last millisecond of month
+                    const expiryDate = new Date(yy, mm, 0, 23, 59, 59, 999);
+                    const today = new Date();
+                    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                    if (expiryDate <= todayDate) {
+                        showFieldError(expiryEl, 'Thẻ đã hết hạn. Vui lòng kiểm tra lại.');
+                        if (valid) expiryEl.focus();
+                        valid = false;
+                    }
+                }
+            }
+        }
+
+        // CVV: exactly 3 digits
+        if (!/^\d{3}$/.test(cvv)) {
+            showFieldError(cvvEl, 'CVV phải gồm 3 chữ số.');
+            if (valid) cvvEl.focus();
+            valid = false;
+        }
+
+        // Postal code: required (non-empty)
+        if (!postal) {
+            showFieldError(postalEl, 'Mã bưu chính không được để trống.');
+            if (valid) postalEl.focus();
+            valid = false;
+        }
+
+        if (!valid) {
+            showFormError('Vui lòng sửa các trường màu đỏ phía trên trước khi tiếp tục.');
             return;
         }
+
+        // All validations passed — create booking first (with pending status)
+        // Then show confirmation modal
         
-        if (cvv.length < 3) {
-            alert('Vui lòng nhập CVV hợp lệ (3 số)');
-            return;
+        // disable submit to prevent double clicks
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Đang xử lý...';
+
+        // helper to get CSRF token from cookie
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
         }
+
+        const checkin = document.getElementById('checkInDate').value;
+        const checkout = document.getElementById('checkOutDate').value;
+        const guestsVal = new URLSearchParams(window.location.search).get('guests') || '1';
+        const listingId = (new URLSearchParams(window.location.search).get('room')) || currentRoom.id;
+        const noteText = document.getElementById('hostMessage')?.value || '';
+
+        console.log('Creating pending booking with:', { checkin, checkout, guestsVal, listingId, noteText });
+
+        const postUrl = `/booking/create/${listingId}/`;
+        const formBody = new URLSearchParams();
+        formBody.set('checkin', checkin);
+        formBody.set('checkout', checkout);
+        formBody.set('guests', guestsVal);
+        formBody.set('note', noteText);
         
-        // Show confirmation
-        const confirmed = confirm(
-            `Xác nhận đặt phòng\n\n` +
-            `Phòng: ${roomData.title}\n` +
-            `Ngày: ${document.getElementById('tripDates').textContent}\n` +
-            `Khách: ${document.getElementById('tripGuests').textContent}\n` +
-            `Tổng tiền: ${formatCurrency(prices.total)}\n\n` +
-            `Bạn có chắc chắn muốn tiếp tục?`
-        );
-        
-        if (confirmed) {
-            // Simulate payment processing
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Đang xử lý...';
+        const csrfToken = getCookie('csrftoken');
+
+        fetch(postUrl, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            credentials: 'same-origin',
+            body: formBody.toString()
+        }).then(resp => {
+            // Check for authentication redirect
+            if (resp.status === 302 || resp.status === 401 || resp.redirected) {
+                if (window.__loginUrl) {
+                    window.location.href = window.__loginUrl + '?next=' + encodeURIComponent(window.location.pathname + window.location.search);
+                } else {
+                    window.location.href = '/login/?next=' + encodeURIComponent(window.location.pathname + window.location.search);
+                }
+                return Promise.reject({skipErrorHandling: true});
+            }
             
-            setTimeout(() => {
-                alert('Đặt phòng thành công! Bạn sẽ nhận được email xác nhận trong giây lát.');
-                // Redirect to home or booking confirmation page
-                window.location.href = '/';
-            }, 2000);
+            return resp.json().then(data => {
+                return { ok: resp.ok, status: resp.status, data: data };
+            });
+        }).then(result => {
+            console.log('Booking created:', result);
+            
+            if (!result.ok) {
+                const errorMsg = result.data.error || 'Lỗi server khi tạo booking.';
+                throw { error: errorMsg };
+            }
+            
+            // Success - show confirmation modal (do NOT create booking here anymore)
+            const data = result.data;
+            {
+                // populate modal fields and open it
+                const confirmModal = document.getElementById('confirmBookingModal');
+                const confirmRoomTitleText = document.getElementById('confirmRoomTitleText');
+                const confirmDates = document.getElementById('confirmDates');
+                const confirmGuests = document.getElementById('confirmGuests');
+                const confirmSubtotal = document.getElementById('confirmSubtotal');
+                const confirmServiceFee = document.getElementById('confirmServiceFee');
+                const confirmTotalPrice = document.getElementById('confirmTotalPrice');
+                const confirmRoomImage = document.getElementById('confirmRoomImage');
+
+                if (confirmRoomTitleText) confirmRoomTitleText.textContent = currentRoom.title || '';
+                if (confirmDates) confirmDates.textContent = document.getElementById('tripDates').textContent || '';
+                if (confirmGuests) confirmGuests.textContent = document.getElementById('reviewGuests').textContent || '';
+                if (confirmSubtotal) confirmSubtotal.textContent = document.getElementById('subtotal').textContent || '';
+                if (confirmServiceFee) confirmServiceFee.textContent = document.getElementById('serviceFee').textContent || '';
+                if (confirmTotalPrice) confirmTotalPrice.textContent = document.getElementById('totalPrice').textContent || '';
+                if (confirmRoomImage) confirmRoomImage.src = document.getElementById('roomImage').src || '';
+
+                // show modal
+                if (confirmModal) {
+                    confirmModal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                }
+                
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Xác nhận và thanh toán';
+            }
+        }).catch(err => {
+            if (err && err.skipErrorHandling) {
+                return;
+            }
+            console.error('Booking creation error:', err);
+            const msg = (err && err.error) ? err.error : 'Lỗi khi tạo booking. Vui lòng thử lại.';
+            showFormError(msg);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Xác nhận và thanh toán';
+        });
+
+        // Attach handler on confirm button (idempotent) - moved outside
+        const confirmBtn = document.getElementById('confirmPayBtn');
+        const cancelBtn = document.getElementById('cancelPayBtn');
+        const closeBtn = document.getElementById('confirmModalClose');
+
+        function closeConfirm() {
+            const confirmModal = document.getElementById('confirmBookingModal');
+            if (confirmModal) { confirmModal.style.display = 'none'; document.body.style.overflow = 'auto'; }
+        }
+
+        if (cancelBtn) cancelBtn.onclick = closeConfirm;
+        if (closeBtn) closeBtn.onclick = closeConfirm;
+
+        if (confirmBtn) {
+            confirmBtn.onclick = function() {
+                // disable submit to prevent double clicks
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = 'Đang xử lý...';
+
+                // helper to get CSRF token from cookie
+                function getCookie(name) {
+                    const value = `; ${document.cookie}`;
+                    const parts = value.split(`; ${name}=`);
+                    if (parts.length === 2) return parts.pop().split(';').shift();
+                    return null;
+                }
+
+                const csrfToken = getCookie('csrftoken');
+
+                // Gather form data to create booking and pay in one step
+                const checkin = document.getElementById('checkInDate').value;
+                const checkout = document.getElementById('checkOutDate').value;
+                const guestsVal = new URLSearchParams(window.location.search).get('guests') || '1';
+                const listingId = (new URLSearchParams(window.location.search).get('room')) || 1;
+                const noteText = document.getElementById('hostMessage')?.value || '';
+
+                const paymentUrl = `/payment/create-and-pay/${listingId}/`;
+                const body = new URLSearchParams();
+                body.set('checkin', checkin);
+                body.set('checkout', checkout);
+                body.set('guests', guestsVal);
+                body.set('note', noteText);
+
+                fetch(paymentUrl, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    },
+                    credentials: 'same-origin',
+                    body: body.toString()
+                }).then(resp => resp.json())
+                .then(data => {
+                    if (data.error) throw new Error(data.error);
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    } else {
+                        window.location.href = '/';
+                    }
+                }).catch(err => {
+                    console.error('Payment error:', err);
+                    const errEl = document.getElementById('confirmErrorMsg');
+                    if (errEl) { 
+                        errEl.style.display = 'block'; 
+                        errEl.textContent = (err && err.message) ? err.message : 'Lỗi khi thanh toán. Vui lòng thử lại.';
+                    }
+                    confirmBtn.disabled = false;
+                    confirmBtn.textContent = 'Thanh toán';
+                });
+            };
         }
     });
     
     // Policy link
     const policyLink = document.querySelector('.policy-link');
-    policyLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        alert('Chính sách hủy:\n\n' +
-              '- Hủy miễn phí trước 7 ngày: Hoàn tiền 100%\n' +
-              '- Hủy trước 3-7 ngày: Hoàn tiền 50%\n' +
-              '- Hủy trong vòng 3 ngày: Không hoàn tiền');
-    });
-    
+    if (policyLink) {
+        policyLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Chính sách hủy:\n\n' +
+                  '- Hủy miễn phí trước 7 ngày: Hoàn tiền 100%\n' +
+                  '- Hủy trước 3-7 ngày: Hoàn tiền 50%\n' +
+                  '- Hủy trong vòng 3 ngày: Không hoàn tiền');
+        });
+    }
+
     // Terms links
     const termsLinks = document.querySelectorAll('.terms-text a');
-    termsLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const text = this.textContent;
-            alert(`Trang ${text} đang được phát triển`);
+    if (termsLinks && termsLinks.length) {
+        termsLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const text = this.textContent;
+                alert(`Trang ${text} đang được phát triển`);
+            });
         });
-    });
+    }
     
     // Add animation on scroll
     const observerOptions = {

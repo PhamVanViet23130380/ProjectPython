@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác nhận hủy đặt phòng - Home Nest</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #757575 0%, #616161 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 16px;
+            opacity: 0.95;
+        }
+        .content {
+            padding: 30px 20px;
+        }
+        .cancel-icon {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .cancel-icon span {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            background: #ffebee;
+            border-radius: 50%;
+            line-height: 60px;
+            font-size: 30px;
+            color: #c62828;
+        }
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #222;
+        }
+        .message {
+            font-size: 15px;
+            color: #555;
+            margin-bottom: 25px;
+        }
+        .booking-info {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        .booking-info h2 {
+            margin: 0 0 15px 0;
+            font-size: 18px;
+            color: #222;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            color: #717171;
+            font-size: 14px;
+        }
+        .info-value {
+            color: #222;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .refund-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .refund-box h3 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            color: #2e7d32;
+        }
+        .refund-box p {
+            margin: 0;
+            font-size: 14px;
+            color: #555;
+        }
+        .refund-amount {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2e7d32;
+            margin: 10px 0;
+        }
+        .cta-button {
+            display: inline-block;
+            padding: 14px 32px;
+            background: #FF385C;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        .cta-button:hover {
+            background: #E31C5F;
+        }
+        .cta-button.secondary {
+            background: #f7f7f7;
+            color: #222;
+        }
+        .cta-button.secondary:hover {
+            background: #e0e0e0;
+        }
+        .footer {
+            background: #f7f7f7;
+            padding: 20px;
+            text-align: center;
+            color: #717171;
+            font-size: 13px;
+        }
+        .footer a {
+            color: #FF385C;
+            text-decoration: none;
+        }
+        .button-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .listing-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Đã Hủy Đặt Phòng</h1>
+            <p>Đơn đặt phòng #{{ booking_id }}</p>
+        </div>
+        
+        <div class="content">
+            <div class="cancel-icon">
+                <span>✕</span>
+            </div>
+            
+            <p class="greeting">Xin chào {{ user_name }},</p>
+            
+            <p class="message">
+                Chúng tôi xác nhận rằng đơn đặt phòng <strong>#{{ booking_id }}</strong> của bạn đã được hủy thành công.
+            </p>
+            
+            {% if listing_image %}
+            <img src="{{ listing_image }}" alt="{{ listing_title }}" class="listing-image">
+            {% endif %}
+            
+            <div class="booking-info">
+                <h2>Thông tin đặt phòng đã hủy</h2>
+                
+                <div class="info-row">
+                    <span class="info-label">Tên chỗ ở</span>
+                    <span class="info-value">{{ listing_title }}</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Mã đặt phòng</span>
+                    <span class="info-value">#{{ booking_id }}</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Ngày nhận phòng</span>
+                    <span class="info-value">{{ check_in }}</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Ngày trả phòng</span>
+                    <span class="info-value">{{ check_out }}</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Số đêm</span>
+                    <span class="info-value">{{ nights }} đêm</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Tổng tiền</span>
+                    <span class="info-value">₫{{ total_price }}</span>
+                </div>
+            </div>
+            
+            {% if has_refund %}
+            <div class="refund-box">
+                <h3>💰 Thông tin hoàn tiền</h3>
+                <p>Số tiền sẽ được hoàn lại:</p>
+                <div class="refund-amount">₫{{ refund_amount }}</div>
+                <p>
+                    Khoản hoàn tiền sẽ được xử lý trong vòng <strong>5-7 ngày làm việc</strong> 
+                    và sẽ được chuyển về phương thức thanh toán ban đầu của bạn.
+                </p>
+            </div>
+            {% endif %}
+            
+            <p class="message">
+                Chúng tôi rất tiếc khi bạn phải hủy đặt phòng. Nếu có bất kỳ thắc mắc nào 
+                về việc hủy đặt phòng{% if has_refund %} hoặc hoàn tiền{% endif %}, 
+                vui lòng liên hệ với chúng tôi.
+            </p>
+            
+            <div class="button-container">
+                <a href="{{ home_url }}" class="cta-button">
+                    Khám phá chỗ ở khác
+                </a>
+                <a href="{{ booking_history_url }}" class="cta-button secondary">
+                    Xem lịch sử đặt phòng
+                </a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>
+                Email này được gửi tự động, vui lòng không trả lời.<br>
+                Nếu bạn có câu hỏi, vui lòng liên hệ 
+                <a href="mailto:support@homenest.com">support@homenest.com</a>
+            </p>
+            <p style="margin-top: 15px;">
+                © 2026 Home Nest. Tất cả quyền được bảo lưu.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

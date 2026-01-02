@@ -64,7 +64,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'homenest_db',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': '123456',
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {
@@ -101,6 +101,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom User Model
 AUTH_USER_MODEL = 'app.User'
+
+# Ensure Django redirects to the project's named login page (usually '/login/')
+LOGIN_URL = '/login/'
 
 
 # --- JAZZMIN CONFIGURATION ---
@@ -141,7 +144,19 @@ JAZZMIN_UI_TWEAKS = {
 
 
 
-# Email Backend
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'webmaster@localhost'
+
+# Email Backend - Gửi email thật qua Gmail
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'nguyenvananhhan555@gmail.com'
+EMAIL_HOST_PASSWORD = 'xhpjpqybfkuujdpg'
+DEFAULT_FROM_EMAIL = 'Home Nest <nguyenvananhhan555@gmail.com>'
+
+# Fixed service fee (VND) used in price breakdown when present. If not set, percentage fee applies.
+# Set as string to preserve Decimal parsing.
+SERVICE_FEE_FIXED = '350000'
+# Percentage fee (e.g. '0.10' for 10%) kept for fallback but not used when SERVICE_FEE_FIXED is set.
+SERVICE_FEE_PCT = '0.10'
 

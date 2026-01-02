@@ -52,6 +52,10 @@ class Booking(models.Model):
     listing = models.ForeignKey('app.Listing', on_delete=models.RESTRICT, related_name='bookings', verbose_name='Phòng')
     check_in = models.DateField(verbose_name='Ngày nhận')
     check_out = models.DateField(verbose_name='Ngày trả')
+    guests = models.IntegerField(default=1, verbose_name='Số khách')
+    base_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Giá cơ bản')
+    service_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Phí dịch vụ')
+    cleaning_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Phí vệ sinh')
     total_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Tổng tiền')
     booking_status = models.CharField(max_length=10, choices=BOOKING_STATUS_CHOICES, default='pending', verbose_name='Trạng thái đặt phòng')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -102,6 +106,7 @@ class Payment(models.Model):
     method = models.CharField(max_length=50, verbose_name='Phương thức')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=10, choices=PAYMENT_STATUS_CHOICES, default='paid', verbose_name='Trạng thái thanh toán')
+    transaction_id = models.CharField(max_length=255, unique=True, null=True, blank=True, verbose_name='Mã giao dịch')
     paid_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):

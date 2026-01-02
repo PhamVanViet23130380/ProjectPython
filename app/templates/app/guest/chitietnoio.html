@@ -12,6 +12,22 @@
     <link rel="stylesheet" href="{% static 'app/css/header.css' %}">
     <link rel="stylesheet" href="{% static 'app/css/footer.css' %}">
 
+    <!-- Prevent flash of unstyled content: hide until CSS and critical JS initialize -->
+    <style id="critical-inline-style">html{opacity:0}body{opacity:0;transition:opacity .12s ease}</style>
+    <script>
+        (function(){
+            // Show page as soon as DOM is ready and at least one stylesheet has loaded
+            function show() { document.documentElement.style.opacity = '1'; document.body.style.opacity = '1'; }
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                requestAnimationFrame(show);
+            } else {
+                document.addEventListener('DOMContentLoaded', function(){ requestAnimationFrame(show); }, {once:true});
+            }
+            // Fallback: ensure page becomes visible after 3s to avoid permanent hiding
+            setTimeout(show, 3000);
+        })();
+    </script>
+
     <title id="page-title">Chi tiết nơi ở</title>
 </head>
 
@@ -43,6 +59,13 @@
     </section>
 
     <main class="container">
+        <!-- ensure CSRF cookie is present for AJAX POSTs -->
+        <form style="display:none">{% csrf_token %}</form>
+        <script>
+            // Expose authentication state for page scripts
+            window.__isAuthenticated = {{ request.user.is_authenticated|yesno:"true,false" }};
+            window.__loginUrl = "{% url 'login' %}";
+        </script>
         <div class="row">
             <!-- LEFT: main content -->
             <div class="col-lg-8">
@@ -143,8 +166,8 @@
                     <p class="text-muted mb-3">Bạn nhận được hoàn tiền 50% cho các đặt phòng bị hủy 3 ngày trước khi nhận phòng.</p>
                     <div class="border rounded p-3" style="background-color: #F5E6D3; border-color: #D4A574 !important;">
                         <p class="mb-0">
-                            <i class="fa-solid fa-calendar"></i> 
-                            Ngày 20/3/2026 - 22/3/2026 · 2 đêm
+                            <i class="fa-solid fa-calendar"></i>
+                            <span id="calendarRange">Ngày 20/3/2026 - 22/3/2026 · 2 đêm</span>
                         </p>
                     </div>
                 </section>
@@ -275,7 +298,7 @@
 
             <!-- RIGHT: booking card -->
             <aside class="col-lg-4">
-                <div class="card shadow-lg booking-card sticky-top" style="top: 120px;">
+                <div class="card shadow-lg booking-card sticky-top" style="top: 120px;" {% if listing %}data-listing-id="{{ listing.listing_id }}"{% endif %}>
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-start mb-4">
                             <div>
@@ -292,11 +315,11 @@
                             <div class="input-group mb-2 border rounded">
                                 <div class="form-group flex-grow-1 m-0 p-2 border-end">
                                     <label class="form-label small text-uppercase fw-bold d-block mb-1">Nhận phòng</label>
-                                    <input type="date" class="form-control border-0 p-0" value="2026-03-20" style="font-size: 14px;">
+                                    <input type="date" class="form-control border-0 p-0" style="font-size: 14px;">
                                 </div>
                                 <div class="form-group flex-grow-1 m-0 p-2">
                                     <label class="form-label small text-uppercase fw-bold d-block mb-1">Trả phòng</label>
-                                    <input type="date" class="form-control border-0 p-0" value="2026-03-22" style="font-size: 14px;">
+                                    <input type="date" class="form-control border-0 p-0" style="font-size: 14px;">
                                 </div>
                             </div>
 
@@ -309,10 +332,10 @@
                             </div>
 
                             <button type="button" class="btn w-100 mb-3 fw-bold booking-btn-main" style="background-color: #ff385c; color: white; padding: 12px; border-radius: 8px;">
-                                Đặt phòng
+                                Kiểm tra tình trạng
                             </button>
 
-                            <p class="text-center text-muted small mb-0">Bạn vẫn chưa bị trừ tiền</p>
+                            <p class="text-center text-muted small mb-0">Kiểm tra xem còn phòng không</p>
                         </form>
 
                         <hr class="my-3">
@@ -443,8 +466,24 @@
         crossorigin="anonymous"></script>
 
     <script>
+        // helper to read csrftoken cookie
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+        // If view provided a `listing` object, prefer server values and avoid demo data overwriting booking card.
+        const SERVER_LISTING = {% if listing %}true{% else %}false{% endif %};
+        const SERVER_LISTING_ID = {% if listing %}{{ listing.listing_id }}{% else %}null{% endif %};
+        const SERVER_PRICE_PER_NIGHT = {% if listing %}'{{ listing.price_per_night }}'{% else %}null{% endif %};
+
         // Database của tất cả 48 phòng từ home.html
-        const rooms = [
+        // Defer demo `rooms` population until window.load so external scripts
+        // (which may also declare `rooms`) can run first and avoid duplicate
+        // declaration SyntaxError. If `rooms` still undefined on load, populate it.
+        function populateDemoRooms() {
+            if (typeof rooms !== 'undefined') return;
+            window.rooms = [
             // Section 1: Nơi lưu trú được ưa chuộng tại Hồ Chí Minh (8 phòng)
             { 
                 id: 1, 
@@ -667,6 +706,7 @@
             { id: 55, title: "Căn hộ tại Hồ Thiên Nga", price: 2199343, rating: 4.97, reviews: 14, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1189731487467754109/original/beb1914a-015b-409c-b72d-ac368cf5c6df.jpeg?im_w=1200", location: "Hồ Thiên Nga, Văn Giang", guests: 5, description: "Căn hộ 3PN view hồ tuyệt đẹp.", fullDescription: "Căn hộ rộng view hồ!\n\n🏡 3 phòng ngủ\n🌊 View hồ Thiên Nga\n🍽️ Phòng ăn rộng\n👨‍👩‍👧‍👦 5 người" },
             { id: 56, title: "Căn hộ tại Văn Giang", price: 1529177, rating: 5.0, reviews: 9, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1486889413234179338/original/2bb9bc2b-2f0d-448e-b392-fecd4d1771f0.jpeg?im_w=1440", location: "Văn Giang, Hưng Yên", guests: 2, description: "Căn hộ mới 100% tại Văn Giang.", fullDescription: "Căn hộ mới 100%!\n\n✨ Nội thất mới\n🛏️ Giường cao cấp\n📺 Smart TV 55 inch\n🌟 Rating 5.0" }
         ];
+        }
 
         // Lấy room ID từ URL query parameter
         function getRoomIdFromURL() {
@@ -689,22 +729,24 @@
             document.getElementById('guests-max').textContent = room.guests;
             document.getElementById('room-description').textContent = room.description;
             
-            // Card info
-            document.getElementById('card-price').textContent = `₫${room.price.toLocaleString('vi-VN')}`;
-            document.getElementById('card-rating').textContent = room.rating.toFixed(1);
-            document.getElementById('card-reviews').textContent = `${room.reviews} đánh giá`;
-            document.getElementById('price-per-night').textContent = `₫${room.price.toLocaleString('vi-VN')} x 2 đêm`;
-            document.getElementById('price-subtotal').textContent = `₫${(room.price * 2).toLocaleString('vi-VN')}`;
-            
-            // Calculate fees (roughly 32% service fee + 8% host protection)
-            const subtotal = room.price * 2;
-            const serviceFee = Math.round(subtotal * 0.32 / 100) * 100;
-            const hostFee = Math.round(subtotal * 0.08 / 100) * 100;
-            const total = subtotal + serviceFee + hostFee;
-            
-            document.getElementById('fee-service').textContent = `₫${serviceFee.toLocaleString('vi-VN')}`;
-            document.getElementById('fee-host').textContent = `₫${hostFee.toLocaleString('vi-VN')}`;
-            document.getElementById('price-total').textContent = `₫${total.toLocaleString('vi-VN')}`;
+            // Card info (only update client demo prices when not using server listing)
+            if (!SERVER_LISTING) {
+                document.getElementById('card-price').textContent = `₫${room.price.toLocaleString('vi-VN')}`;
+                document.getElementById('card-rating').textContent = room.rating.toFixed(1);
+                document.getElementById('card-reviews').textContent = `${room.reviews} đánh giá`;
+                document.getElementById('price-per-night').textContent = `₫${room.price.toLocaleString('vi-VN')} x 2 đêm`;
+                document.getElementById('price-subtotal').textContent = `₫${(room.price * 2).toLocaleString('vi-VN')}`;
+
+                // Calculate fees (roughly 32% service fee + 8% host protection)
+                const subtotal = room.price * 2;
+                const serviceFee = Math.round(subtotal * 0.32 / 100) * 100;
+                const hostFee = Math.round(subtotal * 0.08 / 100) * 100;
+                const total = subtotal + serviceFee + hostFee;
+
+                document.getElementById('fee-service').textContent = `₫${serviceFee.toLocaleString('vi-VN')}`;
+                document.getElementById('fee-host').textContent = `₫${hostFee.toLocaleString('vi-VN')}`;
+                document.getElementById('price-total').textContent = `₫${total.toLocaleString('vi-VN')}`;
+            }
             
             // Gallery
             document.getElementById('gallery-main-img').src = room.image;
@@ -735,6 +777,12 @@
 
             // Load amenities
             loadAmenities(room);
+            // expose listing id on booking card for JS-driven form submission
+            const bookingCardEl = document.querySelector('.booking-card');
+            if (bookingCardEl && (!bookingCardEl.dataset.listingId || bookingCardEl.dataset.listingId === '')) {
+                bookingCardEl.setAttribute('data-listing-id', room.id);
+                bookingCardEl.dataset.listingId = room.id;
+            }
         }
 
         // Load amenities preview (6 tiện nghi đầu tiên)
@@ -767,7 +815,42 @@
         // Load room khi trang load
         document.addEventListener('DOMContentLoaded', function() {
             const roomId = getRoomIdFromURL();
-            loadRoom(roomId);
+            if (SERVER_LISTING && SERVER_LISTING_ID) {
+                // if server listing provided, avoid overriding booking card with demo data
+                // ensure booking-card has server listing id
+                const bc = document.querySelector('.booking-card');
+                if (bc) {
+                    if (!bc.dataset.listingId || bc.dataset.listingId === '') {
+                        bc.dataset.listingId = SERVER_LISTING_ID;
+                    }
+                }
+                // set visible price-per-night using server value (will be refined by maybeFetch)
+                try {
+                    const base = SERVER_PRICE_PER_NIGHT ? Number(SERVER_PRICE_PER_NIGHT) : null;
+                    if (base !== null) {
+                        const nightsEl = document.querySelector('.price .total_amount');
+                        const cardPrice = document.getElementById('card-price');
+                        const perNight = document.getElementById('price-per-night');
+                        if (cardPrice) cardPrice.textContent = `₫${base.toLocaleString('vi-VN')}`;
+                        if (perNight) perNight.textContent = `₫${base.toLocaleString('vi-VN')} x 2 đêm`;
+                    }
+                } catch (e) {}
+                // call server to compute correct breakdown
+                maybeFetch();
+                // still load other room UI from demo data for non-price areas
+                // If `rooms` isn't available yet (we deferred), wait until window.load
+                if (typeof rooms !== 'undefined') {
+                    loadRoom(roomId);
+                } else {
+                    window.addEventListener('load', function() { try { populateDemoRooms(); loadRoom(roomId); } catch(e){} });
+                }
+            } else {
+                if (typeof rooms !== 'undefined') {
+                    loadRoom(roomId);
+                } else {
+                    window.addEventListener('load', function() { try { populateDemoRooms(); loadRoom(roomId); } catch(e){} });
+                }
+            }
             
             // Xử lý nút "Xem thêm" mô tả
             document.getElementById('btn-show-more').addEventListener('click', function(e) {
@@ -1227,9 +1310,232 @@
         }
     </script>
 
+    <!-- Server-backed price preview script -->
+    <script>
+        function fetchServerPrice(listingId, checkin, checkout, guests) {
+            if (!listingId || !checkin || !checkout) return;
+            const url = new URL('/api/price/', window.location.origin);
+            url.searchParams.set('listing', listingId);
+            url.searchParams.set('checkin', checkin);
+            url.searchParams.set('checkout', checkout);
+            url.searchParams.set('guests', guests || 1);
+
+            fetch(url.toString())
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) return console.warn('price error', data.error);
+                    // `data.base` from /api/price/ is the base for the whole stay (price_per_night * nights)
+                    const nights = Number(data.nights || 1);
+                    if (data.total && document.getElementById('price-total')) document.getElementById('price-total').textContent = `₫${Number(data.total).toLocaleString('vi-VN')}`;
+                    if (data.base) {
+                        // derive per-night from base
+                        const perNight = nights ? (Number(data.base) / nights) : Number(data.base);
+                        if (document.getElementById('price-per-night')) document.getElementById('price-per-night').textContent = `₫${perNight.toLocaleString('vi-VN')} x ${nights} đêm`;
+                        if (document.getElementById('price-subtotal')) document.getElementById('price-subtotal').textContent = `₫${Number(data.base).toLocaleString('vi-VN')}`;
+                    }
+                    if (data.service_fee && document.getElementById('fee-service')) document.getElementById('fee-service').textContent = `₫${Number(data.service_fee).toLocaleString('vi-VN')}`;
+                    // extra_guest_fee or cleaning_fee may represent host-related fees
+                    const hostFee = Number(data.extra_guest_fee || data.cleaning_fee || 0);
+                    if (hostFee && document.getElementById('fee-host')) document.getElementById('fee-host').textContent = `₫${hostFee.toLocaleString('vi-VN')}`;
+                })
+                .catch(err => console.warn('price fetch err', err));
+        }
+
+        // attach listeners to booking inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            // try common selectors used in template
+            const checkinEl = document.querySelector('.booking-form input[type="date"]');
+            const checkoutEl = document.querySelectorAll('.booking-form input[type="date"]')[1];
+            const guestsEl = document.querySelector('.booking-form select');
+            const bookingCard = document.querySelector('.booking-card');
+            const listingId = bookingCard ? bookingCard.getAttribute('data-listing-id') || bookingCard.dataset.listingId : null;
+
+            // Fetch full listing data from server and render into DOM
+            function renderListing(data) {
+                try {
+                    if (!data) return;
+                    if (data.title) document.getElementById('room-title').textContent = data.title;
+                    if (data.title) document.getElementById('page-title').textContent = data.title;
+                    if (data.description) document.getElementById('room-description').textContent = data.description;
+                    if (data.max_adults) document.getElementById('room-guests').textContent = `${data.max_adults} khách`;
+                    if (data.max_adults) document.getElementById('guests-max').textContent = data.max_adults;
+                    if (data.price_per_night) {
+                        const base = Number(data.price_per_night);
+                        const cardPrice = document.getElementById('card-price');
+                        const perNight = document.getElementById('price-per-night');
+                        if (cardPrice) cardPrice.textContent = `₫${base.toLocaleString('vi-VN')}`;
+                        if (perNight) perNight.textContent = `₫${base.toLocaleString('vi-VN')} x 2 đêm`;
+                        if (document.getElementById('price-subtotal')) document.getElementById('price-subtotal').textContent = `₫${(base * 2).toLocaleString('vi-VN')}`;
+                    }
+                    if (Array.isArray(data.images) && data.images.length) {
+                        document.getElementById('gallery-main-img').src = data.images[0];
+                        document.getElementById('thumb-1').src = data.images[0] || '';
+                        document.getElementById('thumb-2').src = data.images[1] || data.images[0] || '';
+                        document.getElementById('thumb-3').src = data.images[2] || data.images[0] || '';
+                        document.getElementById('thumb-4').src = data.images[3] || data.images[0] || '';
+                    }
+                    // amenities
+                    if (Array.isArray(data.amenities)) {
+                        const amenitiesList = document.getElementById('amenities-list');
+                        amenitiesList.innerHTML = '';
+                        data.amenities.slice(0,6).forEach(a => {
+                            const col = document.createElement('div'); col.className = 'col-md-6 mb-3';
+                            col.innerHTML = `<div class="d-flex align-items-center mb-3"><i class="fa-solid fa-check" style="color:#ff385c; font-size:20px;"></i><span class="ms-3">${a.name}</span></div>`;
+                            amenitiesList.appendChild(col);
+                        });
+                        document.getElementById('amenities-count').textContent = data.amenities.length || 0;
+                    }
+                } catch (e) {
+                    console.warn('renderListing error', e);
+                }
+            }
+
+            function fetchListing(id) {
+                if (!id) return;
+                const url = new URL('/api/listing/', window.location.origin);
+                url.searchParams.set('listing', id);
+                fetch(url.toString())
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data && !data.error) renderListing(data);
+                    })
+                    .catch(err => console.warn('listing fetch err', err));
+            }
+            function maybeFetch() {
+                const ci = checkinEl ? checkinEl.value : null;
+                const co = checkoutEl ? checkoutEl.value : null;
+                const guests = guestsEl ? (guestsEl.value || '1').replace(/[^0-9]/g, '') : '1';
+                if (ci && co && listingId) fetchServerPrice(listingId, ci, co, guests);
+            }
+
+            if (checkinEl) checkinEl.addEventListener('change', maybeFetch);
+            if (checkoutEl) checkoutEl.addEventListener('change', maybeFetch);
+            if (guestsEl) guestsEl.addEventListener('change', maybeFetch);
+
+            // fetch initial server price on load (if inputs exist)
+            maybeFetch();
+
+            // fetch listing data to populate the page (replace hardcoded demo data)
+            try { fetchListing(listingId || SERVER_LISTING_ID); } catch (e) { /* ignore */ }
+
+            // Some other external scripts may update price DOM after this script runs.
+            // Re-run the server price fetch shortly after full window load to ensure
+            // the server-calculated values override any later DOM changes.
+            window.addEventListener('load', function() {
+                setTimeout(function() { try { maybeFetch(); } catch (e) { console.warn(e); } }, 200);
+            });
+
+            // Enable availability flow to prevent default redirect from external JS
+            window.__useAvailabilityFlow = true;
+            // Booking button - Check availability then redirect to booking page
+            const bookingBtn = document.querySelector('.booking-btn-main');
+            if (bookingBtn) {
+                bookingBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Get listing ID from URL (e.g., /chitietnoio/?room=12)
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const listing = urlParams.get('room') || listingId;
+                    
+                    const ci = checkinEl ? checkinEl.value : null;
+                    const co = checkoutEl ? checkoutEl.value : null;
+                    const guests = guestsEl ? (guestsEl.value || '1').replace(/[^0-9]/g, '') : '1';
+                    
+                    console.log('Check availability:', {listing, ci, co, guests}); // Debug log
+                    
+                    if (!listing || !ci || !co) {
+                        return showInlineNotice('Vui lòng chọn ngày nhận/trả.');
+                    }
+
+                    // Kiểm tra ngày hợp lệ
+                    const checkInDate = new Date(ci);
+                    const checkOutDate = new Date(co);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    if (checkInDate <= today) {
+                        return showInlineNotice('Ngày nhận phòng phải sau hôm nay.');
+                    }
+                    if (checkOutDate <= checkInDate) {
+                        return showInlineNotice('Ngày trả phòng phải sau ngày nhận phòng.');
+                    }
+
+                    // Gọi API kiểm tra availability
+                    const checkUrl = `/api/check-availability/?listing=${listing}&checkin=${ci}&checkout=${co}`;
+                    
+                    console.log('Calling API:', checkUrl); // Debug log
+                    
+                    // Hiển thị loading
+                    bookingBtn.disabled = true;
+                    bookingBtn.textContent = 'Đang kiểm tra...';
+                    
+                    fetch(checkUrl)
+                    .then(r => {
+                        console.log('API response status:', r.status); // Debug log
+                        return r.json();
+                    })
+                    .then(data => {
+                        console.log('API response data:', data); // Debug log
+                        
+                        bookingBtn.disabled = false;
+                        bookingBtn.textContent = 'Kiểm tra tình trạng';
+                        
+                        if (data.error || !data.available) {
+                            const msg = data.error || 'Khoảng thời gian này đã có người đặt. Vui lòng chọn ngày khác.';
+                            showInlineNotice(msg);
+                        } else {
+                            // Còn phòng - chuyển sang trang đặt phòng với params
+                            const bookingUrl = `/datphong/?room=${listing}&checkin=${ci}&checkout=${co}&guests=${guests}`;
+                            window.location.href = bookingUrl;
+                        }
+                    })
+                    .catch(err => { 
+                        console.error('API error:', err); // Debug log
+                        bookingBtn.disabled = false;
+                        bookingBtn.textContent = 'Kiểm tra tình trạng';
+                        showInlineNotice('Lỗi khi kiểm tra tình trạng phòng. Vui lòng thử lại.'); 
+                    });
+                });
+            }
+        });
+    </script>
+
+    <script>
+        // Lightweight inline notice used before external JS loads
+        function showInlineNotice(msg) {
+            try {
+                if (!msg) return;
+                const id = 'inlineBookingNotice';
+                let el = document.getElementById(id);
+                if (!el) {
+                    el = document.createElement('div');
+                    el.id = id;
+                    el.style.position = 'fixed';
+                    el.style.right = '18px';
+                    el.style.bottom = '18px';
+                    el.style.zIndex = 99999;
+                    el.style.maxWidth = '360px';
+                    el.style.background = 'linear-gradient(180deg,#fff,#f8f4f1)';
+                    el.style.border = '1px solid rgba(0,0,0,0.06)';
+                    el.style.boxShadow = '0 6px 24px rgba(0,0,0,0.12)';
+                    el.style.padding = '12px 14px';
+                    el.style.borderRadius = '10px';
+                    el.style.fontFamily = 'Arial, sans-serif';
+                    el.style.color = '#222';
+                    document.body.appendChild(el);
+                }
+                el.textContent = msg;
+                el.style.opacity = '1';
+                setTimeout(() => {
+                    try { el.style.transition = 'opacity 400ms'; el.style.opacity = '0'; setTimeout(()=>el.remove(),450); } catch(e){}
+                }, 4000);
+            } catch(e){ console.error('showInlineNotice error', e); }
+        }
+    </script>
+
     <!-- External JavaScript -->
-    <script src="{% static 'app/js/chitietnoio-data.js' %}"></script>
     <script src="{% static 'app/js/chitietnoio-main.js' %}"></script>
+
 </body>
 
 </html>

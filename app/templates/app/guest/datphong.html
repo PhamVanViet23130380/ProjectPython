@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" data-is-authenticated="{{ request.user.is_authenticated|yesno:'true,false' }}">
 
 <head>
     <meta charset="UTF-8">
@@ -12,7 +12,7 @@
     <title>Yêu cầu đặt phòng/đặt chỗ - Home Nest</title>
 </head>
 
-<body>
+<body data-listing-id="{{ listing_id }}">
     <!-- Simple Header -->
     <header class="booking-header">
         <div class="container">
@@ -31,6 +31,12 @@
     </header>
 
     <main class="booking-main">
+        <script>
+            // Expose authentication state to client JS so booking flow can redirect to login when needed
+            window.__isAuthenticated = document.documentElement.dataset.isAuthenticated === "true";
+            // Provide the named login URL for client-side redirects
+            window.__loginUrl = "{% url 'login' %}";
+        </script>
         <div class="container">
             <div class="booking-container">
                 <!-- Left Side - Form -->
@@ -85,8 +91,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn-secondary" onclick="closeDateModal()">Xóa ngày</button>
-                                <button class="btn-primary" onclick="saveDates()">Lưu</button>
+                                <button type="button" class="btn-secondary" onclick="closeDateModal()">Xóa ngày</button>
+                                <button type="button" class="btn-primary" onclick="saveDates()">Lưu</button>
                             </div>
                         </div>
                     </div>
@@ -168,8 +174,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn-secondary" onclick="closeGuestsModal()">Hủy</button>
-                                <button class="btn-primary" onclick="saveGuests()">Lưu</button>
+                                <button type="button" class="btn-secondary" onclick="closeGuestsModal()">Hủy</button>
+                                <button type="button" class="btn-primary" onclick="saveGuests()">Lưu</button>
                             </div>
                         </div>
                     </div>
@@ -247,7 +253,7 @@
                             <div class="message-host-content">
                                 <p class="message-description">Cho host biết lý do bạn đi và ai sẽ tham gia cùng bạn.</p>
                                 <div class="form-group">
-                                    <textarea id="hostMessage" class="form-control" rows="5" 
+                                    <textarea id="hostMessage" name="note" class="form-control" rows="5" 
                                               placeholder="Xin chào! Tôi rất mong chờ được ở chỗ của bạn. Tôi sẽ đến với..."></textarea>
                                 </div>
                             </div>
@@ -339,13 +345,13 @@
                 <div class="booking-right">
                     <div class="booking-card">
                         <div class="room-info">
-                            <img src="{% static 'app/images/room1.jpg' %}" alt="Room" class="room-image" id="roomImage">
+                            <img src="{{ image_url }}" alt="{{ title }}" class="room-image" id="roomImage" onerror="this.onerror=null; this.src='https://via.placeholder.com/200x150?text=No+Image'">
                             <div class="room-details">
-                                <h3 class="room-title" id="roomTitle">Căn hộ tại Quận Tây Hồ</h3>
+                                <h3 class="room-title" id="roomTitle">{{ title }}</h3>
                                 <div class="room-rating">
                                     <i class="fa-solid fa-star"></i>
-                                    <span id="roomRating">4.8</span>
-                                    <span class="rating-count" id="roomReviews">(12 đánh giá)</span>
+                                    <span id="roomRating">{{ rating }}</span>
+                                    <span class="rating-count" id="roomReviews">({{ review_count }} đánh giá)</span>
                                 </div>
                             </div>
                         </div>
@@ -357,19 +363,32 @@
                             
                             <div class="price-row">
                                 <span class="price-label">
-                                    <span id="pricePerNight">đ2.259.530</span> x <span id="numNights">2</span> đêm
+                                    <span id="pricePerNight">₫{{ price_per_night|floatformat:0 }}</span> x <span id="numNights">2</span> đêm
                                 </span>
-                                <span class="price-value" id="subtotal">đ4.519.060</span>
+                                <span class="price-value" id="subtotal">₫0</span>
+                            </div>
+
+                            <!-- Phí vệ sinh (nếu có) -->
+                            <div class="price-row" id="cleaningFeeRow" style="display: none;">
+                                <span class="price-label">Phí vệ sinh</span>
+                                <span class="price-value" id="cleaningFee">₫0</span>
+                            </div>
+
+                            <!-- Phí khách thêm (nếu có) -->
+                            <div class="price-row" id="extraGuestFeeRow" style="display: none;">
+                                <span class="price-label">Phí khách thêm</span>
+                                <span class="price-value" id="extraGuestFee">₫0</span>
+                            </div>
+
+                            <!-- Phí cuối tuần (nếu có) -->
+                            <div class="price-row" id="weekendFeeRow" style="display: none;">
+                                <span class="price-label">Phí cuối tuần</span>
+                                <span class="price-value" id="weekendFee">₫0</span>
                             </div>
 
                             <div class="price-row">
                                 <span class="price-label">Phí dịch vụ</span>
-                                <span class="price-value" id="serviceFee">đ1.446.100</span>
-                            </div>
-
-                            <div class="price-row">
-                                <span class="price-label">Phí bảo vệ chủ nhà</span>
-                                <span class="price-value" id="hostFee">đ361.500</span>
+                                <span class="price-value" id="serviceFee">₫0</span>
                             </div>
                         </div>
 
@@ -377,7 +396,7 @@
 
                         <div class="price-row total-row">
                             <span class="price-label"><strong>Tổng cộng (VND)</strong></span>
-                            <span class="price-value"><strong id="totalPrice">đ6.326.660</strong></span>
+                            <span class="price-value"><strong id="totalPrice">₫0</strong></span>
                         </div>
                     </div>
 
@@ -396,62 +415,39 @@
         </div>
     </main>
 
+    <!-- Confirmation Modal (shown after payment validation passes) -->
+    <div class="modal-overlay" id="confirmBookingModal" style="display:none;">
+        <div class="modal-container confirm-modal">
+            <div class="modal-header">
+                <h3 id="confirmRoomTitle">Xác nhận đặt phòng</h3>
+                <button class="modal-close" id="confirmModalClose">×</button>
+            </div>
+            <div class="modal-body confirm-body">
+                <div class="confirm-left">
+                    <img id="confirmRoomImage" src="" alt="Room image" />
+                </div>
+                <div class="confirm-right">
+                    <div class="confirm-row"><strong>Chỗ ở:</strong> <span id="confirmRoomTitleText"></span></div>
+                    <div class="confirm-row"><strong>Ngày:</strong> <span id="confirmDates"></span></div>
+                    <div class="confirm-row"><strong>Khách:</strong> <span id="confirmGuests"></span></div>
+                    <hr />
+                    <div class="confirm-row"><span>Tiền phòng</span><span id="confirmSubtotal"></span></div>
+                    <div class="confirm-row"><span>Phí dịch vụ</span><span id="confirmServiceFee"></span></div>
+                    <div class="confirm-row total"><strong>Tổng cộng</strong><strong id="confirmTotalPrice"></strong></div>
+                    <div id="confirmErrorMsg" style="display:none;color:#b00020;margin-top:8px;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelPayBtn">Hủy</button>
+                <button class="btn-primary" id="confirmPayBtn">Thanh toán</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
-    <script>
-        // Embed room data directly (48 rooms)
-        const rooms = [
-            { id: 1, title: "Phòng tại Thành phố Hồ Chí Minh", price: 798000, rating: 5.0, reviews: 13, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1496408576612343725/original/0bbb91de-5c32-46ce-b2aa-4914c331fc13.jpeg?im_w=1440", location: "Quận 1, Thành phố Hồ Chí Minh", guests: 2 },
-            { id: 2, title: "Căn hộ tại Thành phố Hồ Chí Minh", price: 911800, rating: 4.98, reviews: 12, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1386690223982968237/original/4df20859-007e-4a86-8db1-7a008298e23e.jpeg?im_w=1200", location: "Quận 3, Thành phố Hồ Chí Minh", guests: 2 },
-            { id: 3, title: "Căn hộ tại Thành phố Hồ Chí Minh", price: 1751860, rating: 4.82, reviews: 11, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1425899556206659577/original/140dc752-7bb4-49f7-b47f-69ef266c1d47.jpeg?im_w=1200", location: "Quận 4, Thành phố Hồ Chí Minh", guests: 3 },
-            { id: 4, title: "Căn hộ chung cư cao cấp tại Thành phố Hồ Chí Minh", price: 2360000, rating: 4.96, reviews: 14, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1462849377191931233/original/081e4730-71e3-43f9-a70e-3b21842046f8.jpeg?im_w=1200", location: "Quận 1, Thành phố Hồ Chí Minh", guests: 4 },
-            { id: 5, title: "Căn hộ tại Thành phố Hồ Chí Minh", price: 708000, rating: 4.91, reviews: 10, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1369286291403033902/original/25e2a4a3-f623-4d82-b47e-f0b0afcc9eda.jpeg?im_w=1200", location: "Quận 3, Thành phố Hồ Chí Minh", guests: 2 },
-            { id: 6, title: "Căn hộ tại Thành phố Hồ Chí Minh", price: 1342000, rating: 4.92, reviews: 11, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTMwNzMyNDc5NDQwMTU4MTAwMg%3D%3D/original/78a83870-53e6-4769-9f08-ce6a6ba63db6.jpeg?im_w=1200", location: "Quận 1, Thành phố Hồ Chí Minh", guests: 2 },
-            { id: 7, title: "Căn hộ tại Thành phố Hồ Chí Minh", price: 1280000, rating: 4.87, reviews: 9, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1340228335961775191/original/03b0e4eb-6f24-48ae-afc9-9ee29cb3e0e9.jpeg?im_w=1200", location: "Quận 1, Thành phố Hồ Chí Minh", guests: 3 },
-            { id: 8, title: "Căn hộ tại Thành phố Hồ Chí Minh", price: 3220000, rating: 4.91, reviews: 13, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTI1MDkwMDE5NzAwNjc1NDA3Nw%3D%3D/original/b76c7725-e9d8-48ba-a75b-a42f98504d89.jpeg?im_w=1200", location: "Quận 1, Thành phố Hồ Chí Minh", guests: 2 },
-            { id: 9, title: "Chung cư cao cấp tại Quận 1", price: 1590000, rating: 4.94, reviews: 15, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTE2MjE1MDQyMDI5NDI4NTc4Nw%3D%3D/original/03c44e0b-2107-4dac-94a2-4b21cc9b4106.jpeg?im_w=1200", location: "Quận 1, Thành phố Hồ Chí Minh", guests: 2 },
-            { id: 10, title: "Phòng tại Quận Hoàn Kiếm", price: 639059, rating: 4.75, reviews: 9, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1180221875142168010/original/abdf5717-8510-4c97-ac2f-302c058093df.jpeg?im_w=1200", location: "Quận Hoàn Kiếm, Hà Nội", guests: 2 },
-            { id: 11, title: "Căn hộ tại Quận Hoàn Kiếm", price: 1539000, rating: 4.88, reviews: 13, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1151216889313926411/original/b165111c-9cbf-4bf7-984c-2bd0956150d6.jpeg?im_w=1440", location: "Quận Hoàn Kiếm, Hà Nội", guests: 3 },
-            { id: 12, title: "Phòng tại Quận Hoàn Kiếm", price: 1111452, rating: 4.96, reviews: 14, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1207805086134572738/original/a151029a-2fd7-4aa7-baf8-569a3b32a24b.jpeg?im_w=1200", location: "Quận Hoàn Kiếm, Hà Nội", guests: 2 },
-            { id: 13, title: "Căn hộ tại Quận Tây Hồ", price: 2259530, rating: 4.78, reviews: 12, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1376847746179925424/original/a27f86c9-bd65-4ca4-8730-7e9fcbd8fc0e.jpeg?im_w=1200", location: "Quận Tây Hồ, Hà Nội", guests: 4 },
-            { id: 14, title: "Căn hộ tại Quận Hoàn Kiếm", price: 1260000, rating: 4.81, reviews: 11, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1153423110798319101/original/d3d1dbca-0a22-4ae7-a6f3-406430d12830.jpeg?im_w=1200", location: "Quận Hoàn Kiếm, Hà Nội", guests: 2 },
-            { id: 15, title: "Nơi ở tại Quận Hoàn Kiếm", price: 570546, rating: 4.83, reviews: 10, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTE0NjI0MjA3MjE0OTA3MTU5OA%3D%3D/original/65b04fdd-0592-480a-a41d-17ba4b851533.jpeg?im_w=1440", location: "Quận Hoàn Kiếm, Hà Nội", guests: 2 },
-            { id: 16, title: "Phòng tại Quận Hoàn Kiếm", price: 1232125, rating: 4.93, reviews: 13, image: "https://a0.muscache.com/im/pictures/b4733660-8ec0-48dc-997c-cf620bc41626.jpg?im_w=1200", location: "Quận Hoàn Kiếm, Hà Nội", guests: 2 },
-            { id: 17, title: "Phòng tại Đa Kao", price: 1894354, rating: 4.76, reviews: 10, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1364503055472486650/original/b0a17453-354e-4982-b818-a16de0e8f0b2.jpeg?im_w=1440", location: "Đa Kao, Quận 1", guests: 2 },
-            { id: 18, title: "Căn hộ tại Cô Giang", price: 1609060, rating: 4.97, reviews: 12, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6ODAzOTc1MzU2NTEzNTcyNjkw/original/e171f451-ab0c-4497-b992-9105566402c8.jpeg?im_w=1440", location: "Cô Giang, Quận 1", guests: 3 },
-            { id: 19, title: "Căn hộ tại Phạm Ngũ Lão", price: 1597648, rating: 4.83, reviews: 11, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1510945975797846368/original/e199fc98-b2cd-4ba4-8a9b-b2195ac4bbf1.jpeg?im_w=1440", location: "Phạm Ngũ Lão, Quận 1", guests: 2 },
-            { id: 20, title: "Phòng tại Đa Kao", price: 1386637, rating: 5.0, reviews: 15, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTI4NDc5NTYxODk1ODc0NDExNA%3D%3D/original/f6952b9a-32e0-41b9-888a-24d91c254f7b.jpeg?im_w=1440", location: "Đa Kao, Quận 1", guests: 2 },
-            { id: 21, title: "Nhà tại Cô Giang", price: 3195296, rating: 4.89, reviews: 14, image: "https://a0.muscache.com/im/pictures/miso/Hosting-54375504/original/8356ac8e-34db-49e2-85eb-3ebbcdcc7867.jpeg?im_w=1200", location: "Cô Giang, Quận 1", guests: 5 },
-            { id: 22, title: "Nhà tại Cô Giang", price: 4097079, rating: 4.95, reviews: 13, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1326172669268706395/original/f14542ea-9530-4091-979e-27a913770892.jpeg?im_w=1200", location: "Cô Giang, Quận 1", guests: 6 },
-            { id: 23, title: "Căn hộ chung cư cao cấp tại Phạm Ngũ Lão", price: 2063810, rating: 4.97, reviews: 12, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1396886973804448786/original/4f7d01fd-71cf-414b-84c0-160a0bcedd2e.jpeg?im_w=1200", location: "Phạm Ngũ Lão, Quận 1", guests: 3 },
-            { id: 24, title: "Căn hộ tại Quận 1", price: 1750000, rating: 4.85, reviews: 11, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1496408576612343725/original/0bbb91de-5c32-46ce-b2aa-4914c331fc13.jpeg?im_w=1200", location: "Quận 1, Thành phố Hồ Chí Minh", guests: 2 },
-            { id: 25, title: "Phòng tại Phường 1", price: 867295, rating: 4.92, reviews: 10, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1031143726041246737/original/6d066100-9d1d-4fcf-b6fa-eb10695f1fb6.jpeg?im_w=1440", location: "Phường 1, Đà Lạt", guests: 2 },
-            { id: 26, title: "Nhà phố tại Dalat", price: 2371840, rating: 4.77, reviews: 11, image: "https://a0.muscache.com/im/pictures/bfdf27ab-ac56-49be-9c82-ae59313269a2.jpg?im_w=1200", location: "Dalat, Lâm Đồng", guests: 4 },
-            { id: 27, title: "Phòng tại Dalat", price: 753177, rating: 4.76, reviews: 9, image: "https://a0.muscache.com/im/pictures/14c1f895-8d1e-4a14-96d6-8c52e9b8256d.jpg?im_w=1440", location: "Dalat, Lâm Đồng", guests: 2 },
-            { id: 28, title: "Phòng tại Dalat", price: 3469178, rating: 4.96, reviews: 14, image: "https://a0.muscache.com/im/pictures/miso/Hosting-563426164767978151/original/d7bff34f-807d-4f1d-b9ad-4293e203461c.png?im_w=1200", location: "Dalat, Lâm Đồng", guests: 2 },
-            { id: 29, title: "Căn hộ tại Dalat", price: 3780000, rating: 4.89, reviews: 12, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1353653864064161285/original/736f6de3-2004-4bab-b151-074c43995dd1.jpeg?im_w=1440", location: "Dalat, Lâm Đồng", guests: 3 },
-            { id: 30, title: "Phòng tại Dalat", price: 3105000, rating: 4.94, reviews: 13, image: "https://a0.muscache.com/im/pictures/832e961b-b328-4ad2-af23-6251715b890b.jpg?im_w=1440", location: "Dalat, Lâm Đồng", guests: 2 },
-            { id: 31, title: "Nhà tại Dalat", price: 2433447, rating: 4.89, reviews: 11, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1149852181500806941/original/527e47ac-a168-4f90-b8b5-096971bab757.jpeg?im_w=1440", location: "Dalat, Lâm Đồng", guests: 4 },
-            { id: 32, title: "Khách sạn tại Dalat", price: 420000, rating: 5.0, reviews: 16, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1312933678294802979/original/c876f1e5-7690-4a0a-a0dc-a57e703d5823.jpeg?im_w=1200", location: "Dalat, Lâm Đồng", guests: 2 },
-            { id: 33, title: "Phòng tại Quận Sơn Trà", price: 718942, rating: 4.9, reviews: 10, image: "https://a0.muscache.com/im/pictures/b5376fc0-3a3e-4802-8ef4-56a3baf587ba.jpg?im_w=1200", location: "Quận Sơn Trà, Đà Nẵng", guests: 2 },
-            { id: 34, title: "Phòng tại Quận Sơn Trà", price: 798824, rating: 4.92, reviews: 11, image: "https://a0.muscache.com/im/pictures/0a4bd2da-563b-4f49-8b75-5dfca64b3fc7.jpg?im_w=1200", location: "Quận Sơn Trà, Đà Nẵng", guests: 2 },
-            { id: 35, title: "Khách sạn tại Quận Sơn Trà", price: 1676924, rating: 5.0, reviews: 15, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1558413114768000235/original/5493b30c-c2a0-4048-9859-9012b3feca13.jpeg?im_w=1440", location: "Quận Sơn Trà, Đà Nẵng", guests: 3 },
-            { id: 36, title: "Biệt thự tại Quận Sơn Trà", price: 10270593, rating: 5.0, reviews: 18, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1527350768979919060/original/3f12373f-6644-40e4-9a5b-4e48d4819b3d.jpeg?im_w=1440", location: "Quận Sơn Trà, Đà Nẵng", guests: 8 },
-            { id: 37, title: "Biệt thự tại Quận Sơn Trà", price: 7680000, rating: 4.99, reviews: 16, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTM4NjU2MTg3NDUzMDU1NDQ2Nw==/original/d04b3b4b-50b9-4371-8911-6205206d126c.jpeg?im_w=1440", location: "Quận Sơn Trà, Đà Nẵng", guests: 6 },
-            { id: 38, title: "Căn hộ tại Quận Ngũ Hành Sơn", price: 2054119, rating: 5.0, reviews: 14, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTQ1MDY5MjQxMzE0MDc5ODkyMg==/original/831a6189-2040-4b30-bebb-089a8e5714fd.jpeg?im_w=1440", location: "Quận Ngũ Hành Sơn, Đà Nẵng", guests: 3 },
-            { id: 39, title: "Khách sạn tại Quận Sơn Trà", price: 1164378, rating: 4.95, reviews: 12, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-38285617/original/a3177364-73ea-4181-ac9c-ebd0d7630a84.jpeg?im_w=1440", location: "Quận Sơn Trà, Đà Nẵng", guests: 2 },
-            { id: 40, title: "Căn hộ tại Mân Thái", price: 2838048, rating: 4.95, reviews: 13, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTM2ODU5MTM2NjE2NDQyNzE3Nw==/original/d8ff4c9f-4499-4260-bdb9-9b18b85f5230.jpeg?im_w=1440", location: "Mân Thái, Đà Nẵng", guests: 3 },
-            { id: 41, title: "Căn hộ tại Vũng Tàu", price: 935765, rating: 4.75, reviews: 10, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1324955592152429127/original/dbe1334d-c409-4c12-9586-4748fff5332f.jpeg?im_w=1200", location: "Vũng Tàu, Bà Rịa - Vũng Tàu", guests: 2 },
-            { id: 42, title: "Phòng tại Vũng Tàu", price: 726750, rating: 5.0, reviews: 14, image: "https://a0.muscache.com/im/pictures/miso/Hosting-1327307809472209250/original/192a9c3e-88f9-4ca3-a294-985f6ab5197b.jpeg?im_w=1440", location: "Vũng Tàu, Bà Rịa - Vũng Tàu", guests: 2 },
-            { id: 43, title: "Căn hộ tại Vũng Tàu", price: 2031072, rating: 4.87, reviews: 12, image: "https://a0.muscache.com/im/pictures/prohost-api/Hosting-705602580862042057/original/195f641f-55fc-41dc-b9f7-1ddf962bd1d1.jpeg?im_w=1200", location: "Vũng Tàu, Bà Rịa - Vũng Tàu", guests: 3 },
-            { id: 44, title: "Căn hộ tại Vũng Tàu", price: 1825883, rating: 5.0, reviews: 15, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-985452273027067097/original/b9a74264-4855-4755-8bb2-3d1c8614f721.jpeg?im_w=1440", location: "Vũng Tàu, Bà Rịa - Vũng Tàu", guests: 2 },
-            { id: 45, title: "Căn hộ tại Vũng Tàu", price: 1950271, rating: 4.93, reviews: 13, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-1146327806519584685/original/3a21ad86-91e9-4157-a0b3-6d34679b98d2.jpeg?im_w=1440", location: "Vũng Tàu, Bà Rịa - Vũng Tàu", guests: 2 },
-            { id: 46, title: "Căn hộ tại Vũng Tàu", price: 2054119, rating: 4.93, reviews: 12, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-858131205689322602/original/06608599-e2ed-4868-8cfa-90da9fb5549c.jpeg?im_w=1440", location: "Vũng Tàu, Bà Rịa - Vũng Tàu", guests: 3 },
-            { id: 47, title: "Căn hộ tại Vũng Tàu", price: 1997060, rating: 4.94, reviews: 11, image: "https://a0.muscache.com/im/pictures/hosting/Hosting-925948523846924803/original/ae94ef43-743c-49d2-b4f1-9a2daf475e98.jpeg?im_w=1200", location: "Vũng Tàu, Bà Rịa - Vũng Tàu", guests: 2 },
-            { id: 48, title: "Căn hộ tại Vũng Tàu", price: 1848187, rating: 4.94, reviews: 12, image: "https://a0.muscache.com/im/pictures/miso/Hosting-968556098058240700/original/9b683bf4-1f1c-4af2-9296-534f68312cf2.jpeg?im_w=1440", location: "Vũng Tàu, Bà Rịa - Vũng Tàu", guests: 2 }
-        ];
-    </script>
-    <script src="{% static 'app/js/datphong.js' %}"></script>
+    <script src="{% static 'app/js/datphong_api.js' %}?v=11"></script>
+    <script src="{% static 'app/js/datphong.js' %}?v=11"></script>
 </body>
 
 </html>

@@ -97,7 +97,7 @@ def user_bookings(request):
     except Exception:
         return render(request, 'app/pages/user_bookings.html', {'error': 'Booking model unavailable'})
 
-    qs = Booking.objects.filter(user=request.user).order_by('-checkin')
+    qs = Booking.objects.filter(user=request.user).order_by('-check_in')
     page = request.GET.get('page', 1)
     paginator = Paginator(qs, 12)
     try:

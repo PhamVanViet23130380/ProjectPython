@@ -18,6 +18,7 @@ BOOKING_STATUS_CHOICES = [
 
 PAYMENT_STATUS_CHOICES = [
     ('paid', 'Đã thanh toán'),
+    ('refunded', 'Đã hoàn tiền'),
     ('failed', 'Thanh toán thất bại'),
 ]
 
@@ -226,6 +227,15 @@ class Booking(models.Model):
     # total_price: DECIMAL(10,2) (DecimalField)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Tổng tiền')
 
+    # base_price: DECIMAL(10,2) (DecimalField) - subtotal (price_per_night * nights)
+    base_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Tiền cơ bản')
+
+    # service_fee: DECIMAL(10,2) (DecimalField) - platform service fee portion
+    service_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Phí dịch vụ')
+
+    # guests: number of guests for the booking
+    guests = models.IntegerField(default=1, verbose_name='Số khách')
+
     # booking_status: ENUM (CharField)
     booking_status = models.CharField(max_length=10, choices=BOOKING_STATUS_CHOICES, default='pending', verbose_name='Trạng thái đặt phòng')
 
@@ -261,6 +271,12 @@ class Payment(models.Model):
 
     # paid_at: DATETIME (DateTimeField)
     paid_at = models.DateTimeField(null=True, blank=True)
+
+    # Optional transaction identifier from payment provider
+    transaction_id = models.CharField(max_length=255, null=True, blank=True)
+
+    # Optional payment details / breakdown stored as JSON string
+    details = models.TextField(null=True, blank=True, verbose_name='Chi tiết thanh toán (JSON)')
 
     def __str__(self):
         return f"Thanh toán cho Đơn {self.booking.booking_id}"

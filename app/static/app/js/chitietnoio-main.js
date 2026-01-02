@@ -22,22 +22,46 @@ function loadRoom(roomId) {
     document.getElementById('guests-max').textContent = room.guests;
     document.getElementById('room-description').textContent = room.description;
     
-    // Card info
-    document.getElementById('card-price').textContent = `₫${room.price.toLocaleString('vi-VN')}`;
-    document.getElementById('card-rating').textContent = room.rating.toFixed(1);
-    document.getElementById('card-reviews').textContent = `${room.reviews} đánh giá`;
-    document.getElementById('price-per-night').textContent = `₫${room.price.toLocaleString('vi-VN')} x 2 đêm`;
-    document.getElementById('price-subtotal').textContent = `₫${(room.price * 2).toLocaleString('vi-VN')}`;
+    // Card info - but do NOT override server-provided price when SERVER_LISTING is true.
+    try {
+        const shouldOverridePrice = !(typeof SERVER_LISTING !== 'undefined' && SERVER_LISTING);
+        if (shouldOverridePrice) {
+            document.getElementById('card-price').textContent = `₫${room.price.toLocaleString('vi-VN')}`;
+            document.getElementById('price-per-night').textContent = `₫${room.price.toLocaleString('vi-VN')} x 2 đêm`;
+            document.getElementById('price-subtotal').textContent = `₫${(room.price * 2).toLocaleString('vi-VN')}`;
+        }
+        // Always update rating/reviews (non-price fields)
+        document.getElementById('card-rating').textContent = room.rating.toFixed(1);
+        document.getElementById('card-reviews').textContent = `${room.reviews} đánh giá`;
+    } catch (e) {
+        console.warn('loadRoom price update skipped due to error', e);
+    }
     
-    // Calculate fees (roughly 32% service fee + 8% host protection)
-    const subtotal = room.price * 2;
-    const serviceFee = Math.round(subtotal * 0.32 / 100) * 100;
-    const hostFee = Math.round(subtotal * 0.08 / 100) * 100;
-    const total = subtotal + serviceFee + hostFee;
-    
-    document.getElementById('fee-service').textContent = `₫${serviceFee.toLocaleString('vi-VN')}`;
-    document.getElementById('fee-host').textContent = `₫${hostFee.toLocaleString('vi-VN')}`;
-    document.getElementById('price-total').textContent = `₫${total.toLocaleString('vi-VN')}`;
+    // Calculate fees only when we're using demo `rooms` data (do not override server breakdown)
+    if (shouldOverridePrice) {
+        // Calculate fees (roughly 32% service fee + 8% host protection)
+        const subtotal = room.price * 2;
+        const serviceFee = Math.round(subtotal * 0.32 / 100) * 100;
+        const hostFee = Math.round(subtotal * 0.08 / 100) * 100;
+        const total = subtotal + serviceFee + hostFee;
+
+        if (document.getElementById('fee-service')) document.getElementById('fee-service').textContent = `₫${serviceFee.toLocaleString('vi-VN')}`;
+        if (document.getElementById('fee-host')) document.getElementById('fee-host').textContent = `₫${hostFee.toLocaleString('vi-VN')}`;
+        if (document.getElementById('price-total')) document.getElementById('price-total').textContent = `₫${total.toLocaleString('vi-VN')}`;
+    } else {
+        // When using server-backed listing, ask the server to compute breakdown (if function available)
+        try {
+            const bookingCard = document.querySelector('.booking-card');
+            const listingId = bookingCard ? bookingCard.getAttribute('data-listing-id') || bookingCard.dataset.listingId : null;
+            const checkin = document.querySelector('.booking-form input[type="date"]')?.value;
+            const checkout = document.querySelectorAll('.booking-form input[type="date"]')[1]?.value;
+            if (typeof fetchServerPrice === 'function' && listingId && checkin && checkout) {
+                fetchServerPrice(listingId, checkin, checkout, 1);
+            }
+        } catch (e) {
+            console.warn('fetchServerPrice call skipped', e);
+        }
+    }
     
     // Gallery
     document.getElementById('gallery-main-img').src = room.image;
@@ -100,7 +124,12 @@ function loadAmenities(room) {
 // Load room khi trang load
 document.addEventListener('DOMContentLoaded', function() {
     const roomId = getRoomIdFromURL();
-    loadRoom(roomId);
+    if (typeof rooms !== 'undefined') {
+        loadRoom(roomId);
+    } else {
+        // rooms not available (we rely on server API); skip demo loader
+        console.debug('rooms demo not present; skipping loadRoom');
+    }
     
     // Xử lý nút "Xem thêm" mô tả
     document.getElementById('btn-show-more').addEventListener('click', function(e) {
@@ -284,12 +313,192 @@ function cleanupModal() {
 
 // Handle booking button click
 document.addEventListener('DOMContentLoaded', function() {
+    // Friendly login notice toast
+    function showLoginNotice(message, loginUrl) {
+        try {
+            if (document.getElementById('loginNoticeToast')) return;
+            const container = document.createElement('div');
+            container.id = 'loginNoticeToast';
+            container.style.position = 'fixed';
+            container.style.right = '20px';
+            container.style.bottom = '20px';
+            container.style.zIndex = '99999';
+            container.style.maxWidth = '320px';
+            container.style.background = 'linear-gradient(180deg, #ffffff, #f8f4f1)';
+            container.style.border = '1px solid rgba(0,0,0,0.06)';
+            container.style.boxShadow = '0 6px 24px rgba(0,0,0,0.12)';
+            container.style.padding = '14px';
+            container.style.borderRadius = '10px';
+            container.style.fontFamily = 'Arial, sans-serif';
+
+            container.innerHTML = `
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div style="flex:1">
+                        <div style="font-weight:600;margin-bottom:6px;color:#333">Bạn cần đăng nhập</div>
+                        <div style="font-size:13px;color:#444">${message}</div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:6px">
+                        <button id="loginNoticeBtn" style="background:#ff6b3d;border:none;color:white;padding:8px 10px;border-radius:8px;cursor:pointer;font-weight:600">Đăng nhập</button>
+                        <button id="loginNoticeClose" style="background:transparent;border:none;color:#666;cursor:pointer;font-size:12px">Đóng</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(container);
+
+            document.getElementById('loginNoticeBtn').addEventListener('click', function() {
+                const next = encodeURIComponent(window.location.pathname + window.location.search);
+                const url = (typeof loginUrl !== 'undefined' && loginUrl) ? loginUrl : '/login/';
+                window.location.href = `${url}?next=${next}`;
+            });
+            document.getElementById('loginNoticeClose').addEventListener('click', function() {
+                container.remove();
+            });
+
+            setTimeout(() => { try { container.remove(); } catch(_){} }, 8000);
+        } catch (e) { console.error('showLoginNotice error', e); }
+    }
+
     const bookingBtn = document.querySelector('.booking-btn-main');
+    // enforce min dates on listing booking card
+    try {
+        const bookingFormEl = document.querySelector('.booking-form');
+        const dateInputs = bookingFormEl ? bookingFormEl.querySelectorAll('input[type="date"]') : [];
+        const checkInEl = dateInputs && dateInputs.length > 0 ? dateInputs[0] : null;
+        const checkOutEl = dateInputs && dateInputs.length > 1 ? dateInputs[1] : null;
+        const now = new Date(); now.setHours(0,0,0,0);
+        const todayISO = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+        const tomorrow = new Date(now.getTime() + 24*60*60*1000);
+        const tomorrowISO = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth()+1).padStart(2,'0')}-${String(tomorrow.getDate()).padStart(2,'0')}`;
+        if (checkInEl) checkInEl.setAttribute('min', todayISO);
+        if (checkOutEl) checkOutEl.setAttribute('min', tomorrowISO);
+        // Default values: check-in = today, check-out = today + 2 days
+        try {
+            if (checkInEl && !checkInEl.value) checkInEl.value = todayISO;
+            if (checkOutEl && !checkOutEl.value) {
+                const twoDays = new Date(now.getTime() + 2*24*60*60*1000);
+                const twoDaysISO = `${twoDays.getFullYear()}-${String(twoDays.getMonth()+1).padStart(2,'0')}-${String(twoDays.getDate()).padStart(2,'0')}`;
+                checkOutEl.value = twoDaysISO;
+                if (checkOutEl.getAttribute('min') && checkOutEl.value < checkOutEl.getAttribute('min')) {
+                    checkOutEl.value = checkOutEl.getAttribute('min');
+                }
+            }
+            if (checkInEl && checkOutEl) {
+                checkInEl.addEventListener('change', function() {
+                    try {
+                        const ci = new Date(checkInEl.value);
+                        if (!isNaN(ci)) {
+                            ci.setHours(0,0,0,0);
+                            const minCo = new Date(ci.getTime() + 24*60*60*1000);
+                            const minCoISO = `${minCo.getFullYear()}-${String(minCo.getMonth()+1).padStart(2,'0')}-${String(minCo.getDate()).padStart(2,'0')}`;
+                            checkOutEl.setAttribute('min', minCoISO);
+                            // default checkout to checkin + 2 days for convenience
+                            const defaultCo = new Date(ci.getTime() + 2*24*60*60*1000);
+                            const defaultCoISO = `${defaultCo.getFullYear()}-${String(defaultCo.getMonth()+1).padStart(2,'0')}-${String(defaultCo.getDate()).padStart(2,'0')}`;
+                            if (!checkOutEl.value) {
+                                checkOutEl.value = defaultCoISO;
+                            } else if (checkOutEl.value < minCoISO) {
+                                checkOutEl.value = defaultCoISO;
+                            }
+                            // update calendar summary text when dates change
+                            try {
+                                const calendarEl = document.getElementById('calendarRange');
+                                if (calendarEl) {
+                                    const ci2 = new Date(checkInEl.value);
+                                    const co2 = new Date(checkOutEl.value);
+                                    if (!isNaN(ci2) && !isNaN(co2)) {
+                                        const fmt = d => `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+                                        const nights2 = Math.ceil((co2 - ci2)/(24*60*60*1000));
+                                        calendarEl.textContent = `Ngày ${fmt(ci2)} - ${fmt(co2)} · ${nights2} đêm`;
+                                    }
+                                }
+                            } catch (e) {}
+                        }
+                    } catch (e) {}
+                });
+            }
+            // initial calendar summary update (when defaults assigned)
+            try {
+                const calendarElInit = document.getElementById('calendarRange');
+                if (calendarElInit && checkInEl && checkOutEl) {
+                    const ci0 = new Date(checkInEl.value);
+                    const co0 = new Date(checkOutEl.value);
+                    if (!isNaN(ci0) && !isNaN(co0)) {
+                        const fmt0 = d => `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+                        const nights0 = Math.ceil((co0 - ci0)/(24*60*60*1000));
+                        calendarElInit.textContent = `Ngày ${fmt0(ci0)} - ${fmt0(co0)} · ${nights0} đêm`;
+                    }
+                }
+            } catch (e) {}
+        } catch (e) {}
+    } catch (e) {}
     if (bookingBtn) {
+        // If availability flow is enabled (set by server-backed template),
+        // skip attaching the default redirect handler here.
+        if (typeof window.__useAvailabilityFlow !== 'undefined' && window.__useAvailabilityFlow) {
+            // Availability flow will attach its own click handler in the template.
+        } else {
         bookingBtn.addEventListener('click', function() {
+            // If user not authenticated, prompt and redirect to login page
+            try {
+                if (typeof window.__isAuthenticated !== 'undefined' && !window.__isAuthenticated) {
+                    // show friendly toast instead of confirm
+                    const loginUrl = (typeof window.__loginUrl !== 'undefined') ? window.__loginUrl : '/login/';
+                    showLoginNotice('Bạn cần đăng nhập trước khi đặt phòng. Nhấn nút Đăng nhập để tiếp tục.', loginUrl);
+                    return;
+                }
+            } catch (err) {
+                console.debug('Auth check failed, proceeding to booking navigation', err);
+            }
+
             const roomId = getRoomIdFromURL();
-            window.location.href = `/datphong/?room=${roomId}`;
+            // Try to read selected dates and guests from the booking card
+            try {
+                const bookingForm = document.querySelector('.booking-form');
+                const dateInputs = bookingForm ? bookingForm.querySelectorAll('input[type="date"]') : [];
+                const checkIn = dateInputs && dateInputs.length > 0 ? dateInputs[0].value : '';
+                const checkOut = dateInputs && dateInputs.length > 1 ? dateInputs[1].value : '';
+                // Validate dates against today
+                try {
+                    const now = new Date(); now.setHours(0,0,0,0);
+                    const todayISO = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+                    if (checkIn && checkIn < todayISO) { showInlineNotice('Ngày nhận phòng không được trước ngày hôm nay. Vui lòng chọn lại.'); return; }
+                    if (checkIn && checkOut && checkOut <= checkIn) { showInlineNotice('Ngày trả phòng phải sau ngày nhận phòng. Vui lòng chọn lại.'); return; }
+                } catch (e) {
+                    // ignore
+                }
+                const guestsEl = bookingForm ? bookingForm.querySelector('select') : null;
+                let guests = '';
+                if (guestsEl) {
+                    const opt = guestsEl.options[guestsEl.selectedIndex];
+                    guests = opt ? opt.text.replace(/[^0-9]/g, '') : '';
+                }
+
+                const params = new URLSearchParams();
+                params.set('room', roomId);
+                if (checkIn) params.set('checkin', checkIn);
+                if (checkOut) params.set('checkout', checkOut);
+                if (guests) params.set('guests', guests);
+
+                    // store subtotal in sessionStorage to avoid long URLs
+                    const subtotalEl = document.getElementById('price-subtotal') || document.getElementById('subtotal');
+                    if (subtotalEl) {
+                        try {
+                            const raw = subtotalEl.textContent || subtotalEl.value || '';
+                            const numeric = raw.replace(/[^0-9]/g, '');
+                            if (numeric) sessionStorage.setItem('booking_subtotal', numeric);
+                        } catch (err) {
+                            // ignore
+                        }
+                    }
+
+                window.location.href = `/datphong/?${params.toString()}`;
+            } catch (e) {
+                // fallback to simple navigation
+                window.location.href = `/datphong/?room=${roomId}`;
+            }
         });
+        }
     }
 
     // Xử lý đóng modal - xóa backdrop và reset body

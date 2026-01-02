@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác nhận đặt phòng - Home Nest</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #FF385C 0%, #E31C5F 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 16px;
+            opacity: 0.95;
+        }
+        .content {
+            padding: 30px 20px;
+        }
+        .success-icon {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .success-icon span {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            background: #00A699;
+            border-radius: 50%;
+            line-height: 60px;
+            font-size: 30px;
+            color: white;
+        }
+        .message {
+            font-size: 16px;
+            color: #555;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .booking-details {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .booking-details h2 {
+            margin: 0 0 15px 0;
+            font-size: 20px;
+            color: #222;
+            border-bottom: 2px solid #FF385C;
+            padding-bottom: 10px;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .detail-label {
+            color: #666;
+            font-weight: 500;
+        }
+        .detail-value {
+            color: #222;
+            font-weight: 600;
+        }
+        .total-row {
+            background: #fff3e0;
+            margin: 15px -20px -20px -20px;
+            padding: 15px 20px;
+            border-radius: 0 0 8px 8px;
+        }
+        .total-row .detail-value {
+            color: #FF385C;
+            font-size: 20px;
+        }
+        .listing-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .listing-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 10px;
+        }
+        .button {
+            display: inline-block;
+            background: #FF385C;
+            color: white;
+            padding: 14px 28px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .button:hover {
+            background: #E31C5F;
+        }
+        .footer {
+            background: #f9f9f9;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid #eee;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        .footer a {
+            color: #FF385C;
+            text-decoration: none;
+        }
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .info-box p {
+            margin: 0;
+            color: #1976D2;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Home Nest</h1>
+            <p>Xác nhận đặt phòng thành công</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="success-icon">
+                <span>✓</span>
+            </div>
+
+            <p class="message">
+                Xin chào <strong>{{ user_name }}</strong>,<br>
+                Cảm ơn bạn đã tin tưởng Home Nest! Đặt phòng của bạn đã được xác nhận thành công.
+            </p>
+
+            <!-- Listing Info -->
+            {% if listing_image %}
+            <img src="{{ listing_image }}" alt="{{ listing_title }}" class="listing-image">
+            {% endif %}
+            <h3 class="listing-title">{{ listing_title }}</h3>
+
+            <!-- Booking Details -->
+            <div class="booking-details">
+                <h2>Chi tiết đặt phòng</h2>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Mã đặt phòng</span>
+                    <span class="detail-value">#{{ booking_id }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Ngày nhận phòng</span>
+                    <span class="detail-value">{{ check_in }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Ngày trả phòng</span>
+                    <span class="detail-value">{{ check_out }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Số đêm</span>
+                    <span class="detail-value">{{ nights }} đêm</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Số khách</span>
+                    <span class="detail-value">{{ guests }} người</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Giá phòng</span>
+                    <span class="detail-value">{{ base_price }} VND</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Phí dịch vụ</span>
+                    <span class="detail-value">{{ service_fee }} VND</span>
+                </div>
+
+                <div class="detail-row total-row">
+                    <span class="detail-label"><strong>Tổng tiền</strong></span>
+                    <span class="detail-value">{{ total_price }} VND</span>
+                </div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="info-box">
+                <p><strong>📌 Lưu ý quan trọng:</strong> Vui lòng mang theo giấy tờ tùy thân khi nhận phòng. Chủ nhà sẽ liên hệ với bạn qua email hoặc số điện thoại đã đăng ký.</p>
+            </div>
+
+            <!-- CTA Button -->
+            <center>
+                <a href="{{ booking_url }}" class="button">Xem chi tiết đặt phòng</a>
+            </center>
+
+            <p style="text-align: center; color: #666; font-size: 14px; margin-top: 20px;">
+                Bạn có thể xem và quản lý các đặt phòng của mình tại 
+                <a href="{{ booking_history_url }}" style="color: #FF385C; text-decoration: none;">Lịch sử đặt phòng</a>
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Home Nest</strong></p>
+            <p>Nền tảng đặt phòng trực tuyến</p>
+            <p>Email: support@homenest.com | Hotline: 1900-xxxx</p>
+            <p style="margin-top: 15px;">
+                <a href="#">Chính sách</a> | 
+                <a href="#">Điều khoản</a> | 
+                <a href="#">Hỗ trợ</a>
+            </p>
+            <p style="font-size: 12px; color: #999; margin-top: 15px;">
+                Email này được gửi tự động, vui lòng không trả lời.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

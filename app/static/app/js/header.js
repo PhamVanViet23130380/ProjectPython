@@ -198,4 +198,93 @@ window.addEventListener('load', () => {
 
         update();
     });
+
+    // Search button handler
+    const searchBtn = document.querySelector('.ab-search-btn');
+    if (searchBtn) {
+        searchBtn.addEventListener('click', performSearch);
+    }
+
+    // Store selected dates
+    let selectedCheckIn = null;
+    let selectedCheckOut = null;
+
+    // Enhanced calendar day selection
+    calendarDays.forEach((day) => {
+        if (day.classList.contains('muted')) return;
+        
+        day.addEventListener('click', () => {
+            const monthWrap = day.closest('.calendar-month');
+            const headingEl = monthWrap ? monthWrap.querySelector('.calendar-heading') : null;
+            const monthTitle = headingEl ? headingEl.textContent.trim() : '';
+            const dayNum = day.textContent.trim();
+            
+            if (!selectedCheckIn || (selectedCheckIn && selectedCheckOut)) {
+                // First selection or reset
+                selectedCheckIn = `${dayNum} ${monthTitle}`;
+                selectedCheckOut = null;
+                setValue('dates', selectedCheckIn);
+                
+                // Clear previous selections
+                calendarDays.forEach(d => d.classList.remove('selected', 'in-range'));
+                day.classList.add('selected');
+            } else {
+                // Second selection
+                selectedCheckOut = `${dayNum} ${monthTitle}`;
+                setValue('dates', `${selectedCheckIn} - ${selectedCheckOut}`);
+                day.classList.add('selected');
+                
+                // Optionally open guests panel
+                setTimeout(() => openPanel('guests'), 300);
+            }
+        });
+    });
+
+    function performSearch() {
+        // Collect search parameters
+        const params = new URLSearchParams();
+        
+        // Location
+        const location = locationInp ? locationInp.value.trim() : '';
+        if (location) {
+            params.set('location', location);
+        }
+        
+        // Dates
+        if (selectedCheckIn) {
+            params.set('check_in', selectedCheckIn);
+        }
+        if (selectedCheckOut) {
+            params.set('check_out', selectedCheckOut);
+        }
+        
+        // Guests
+        if (guestState.adults > 0) {
+            params.set('adults', guestState.adults);
+        }
+        if (guestState.children > 0) {
+            params.set('children', guestState.children);
+        }
+        if (guestState.infants > 0) {
+            params.set('infants', guestState.infants);
+        }
+        if (guestState.pets > 0) {
+            params.set('pets', guestState.pets);
+        }
+        
+        // Build search URL
+        const searchUrl = '/search/?' + params.toString();
+        
+        // Navigate to search results
+        window.location.href = searchUrl;
+    }
+
+    // Allow Enter key to trigger search in location input
+    if (locationInp) {
+        locationInp.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    }
 });

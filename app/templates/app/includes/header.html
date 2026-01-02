@@ -232,4 +232,5 @@
 
 </header>
 
-<script src="{% static 'app/js/header.js' %}?v=2"></script>
+<!-- Load header behavior deferred to avoid blocking render -->
+<script src="{% static 'app/js/header.js' %}?v=2" defer></script>

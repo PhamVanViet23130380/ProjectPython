@@ -799,6 +799,117 @@
     line-height: 1.5;
 }
 
+/* Confirmation modal styles */
+.confirm-modal {
+    width: 1040px;
+    max-width: calc(100% - 60px);
+    border-radius: 12px;
+    overflow: hidden;
+}
+.modal-overlay#confirmBookingModal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.45);
+    z-index: 1100;
+}
+.confirm-body {
+    display: flex;
+    gap: 18px;
+    padding: 20px;
+}
+.confirm-body { box-sizing: border-box; display: flex; gap: 18px; padding: 20px; overflow: auto; }
+.confirm-left {
+    flex: 0 0 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.confirm-left img#confirmRoomImage {
+    width: 100%;
+    height: auto;
+    max-width: 320px;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+.confirm-right {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0; /* allow flex child to shrink and avoid overflow */
+}
+
+.confirm-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    word-break: break-word;
+}
+.confirm-row > * { min-width: 0; }
+
+/* Make first child (label) a fixed narrow column and second child the flexible value column */
+.confirm-row > :first-child {
+    flex: 0 0 120px;
+    font-weight: 700;
+    color: #222;
+    text-align: left;
+}
+.confirm-row > :last-child {
+    flex: 1 1 auto;
+    text-align: left;
+}
+.confirm-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    color: #222;
+}
+.confirm-row.total {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #EEE;
+    font-size: 16px;
+}
+.modal-footer {
+    display: flex;
+    gap: 12px;
+    padding: 16px 20px;
+    justify-content: flex-end;
+    background: #fff;
+}
+.modal-header h3 { margin: 0; font-size: 18px; }
+.confirm-modal .modal-header, .confirm-modal .modal-body { background: #fff; }
+.modal-close { background: none; border: none; font-size: 22px; cursor: pointer; }
+
+@media (max-width: 1100px) {
+    .confirm-modal { width: calc(100% - 48px); max-width: calc(100% - 48px); }
+    .confirm-left { flex: 0 0 240px; }
+    .confirm-left img#confirmRoomImage { max-width: 220px; max-height: 150px; }
+    .confirm-right { flex: 1 1 auto; min-width: 0; }
+    .confirm-row > :first-child { flex-basis: 100px; }
+}
+
+@media (max-width: 700px) {
+    .confirm-row > :first-child { flex-basis: 110px; }
+}
+
+@media (max-width: 700px) {
+    .confirm-body { flex-direction: column; }
+    .confirm-left { width: 100%; flex: none; }
+    .confirm-left img#confirmRoomImage { width: 100%; height: auto; }
+    .confirm-right { width: 100%; }
+}
+
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .booking-container {
