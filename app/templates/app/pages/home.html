@@ -135,6 +135,33 @@
         </div>
     </section>
 
+    <section class="section cards-section">
+        <div class="section-header">
+            <h2>Các nơi lưu trú khác ›</h2>
+            <div class="slider-controls">
+                <button class="slide-btn left" onclick="slideLeft(this)">❮</button>
+                <button class="slide-btn right" onclick="slideRight(this)">❯</button>
+            </div>
+        </div>
+        <div class="cards-wrapper">
+            <div class="cards-row">
+                {% for item in other_listings %}
+                <div class="card" data-room-id="{{ item.listing_id }}">
+                    {% with item.images.all|first as first_img %}
+                        <img src="{{ first_img.image_url }}" alt="{{ item.title }}">
+                    {% endwith %}
+                    <div class="popular-badge">Được khách yêu thích</div>
+                    <div class="card-heart"><i class="fa-regular fa-heart"></i></div>
+                    <h4>{{ item.title }}</h4>
+                    <p class="meta">₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm · ★5,0</p>
+                </div>
+                {% empty %}
+                <p style="padding: 12px; color: #666;">Chưa có bài đăng ngoài các thành phố nổi bật.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
 {% endblock %}
 
 {% block extra_js %}

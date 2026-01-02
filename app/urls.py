@@ -4,6 +4,8 @@ from .views import payment_views
 from django.contrib.auth import views as auth_views
 from .views.admin_api import booking_total_price, listing_price, listing_detail
 from .views.availability_views import check_availability
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -17,6 +19,7 @@ urlpatterns = [
     path('chitietnoio/', views.chitietnoio, name='chitietnoio'),
     path('buoc1/', views.buoc1, name='buoc1'),
     path('loaichoo/', views.loaichoo, name='loaichoo'),
+    path('dattieude/', views.dattieude, name='dattieude'),
     path('trungtamtrogiup/', views.trungtamtrogiup, name='trungtamtrogiup'),
     path('datphong/', views.datphong, name='datphong'),  # ?room=123
     path('phuongthucthanhtoan/', views.phuongthucthanhtoan, name='phuongthucthanhtoan'),
@@ -42,6 +45,7 @@ urlpatterns = [
 
     path('buoc2/', views.buoc2, name='buoc2'),
     path('duocuse/', views.duocuse, name='duocuse'),
+    path('thoigianthue/', views.thoigianthue, name='thoigianthue'),
     path('themanh/', views.themanh, name='themanh'),
     path('thongtincb/', views.thongtincb, name='thongtincb'),
     path('tiennghii/', views.tiennghii, name='tiennghii'),
@@ -90,3 +94,6 @@ urlpatterns = [
     path('booking/history/', views.user_booking_history, name='user_booking_history'),
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

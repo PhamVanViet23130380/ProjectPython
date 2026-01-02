@@ -24,16 +24,18 @@
         </div>
 
 
+        <form method="POST" action="{% url 'themanh' %}" enctype="multipart/form-data">
+        {% csrf_token %}
         <div class="start-main scroll-area">
             <h1 class="question">Bổ sung một số bức ảnh chụp chỗ ở thuộc danh mục căn hộ của bạn</h1>
 
             <p class="goiy">Bạn sẽ cần 5 bức ảnh để bắt đầu. Về sau, bạn vẫn có thể đăng thêm hoặc thay đổi ảnh</p>
 
             <div class="upload-area" id="uploadArea">
-                <input id="fileInput" type="file" accept="image/*" multiple hidden>
+                <input id="fileInput" name="images" type="file" accept="image/*" multiple hidden>
                 <div class="upload-placeholder" id="uploadPlaceholder">
                     <img src="https://img.icons8.com/ios/100/000000/camera--v1.png" alt="camera" class="camera-icon">
-                    <button class="btn add-photo-btn" id="chooseBtn">Thêm ảnh</button>
+                    <button type="button" class="btn add-photo-btn" id="chooseBtn">Thêm ảnh</button>
                     <p class="hint">Kéo và thả ảnh vào đây hoặc nhấp vào "Thêm ảnh"</p>
                 </div>
 
@@ -44,8 +46,9 @@
         <div class="start-footer fixed-footer">
             <a href="{% url 'tiennghii' %}" class="back-link">Quay lại</a>
 
-            <a href="{% url 'tieude' %}" class="next-btn">Tiếp theo</a>
+            <button type="submit" class="next-btn">Tiếp theo</button>
         </div>
+        </form>
     </div>
 
 </body>
@@ -106,12 +109,15 @@
             renderThumbs();
         }
 
-        // Click "Thêm ảnh" -> open file chooser
-        chooseBtn.addEventListener('click', () => fileInput.click());
+        // Click "Thêm ảnh" -> open file chooser (prevent form submit)
+        chooseBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            fileInput.click();
+        });
         // When files chosen via file input
         fileInput.addEventListener('change', (e) => {
             addFiles(e.target.files);
-            fileInput.value = '';
+            // Keep selected files so they submit with the form
         });
 
         // Drag & drop handlers
@@ -180,16 +186,13 @@
         updateNextState();
 
         // Optional: intercept Next click to prevent navigation if not enough images
+        // form submit handled normally; ensure minimum images client-side
         if (nextBtn) {
             nextBtn.addEventListener('click', (e) => {
                 if (images.length < MIN_REQUIRED) {
-                    // prevent default behavior and show small feedback
                     e.preventDefault();
-                    // simple visual feedback
                     nextBtn.classList.add('shake');
                     setTimeout(() => nextBtn.classList.remove('shake'), 400);
-                } else {
-                    // proceed (default)
                 }
             });
         }

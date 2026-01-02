@@ -21,16 +21,44 @@
 
     </div>
 
+    <form method="POST" action="{% url 'thongtincb' %}">
+        {% csrf_token %}
     <div class="start-main scroll-area">
         <div class="main-content">
             <h1>Chia sẻ một số thông tin cơ bản về chỗ ở của bạn</h1>
 
             <div class="info-section">
                 <div class="info-item">
-                    <label>Khách</label>
+                    <label>Tối đa khách</label>
                     <div class="quantity-control">
                         <button class="qty-btn minus">−</button>
-                        <span class="qty-value">4</span>
+                        <span class="qty-value" data-target="max_adults">4</span>
+                        <button class="qty-btn plus">+</button>
+                    </div>
+                </div>
+
+            <div class="info-item">
+                    <label>Người lớn</label>
+                    <div class="quantity-control">
+                        <button class="qty-btn minus">−</button>
+                        <span class="qty-value" data-target="max_adults">2</span>
+                        <button class="qty-btn plus">+</button>
+                    </div>
+                </div>
+           <div class="info-item">
+                    <label>Trẻ em</label>
+                    <div class="quantity-control">
+                        <button class="qty-btn minus">−</button>
+                        <span class="qty-value" data-target="max_children">2</span>
+                        <button class="qty-btn plus">+</button>
+          </div>
+          </div>
+
+          <div class="info-item">
+                    <label>Thú cưng</label>
+                    <div class="quantity-control">
+                        <button class="qty-btn minus">−</button>
+                        <span class="qty-value" data-target="max_pets">0</span>
                         <button class="qty-btn plus">+</button>
                     </div>
                 </div>
@@ -65,11 +93,15 @@
     </div>
 
 
-    <div class="start-footer fixed-footer">
+        <div class="start-footer fixed-footer">
              <a href="{% url 'diachi' %}" class="back-link">Quay lại</a>
 
-            <a href="{% url 'buoc2' %}" class="next-btn">Tiếp theo</a>
-    </div>
+            <button type="submit" class="next-btn">Tiếp theo</button>
+        </div>
+        <input type="hidden" name="max_adults" id="max_adults" value="2">
+        <input type="hidden" name="max_children" id="max_children" value="2">
+        <input type="hidden" name="max_pets" id="max_pets" value="0">
+        </form>
 </div>
 
 </body>
@@ -78,11 +110,14 @@
         const minusBtn = item.querySelector('.qty-btn.minus');
         const plusBtn = item.querySelector('.qty-btn.plus');
         const qtyValue = item.querySelector('.qty-value');
+        const target = qtyValue.getAttribute('data-target');
+        const hidden = target ? document.getElementById(target) : null;
 
         if (plusBtn) {
             plusBtn.addEventListener('click', () => {
                 let currentValue = parseInt(qtyValue.textContent);
                 qtyValue.textContent = currentValue + 1;
+                if (hidden) hidden.value = qtyValue.textContent;
             });
         }
 
@@ -91,6 +126,7 @@
                 let currentValue = parseInt(qtyValue.textContent);
                 if (currentValue > 0) {
                     qtyValue.textContent = currentValue - 1;
+                    if (hidden) hidden.value = qtyValue.textContent;
                 }
             });
         }

@@ -3,6 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from app.models import Listing, ListingAddress, ListingImage, Amenity
 from decimal import Decimal
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
+import os
+import shutil
 
 
 @login_required
@@ -11,8 +15,17 @@ def step_loaichoo(request):
     if request.method == 'POST':
         property_type = request.POST.get('property_type')
         request.session['listing_data'] = {'property_type': property_type}
-        return redirect('duocuse')
+        return redirect('dattieude')
     return render(request, 'app/host/loaichoo.html')
+@login_required
+def step_dattieude(request):
+    """Bước sau loaichoo: Đặt tiêu đề nhanh với CSS tieude"""
+    if request.method == 'POST':
+        listing_data = request.session.get('listing_data', {})
+        listing_data['title'] = request.POST.get('title')
+        request.session['listing_data'] = listing_data
+        return redirect('duocuse')
+    return render(request, 'app/host/dattieude.html')
 
 
 @login_required
@@ -38,6 +51,18 @@ def step_diachi(request):
         request.session['listing_data'] = listing_data
         return redirect('thongtincb')
     return render(request, 'app/host/diachi.html')
+
+
+@login_required
+def step_thoigianthue(request):
+    """Bước (thêm): Khoảng thời gian cho thuê"""
+    if request.method == 'POST':
+        listing_data = request.session.get('listing_data', {})
+        listing_data['available_from'] = request.POST.get('available_from')
+        listing_data['available_to'] = request.POST.get('available_to')
+        request.session['listing_data'] = listing_data
+        return redirect('thoigianthue')
+    return render(request, 'app/host/thoigianthue.html')
 
 
 @login_required
@@ -75,8 +100,20 @@ def step_themanh(request):
     """Bước 6: Thêm ảnh"""
     if request.method == 'POST':
         listing_data = request.session.get('listing_data', {})
-        images = request.POST.getlist('images')  # Danh sách URL ảnh
-        listing_data['images'] = images
+        files = request.FILES.getlist('images')
+        if not files or len(files) < 5:
+            messages.error(request, 'Vui lòng tải lên tối thiểu 5 ảnh.')
+            return render(request, 'app/host/themanh.html')
+
+        fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'listing_images', 'staged', str(request.user.id)))
+        saved_paths = []
+        os.makedirs(fs.location, exist_ok=True)
+        for f in files[:5]:
+            filename = fs.save(f.name, f)
+            rel_url = f"{settings.MEDIA_URL}listing_images/staged/{str(request.user.id)}/{filename}"
+            saved_paths.append(rel_url)
+
+        listing_data['images'] = saved_paths
         request.session['listing_data'] = listing_data
         return redirect('tieude')
     return render(request, 'app/host/themanh.html')
@@ -87,7 +124,7 @@ def step_tieude(request):
     """Bước 7: Tiêu đề và mô tả"""
     if request.method == 'POST':
         listing_data = request.session.get('listing_data', {})
-        listing_data['title'] = request.POST.get('title')
+        # Trang tieude giờ chỉ nhận mô tả
         listing_data['description'] = request.POST.get('description')
         request.session['listing_data'] = listing_data
         return redirect('thietlapgia')
@@ -100,6 +137,7 @@ def step_thietlapgia(request):
     if request.method == 'POST':
         listing_data = request.session.get('listing_data', {})
         listing_data['price_per_night'] = request.POST.get('price_per_night')
+        listing_data['cleaning_fee'] = request.POST.get('cleaning_fee')
         request.session['listing_data'] = listing_data
         return redirect('chiasett')
     return render(request, 'app/host/thietlapgia.html')
@@ -113,15 +151,35 @@ def step_chiasett(request):
     if request.method == 'POST':
         # Tạo listing mới
         try:
+            # Validate bắt buộc
+            required_fields = [
+                ('title', 'Tiêu đề'),
+                ('description', 'Mô tả'),
+                ('price_per_night', 'Giá mỗi đêm'),
+            ]
+            for key, label in required_fields:
+                if not listing_data.get(key):
+                    messages.error(request, f'Thiếu {label}. Vui lòng hoàn tất các bước trước đó.')
+                    return redirect('chiasett')
+
+            images = [u for u in listing_data.get('images', []) if u]
+            if len(images) < 5:
+                messages.error(request, 'Vui lòng tải lên tối thiểu 5 ảnh trước khi xuất bản.')
+                return redirect('chiasett')
+
             listing = Listing.objects.create(
                 host=request.user,
                 title=listing_data.get('title', 'Chưa có tiêu đề'),
                 description=listing_data.get('description', 'Chưa có mô tả'),
                 price_per_night=Decimal(listing_data.get('price_per_night', '0')),
+                cleaning_fee=Decimal(listing_data.get('cleaning_fee', '0') or '0'),
+                available_from=listing_data.get('available_from') or None,
+                available_to=listing_data.get('available_to') or None,
                 max_adults=listing_data.get('max_adults', 1),
                 max_children=listing_data.get('max_children', 0),
                 max_pets=listing_data.get('max_pets', 0),
-                is_active=True
+                is_active=False,
+                status='pending'
             )
             
             # Tạo địa chỉ
@@ -133,14 +191,33 @@ def step_chiasett(request):
             )
             
             # Thêm ảnh
-            images = listing_data.get('images', [])
-            for idx, img_url in enumerate(images):
-                if img_url:
-                    ListingImage.objects.create(
-                        listing=listing,
-                        image_url=img_url,
-                        is_main=(idx == 0)  # Ảnh đầu tiên là ảnh chính
-                    )
+            # Ảnh: di chuyển từ staged vào thư mục theo listing
+            final_dir = os.path.join(settings.MEDIA_ROOT, 'listing_images', str(listing.listing_id))
+            os.makedirs(final_dir, exist_ok=True)
+            for idx, url in enumerate(images[:5]):
+                if not url:
+                    continue
+                # url like 'media/listing_images/staged/<uid>/<filename>'
+                # derive filesystem path
+                # remove leading MEDIA_URL
+                relative_path = url.replace(settings.MEDIA_URL, '').lstrip('/') if url.startswith(settings.MEDIA_URL) else url
+                src_path = os.path.join(settings.MEDIA_ROOT, relative_path.replace('/', os.sep))
+                fname = os.path.basename(src_path)
+                dst_path = os.path.join(final_dir, fname)
+                try:
+                    shutil.move(src_path, dst_path)
+                except Exception:
+                    # fallback copy
+                    try:
+                        shutil.copy2(src_path, dst_path)
+                    except Exception:
+                        continue
+                final_url = f"{settings.MEDIA_URL}listing_images/{str(listing.listing_id)}/{fname}"
+                ListingImage.objects.create(
+                    listing=listing,
+                    image_url=final_url,
+                    is_main=(idx == 0)
+                )
             
             # Thêm tiện nghi
             amenity_ids = listing_data.get('amenities', [])

@@ -18,7 +18,9 @@
         </div>
     </div>
 
-    <div class="step-main scroll-area centered">
+    <form method="POST" action="{% url 'chiasett' %}">
+        {% csrf_token %}
+        <div class="step-main scroll-area centered">
         <div class="step-content">
             <h1 class="title">Chia sẻ thông tin an toàn</h1>
             <p class="desc">Chủ của bạn có tiền nghi nào trong số sau đây không?</p>
@@ -50,12 +52,13 @@
                 <p style="margin-top: 12px;">Lưu ý tuân thủ <a href="#" class="link">luật pháp địa phương</a> và xem lại <a href="#" class="link">chính sách chống phân biệt</a> của Home Nest cũng như các loại <a href="#" class="link">phí cho Chủ nhà và khách</a>.</p>
             </div>
         </div>
-    </div>
+        </div>
 
-    <div class="start-footer fixed-footer">
-        <a href="{% url 'giacuoituan' %}" class="back-link">Quay lại</a>
-        <a href="#" class="next-btn" id="nextBtn">Tạo bài đăng</a>
-    </div>
+        <div class="start-footer fixed-footer">
+            <a href="{% url 'thoigianthue' %}" class="back-link">Quay lại</a>
+            <button type="submit" class="next-btn" id="nextBtn">Tạo bài đăng</button>
+        </div>
+    </form>
 </div>
 
 </body>

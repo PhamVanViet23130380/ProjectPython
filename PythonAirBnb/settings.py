@@ -64,7 +64,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'homenest_db',
         'USER': 'root',
-        'PASSWORD': '123456',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {
@@ -96,6 +96,10 @@ STATICFILES_DIRS = [
 ]
 # STATIC_ROOT dùng khi deploy thực tế
 # STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Media (uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

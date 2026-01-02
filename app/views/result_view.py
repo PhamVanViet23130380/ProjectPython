@@ -21,8 +21,8 @@ def search_results(request):
     try:
         from app.models import Listing, Amenity
 
-        # Start with active listings
-        qs = Listing.objects.filter(is_active=True).select_related(
+        # Start with active & approved listings
+        qs = Listing.objects.filter(is_active=True, status='approved').select_related(
             'listingaddress', 'host'
         ).prefetch_related(
             'images', 'amenities'

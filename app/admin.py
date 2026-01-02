@@ -89,11 +89,12 @@ class UserAdmin(admin.ModelAdmin):
 # --- QUẢN LÝ CHỖ Ở (LISTINGS) ---
 @admin.register(Listing)
 class ListingAdmin(admin.ModelAdmin):
-    list_display = ('title', 'host_link', 'price_display', 'is_active', 'created_at')
+    list_display = ('title', 'host_link', 'price_display', 'status', 'is_active', 'created_at')
     list_editable = ('is_active',)
-    list_filter = ('is_active', 'created_at')
+    list_filter = ('status', 'is_active', 'created_at')
     search_fields = ('title', 'host__full_name')
     inlines = [ListingAddressInline, ListingImageInline, ListingAmenityInline]
+    actions = ('approve_listings', 'reject_listings')
     
     def host_link(self, obj):
         # use primary key `id` (or `pk`) — User model does not have `user_id` attribute
@@ -104,6 +105,16 @@ class ListingAdmin(admin.ModelAdmin):
     def price_display(self, obj):
         return format_html('<b style="color:#5D4037;">${}</b> / đêm', obj.price_per_night)
     price_display.short_description = "Giá"
+
+    def approve_listings(self, request, queryset):
+        updated = queryset.update(status='approved', is_active=True)
+        self.message_user(request, f"Approved {updated} listing(s) and set active.")
+    approve_listings.short_description = 'Approve selected listings'
+
+    def reject_listings(self, request, queryset):
+        updated = queryset.update(status='rejected', is_active=False)
+        self.message_user(request, f"Rejected {updated} listing(s) and set inactive.")
+    reject_listings.short_description = 'Reject selected listings'
 
 # --- QUẢN LÝ ĐẶT PHÒNG (BOOKINGS) ---
 @admin.register(Booking)

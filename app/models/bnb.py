@@ -2,6 +2,11 @@ from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+LISTING_STATUS_CHOICES = [
+    ('pending', 'Chờ duyệt'),
+    ('approved', 'Đã duyệt'),
+    ('rejected', 'Từ chối'),
+]
 
 
 # --- LISTINGS ---
@@ -14,10 +19,13 @@ class Listing(models.Model):
     cleaning_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='Phí vệ sinh')
     extra_guest_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Phí khách thêm/đêm')
     weekend_multiplier = models.DecimalField(max_digits=3, decimal_places=2, default=1.00, verbose_name='Hệ số cuối tuần')
+    available_from = models.DateField(null=True, blank=True, verbose_name='Ngày bắt đầu cho thuê')
+    available_to = models.DateField(null=True, blank=True, verbose_name='Ngày kết thúc cho thuê')
     max_adults = models.IntegerField(verbose_name='Số người lớn')
     max_children = models.IntegerField(default=0, verbose_name='Số trẻ em')
     max_pets = models.IntegerField(default=0, verbose_name='Số thú cưng')
     is_active = models.BooleanField(default=True, verbose_name='Có hiển thị không')
+    status = models.CharField(max_length=10, choices=LISTING_STATUS_CHOICES, default='pending', verbose_name='Trạng thái duyệt')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Ngày tạo')
 
     # Many-to-many amenities (through table declared below)
@@ -53,7 +61,7 @@ class ListingAddress(models.Model):
 class ListingImage(models.Model):
     image_id = models.BigAutoField(primary_key=True)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='images', verbose_name='Thuộc listing')
-    image_url = models.URLField(max_length=255, verbose_name='Ảnh')
+    image_url = models.CharField(max_length=255, verbose_name='Ảnh')
     is_main = models.BooleanField(default=False, verbose_name='Ảnh đại diện')
 
     def __str__(self):

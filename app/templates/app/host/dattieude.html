@@ -1,16 +1,18 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="UTF-8">
-    <title>Tiêu đề</title>
+    <title>Đặt Tiêu đề</title>
     <link rel="stylesheet" href="{% static 'app/css/tieude.css' %}">
+    <style>
+        /* optional tweak to reuse tieude.css layout exactly */
+    </style>
 </head>
 
 <body>
     <div class="start-container">
-
 
         <div class="start-header fixed-header">
             <a href="{% url 'home' %}">
@@ -20,22 +22,20 @@
                 <button class="btn btnThacMac">Bạn có thắc mắc?</button>
                 <button class="btn btnLuuThoat">Lưu và thoát</button>
             </div>
-
         </div>
 
-        <form method="POST" action="{% url 'tieude' %}">
+        <form method="POST" action="{% url 'dattieude' %}">
             {% csrf_token %}
             <div class="start-main scroll-area">
-                <h1 class="question">Bây giờ, hãy mô tả về nơi ở của bạn</h1>
+                <h1 class="question">Đặt Tiêu đề cho nơi ở của bạn</h1>
 
-                <textarea name="description" id="titleInput" maxlength="200" placeholder="Viết mô tả ngắn"></textarea>
-                <div class="char-row"><span id="charCount">0</span>/200</div>
+                <textarea name="title" id="titleInput" maxlength="50" placeholder="Viết tiêu đề ngắn"></textarea>
+                <div class="char-row"><span id="charCount">0</span>/50</div>
             </div>
 
             <div class="start-footer fixed-footer">
-                <a href="{% url 'themanh' %}" class="back-link">Quay lại</a>
-
-                <button type="submit" class="next-btn">Tiếp theo</button>
+                <a href="{% url 'loaichoo' %}" class="back-link">Quay lại</a>
+                <button type="submit" class="next-btn disabled">Tiếp theo</button>
             </div>
         </form>
     </div>
@@ -51,14 +51,11 @@
         function update() {
             const len = input.value.length;
             countEl.textContent = len;
-            // highlight khi gần giới hạn
             if (len >= 45 && len < MAX) {
                 document.querySelector('.char-row').classList.add('limit-near');
             } else {
                 document.querySelector('.char-row').classList.remove('limit-near');
             }
-
-            // bật Next nếu có ít nhất 1 ký tự
             if (len >= 1 && len <= MAX) {
                 nextBtn.disabled = false;
                 nextBtn.classList.remove('disabled');
@@ -67,11 +64,7 @@
                 nextBtn.classList.add('disabled');
             }
         }
-
-        // khởi tạo trạng thái (nếu textarea rỗng thì disable)
         update();
-
-        // lắng nghe nhập liệu
         input.addEventListener('input', update);
     });
 </script>

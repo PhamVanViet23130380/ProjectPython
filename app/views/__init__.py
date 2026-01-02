@@ -21,7 +21,7 @@ from .owner_management_view import owner_dashboard, owner_listings, owner_bookin
 from .info_owner_bnb_view import owner_listing_info
 from .contact_view import contact, contact_host
 from .create_listing_views import (
-    step_loaichoo, step_duocuse, step_diachi, step_thongtincb,
+    step_loaichoo, step_dattieude, step_duocuse, step_diachi, step_thoigianthue, step_thongtincb,
     step_tiennghii, step_themanh, step_tieude, step_thietlapgia, step_chiasett
 )
 
@@ -81,6 +81,8 @@ def giacuoituan(request):
 
 def loaichoo(request):
     return step_loaichoo(request)
+def dattieude(request):
+    return step_dattieude(request)
 
 
 def duocuse(request):
@@ -89,6 +91,10 @@ def duocuse(request):
 
 def diachi(request):
     return step_diachi(request)
+
+
+def thoigianthue(request):
+    return step_thoigianthue(request)
 
 
 def thongtincb(request):

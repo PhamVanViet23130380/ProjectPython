@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bạn muốn cho thuê trong khoảng thời gian nào?</title>
+    <link rel="stylesheet" href="{% static 'app/css/loaichoo.css' %}">
+</head>
+<body>
+<div class="start-container">
+    <div class="start-header fixed-header">
+        <a href="{% url 'home' %}">
+            <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
+        </a>
+        <div class="header-actions">
+            <button class="btn btnThacMac">Bạn có thắc mắc?</button>
+            <button class="btn btnLuuThoat">Lưu và thoát</button>
+        </div>
+    </div>
+
+    <form method="POST" action="{% url 'thoigianthue' %}">
+        {% csrf_token %}
+        <div class="start-main scroll-area">
+            <h1 class="question">Bạn muốn cho thuê nơi ở của bạn trong khoảng thời gian nào?</h1>
+
+            <div style="max-width:700px;margin:30px auto;display:flex;gap:16px;justify-content:center;align-items:center;">
+                <div style="flex:1;">
+                    <label for="available_from">Từ</label>
+                    <input type="date" id="available_from" name="available_from" class="option-input" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;" required>
+                </div>
+                <div style="flex:1;">
+                    <label for="available_to">Đến</label>
+                    <input type="date" id="available_to" name="available_to" class="option-input" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;" required>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="start-footer fixed-footer">
+            <a href="{% url 'thietlapgia' %}" class="back-link">Quay lại</a>
+            <button type="submit" class="next-btn">Tiếp theo</button>
+        </div>
+    </form>
+
+</div>
+</body>
+</html>

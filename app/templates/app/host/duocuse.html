@@ -26,7 +26,7 @@
 
         <form method="POST">
     {% csrf_token %}
-    <input type="hidden" name="room_type" id="room_type_input">
+    <input type="hidden" name="usage_type" id="usage_type_input">
     <div class="start-main scroll-area">
         <h1 class="question">Khách sẽ được sử dụng loại chỗ ở nào?</h1>
         <div class="options">
@@ -53,13 +53,13 @@
     </div>
 
     <div class="start-footer fixed-footer">
-        <a href="{% url 'loaichoo' %}" class="back-link">Quay lại</a>
+        <a href="{% url 'dattieude' %}" class="back-link">Quay lại</a>
         <button type="submit" class="next-btn disabled" id="nextBtn" disabled>Tiếp theo</button>
     </div>
 </form>
 <script>
     function selectRoomType(val) {
-        document.getElementById('room_type_input').value = val;
+        document.getElementById('usage_type_input').value = val;
         document.getElementById('nextBtn').disabled = false;
         document.getElementById('nextBtn').classList.remove('disabled');
         document.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
