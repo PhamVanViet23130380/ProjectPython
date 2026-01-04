@@ -451,3 +451,5 @@ class HostPolicy(models.Model):
         db_table = 'host_policies'
         verbose_name = "Chính sách chủ nhà"
         verbose_name_plural = "Chính sách chủ nhà"
+
+

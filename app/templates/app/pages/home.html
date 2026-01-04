@@ -163,7 +163,7 @@
                 if (e.target.closest('.card-heart')) return;
                 // Lấy ID thật từ database
                 const roomId = this.getAttribute('data-room-id');
-                const url = "{% url 'chitietnoio' %}?room=" + roomId;
+                const url = "/chitietnoio/" + roomId + "/";
                 window.open(url, '_blank');
             });
         });

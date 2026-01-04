@@ -73,14 +73,14 @@
                 <section class="mb-4 pb-4 border-bottom">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h1 class="h2 fw-bold mb-2" id="room-title">Tên phòng</h1>
+                            <h1 class="h2 fw-bold mb-2" id="room-title">{{ listing.title }}</h1>
                             <p class="text-muted mb-2">
                                 <i class="fa-solid fa-star" style="color: #ff385c;"></i>
-                                <strong id="room-rating">5,0</strong>
-                                <span class="text-decoration-underline" id="room-reviews">13 đánh giá</span>
+                                <strong>{{ avg_rating|floatformat:1 }}</strong>
+                                <span class="text-decoration-underline">{{ reviews|length }} đánh giá</span>
                                 · Được khách yêu thích · Tự nhận phòng
                             </p>
-                            <p class="text-muted" id="room-location">Phòng tại Quận 1, Thành phố Hồ Chí Minh, Việt Nam</p>
+                            <p class="text-muted" id="room-location">{{ address.street }}, {{ address.district }}, {{ address.city }}</p>
                         </div>
                         <button class="btn btn-light"><i class="fa-regular fa-heart"></i></button>
                     </div>
@@ -214,47 +214,97 @@
 
                 <!-- Reviews Section -->
                 <section class="mb-5 pb-5 border-bottom">
+                    {% if review_status == "pending_review" %}
+                    <div class="alert alert-warning mb-4">
+                        <strong>🟡 Bạn đã ở xong chỗ này</strong><br>
+                        Hãy để lại đánh giá để giúp những khách khác nhé!
+                    </div>
+                    {% elif review_status == "reviewed" %}
+                    <div class="alert alert-success mb-4">
+                        ✅ Bạn đã đánh giá chỗ ở này
+                    </div>
+                    {% endif %}
+
                     <h2 class="h5 fw-bold mb-4">
                         <i class="fa-solid fa-star" style="color: #ff385c;"></i>
-                        <span id="reviews-header-rating">5,0</span> · <span id="reviews-header-count">13</span> đánh giá
+                        {{ avg_rating|floatformat:1 }} · {{ reviews|length }} đánh giá
                     </h2>
                     
+                    {% for r in reviews %}
                     <div class="mb-4">
                         <div class="d-flex align-items-start mb-3">
-                            <img src="https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg" class="rounded-circle me-3" width="48" height="48" alt="Ben">
+                            <img src="https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg?u={{ r.user.id }}" class="rounded-circle me-3" width="48" height="48" alt="Angus">
+                            
                             <div class="flex-grow-1">
-                                <p class="fw-bold mb-1">Ben</p>
-                                <p class="text-muted small mb-2">Tháng 2, 2025</p>
-                                <p class="mb-0">Chỗ ở tuyệt vời ngay ngoài đường chính. Rất sạch sẽ, rẻ và khá yên tĩnh. Host rất thân thiện và hỗ trợ nhanh chóng.</p>
+                                <p class="fw-bold mb-1">{{ r.user.get_full_name|default:r.user.username }}</p>
+                                <p class="text-muted small mb-2">{{ r.created_at|date:"m/Y" }}</p>
+                                <div class="mb-1">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= r.rating %}
+                                            <i class="fa-solid fa-star" style="color:#FFD700;font-size:12px;"></i>
+                                        {% else %}
+                                            <i class="fa-regular fa-star" style="color:#E0E0E0;font-size:12px;"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <p class="mb-0">{{ r.comment }}</p>
+
+                                {% if r.analysis %}
+                                    <div class="mt-1">
+                                        {% if r.analysis.sentiment == "positive" %}
+                                            <span class="badge bg-success">Tích cực</span>
+                                        {% elif r.analysis.sentiment == "negative" %}
+                                            <span class="badge bg-danger">Tiêu cực</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Trung tính</span>
+                                        {% endif %}
+                                        <small class="text-muted ms-1">
+                                            (AI {{ r.analysis.confidence_score }})
+                                        </small>
+                                    </div>
+                                {% endif %}
+
                             </div>
                         </div>
                     </div>
-
-                    <div class="mb-4">
-                        <div class="d-flex align-items-start mb-3">
-                            <img src="https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg" class="rounded-circle me-3" width="48" height="48" alt="Angus">
-                            <div class="flex-grow-1">
-                                <p class="fw-bold mb-1">Angus</p>
-                                <p class="text-muted small mb-2">Tháng 11, 2025</p>
-                                <p class="mb-0">Phòng tuyệt vời ở vị trí tuyệt vời để khám phá thành phố. Tiện nghi đầy đủ, an toàn và sạch sẽ.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <div class="d-flex align-items-start mb-3">
-                            <img src="https://i.pinimg.com/736x/92/7d/70/927d70ace64407a8f2c0690928d3342d.jpg" class="rounded-circle me-3" width="48" height="48" alt="Sarah">
-                            <div class="flex-grow-1">
-                                <p class="fw-bold mb-1">Sarah</p>
-                                <p class="text-muted small mb-2">Tháng 10, 2025</p>
-                                <p class="mb-0">Không gian rất thoải mái, host chu đáo. Tất cả mọi thứ đều hoàn hảo, sẽ quay lại lần sau!</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button class="btn btn-outline-dark" id="btn-show-reviews">Xem tất cả đánh giá</button>
+                    {% empty %}
+                        <p class="text-muted">Chưa có đánh giá nào cho phòng này.</p>
+                    {% endfor %}
                 </section>
+                {% if can_review %}
+                <section class="mb-5 pb-5 border-bottom">
+                    <h4 class="fw-bold mb-3">Đánh giá của bạn</h4>
 
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Số sao</label>
+                            <select name="rating" class="form-select" required>
+                                <option value="5">⭐⭐⭐⭐⭐ Rất tốt</option>
+                                <option value="4">⭐⭐⭐⭐ Tốt</option>
+                                <option value="3">⭐⭐⭐ Bình thường</option>
+                                <option value="2">⭐⭐ Tệ</option>
+                                <option value="1">⭐ Rất tệ</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nhận xét</label>
+                            <textarea
+                                name="comment"
+                                class="form-control"
+                                rows="4"
+                                placeholder="Chia sẻ trải nghiệm của bạn..."
+                                required></textarea>
+                        </div>
+
+                        <button class="btn btn-danger fw-bold">
+                            Gửi đánh giá
+                        </button>
+                    </form>
+                </section>
+                {% endif %}
                 <!-- Location section -->
                 <section class="mb-5 pb-5 border-bottom">
                     <h2 class="h5 fw-bold mb-3">Nơi bạn sẽ đến</h2>
@@ -465,6 +515,7 @@
         integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
         crossorigin="anonymous"></script>
 
+<<<<<<< HEAD
     <script>
         // helper to read csrftoken cookie
         function getCookie(name) {
@@ -1309,6 +1360,9 @@
             return baseAmenities;
         }
     </script>
+=======
+    
+>>>>>>> vietupdate
 
     <!-- Server-backed price preview script -->
     <script>
@@ -1534,8 +1588,13 @@
     </script>
 
     <!-- External JavaScript -->
+<<<<<<< HEAD
     <script src="{% static 'app/js/chitietnoio-main.js' %}"></script>
 
+=======
+    <!-- <script src="{% static 'app/js/chitietnoio-data.js' %}"></script>
+    <script src="{% static 'app/js/chitietnoio-main.js' %}"></script> -->
+>>>>>>> vietupdate
 </body>
 
 </html>

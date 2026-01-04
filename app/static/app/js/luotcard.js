@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
         card.addEventListener('click', function() {
             const roomId = this.getAttribute('data-room-id');
             if (roomId) {
-                window.location.href = `/chitietnoio/?room=${roomId}`;
+                window.location.href = `/chitietnoio/${roomId}/`;
             }
         });
     });

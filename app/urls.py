@@ -2,10 +2,14 @@ from django.urls import path
 from . import views
 from .views import payment_views
 from django.contrib.auth import views as auth_views
+
 from .views.admin_api import booking_total_price, listing_price, listing_detail
 from .views.availability_views import check_availability
 from django.conf import settings
 from django.conf.urls.static import static
+
+from app.views.bnb_information import listing_detail
+
 
 
 urlpatterns = [
@@ -16,7 +20,7 @@ urlpatterns = [
     path('profile/', views.profile_view, name='profile'),
     path('become-host/', views.taobaidang, name='become_host'),
     path('taobaidang/', views.taobaidang, name='taobaidang'),
-    path('chitietnoio/', views.chitietnoio, name='chitietnoio'),
+
     path('buoc1/', views.buoc1, name='buoc1'),
     path('loaichoo/', views.loaichoo, name='loaichoo'),
     path('dattieude/', views.dattieude, name='dattieude'),
@@ -26,6 +30,7 @@ urlpatterns = [
     path('chinhsachdieukhoan/', views.chinhsachdieukhoan, name='chinhsachdieukhoan'),
 
 
+    path("chitietnoio/<int:listing_id>/", listing_detail, name="chitietnoio"),
 
  
 
@@ -56,7 +61,7 @@ urlpatterns = [
     path('giacuoituan/', views.giacuoituan, name='giacuoituan'),
     path('chiasett/', views.chiasett, name='chiasett'),
     
-#     path('room/<int:room_id>/', views.room_detail, name="room_detail"),
+
 
 
     # Của quên mk
@@ -76,6 +81,7 @@ urlpatterns = [
         name='password_reset_complete'
     ),
 
+
     # Payment (mock) endpoints
     path('payment/start/<int:booking_id>/', payment_views.payment_start, name='payment_start'),
     path('payment/success/<int:booking_id>/', payment_views.payment_success, name='payment_success'),
@@ -92,6 +98,12 @@ urlpatterns = [
     path('booking/success/<int:booking_id>/', views.booking_success, name='booking_success'),
     path('booking/cancel/<int:booking_id>/', views.cancel_booking, name='cancel_booking'),
     path('booking/history/', views.user_booking_history, name='user_booking_history'),
+
+
+
+
+
+
 
 ]
 
