@@ -1,0 +1,182 @@
+
+@import url("./profile.css");
+
+/* ============================= */
+/* PROFILE TRIPS PAGE */
+/* ============================= */
+
+
+body {
+    height: 100vh;
+    overflow: hidden; /* ❌ không cho scroll toàn trang */
+}
+
+.container {
+    height: 100vh;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 30px;
+}
+
+.profile-content {
+    flex: 1;
+    display: flex;
+    overflow: hidden; /* quan trọng */
+}
+
+
+
+/* Dùng chung layout profile */
+.profile-content.trips-page {
+    display: flex;
+    padding: 30px;
+    gap: 30px;
+}
+
+/* Bên phải chỉ 1 cột (không chia 2 như dashboard) */
+.trips-content {
+    flex: 1;
+    overflow-y: auto;      /* ✅ scroll nội bộ */
+    padding-right: 10px;
+}
+
+/* Tiêu đề trang */
+.trips-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--dark-brown);
+    margin-bottom: 20px;
+}
+
+/* Nhóm chuyến đi */
+.trip-group {
+    margin-bottom: 30px;
+}
+
+.trip-group h3 {
+    margin-bottom: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* ============================= */
+/* HISTORY ITEM – CHUYẾN ĐI */
+/* ============================= */
+
+.history-item {
+    background: var(--white);
+    padding: 16px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 14px;
+    position: relative;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.history-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 26px rgba(0,0,0,0.12);
+}
+
+/* Ảnh phòng */
+.history-item img {
+    width: 110px;
+    height: 80px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+/* Nội dung */
+.item-details {
+    flex: 1;
+}
+
+.item-details h4 {
+    margin: 0 0 6px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dark-brown);
+}
+
+.item-details p {
+    margin: 0 0 6px;
+    font-size: 0.85em;
+    color: #666;
+}
+
+/* Status */
+.status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: 600;
+}
+
+/* Màu theo trạng thái */
+.status.da_xac_nhan {
+    background: rgba(76, 175, 80, 0.15);
+    color: #4caf50;
+}
+
+.status.cho_xac_nhan {
+    background: rgba(255, 152, 0, 0.15);
+    color: #ff9800;
+}
+
+.status.da_hoan_thanh {
+    background: rgba(158, 158, 158, 0.2);
+    color: #616161;
+}
+
+.status.da_huy {
+    background: rgba(244, 67, 54, 0.15);
+    color: #f44336;
+}
+
+/* Icon bên phải */
+.icon-right {
+    position: absolute;
+    right: 20px;
+    font-size: 22px;
+    color: #c7b7af;
+}
+
+/* Không có chuyến đi */
+.empty-trips {
+    font-size: 15px;
+    color: #777;
+    padding: 20px;
+    text-align: center;
+    background: var(--white);
+    border-radius: 12px;
+}
+
+/* ============================= */
+/* RESPONSIVE */
+/* ============================= */
+
+@media (max-width: 768px) {
+    .profile-content.trips-page {
+        flex-direction: column;
+    }
+
+    .history-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .history-item img {
+        width: 100%;
+        height: 160px;
+    }
+
+    .icon-right {
+        display: none;
+    }
+}

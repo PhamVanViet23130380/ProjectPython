@@ -54,11 +54,19 @@
     </script>
 
     <nav class="tabs">
-        <button class="tab-item active">Thông tin tài khoản</button>
-        <button class="tab-item">Lịch sử thuê nhà</button>
-        <button class="tab-item">Tin nhắn</button>
-        <button class="tab-item">Yêu thích</button>
+        <a href="{% url 'profile' %}" class="tab-item active">
+            Thông tin tài khoản
+        </a>
+
+        <a href="{% url 'profile_trips' %}" class="tab-item">
+            Chuyến đi
+        </a>
+
+        <a href="{% url 'profile_host' %}" class="tab-item">
+            Cho thuê
+        </a>
     </nav>
+
 
     <main class="profile-content">
         <aside class="sidebar">
@@ -153,29 +161,54 @@
             </div>
         </aside>
 
-        <section class="history-section {% if edit_mode %}disabled{% endif %}">
-            <h2>Lịch sử thuê nhà</h2>
-            
-            <div class="history-item">
-                <img src="https://via.placeholder.com/100x80" alt="House">
-                <div class="item-details">
-                    <h4>Căn hộ Elsu bắn hụt</h4>
-                    <p>Thời gian thuê: 01/01/2022 - 31/12/2023</p>
-                    <span class="status">Đã kết thúc</span>
+        <div class="dashboard">
+            <h2 class="dashboard-title">Tổng quan tài khoản</h2>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-suitcase"></i>
+                <div>
+                    <h3>{{ total_trips }}</h3>
+                    <p>Tổng chuyến đi</p>
                 </div>
-                <i class="fas fa-home icon-right"></i>
             </div>
 
-            <div class="history-item">
-                <img src="https://via.placeholder.com/100x80" alt="House">
-                <div class="item-details">
-                    <h4>Nhà riêng Krixi đừng dẵm lên cỏ và hoa nhé</h4>
-                    <p>Thời gian thuê: 01/03/2019 - 28/02/2021</p>
-                    <span class="status">Đã kết thúc</span>
+            <div class="stat-card">
+                <i class="fa-solid fa-calendar-check"></i>
+                <div>
+                    <h3>{{ upcoming_trips }}</h3>
+
+                    <p>Chuyến sắp tới</p>
                 </div>
-                <i class="fas fa-home icon-right"></i>
             </div>
-        </section>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-circle-check"></i>
+                <div>
+                    <h3>{{ completed_trips }}</h3>
+                    <p>Đã hoàn thành</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-wallet"></i>
+                <div>
+                    <h3>{{ total_spent|floatformat:0|intcomma }}đ</h3>
+                    <p>Tổng chi tiêu</p>
+                </div>
+            </div>
+
+            {% if profile_user.listings.exists %}
+            <div class="stat-card">
+                <i class="fa-solid fa-star"></i>
+                <div>
+                    <h3>{{ avg_rating|default:"Chưa có" }} ⭐</h3>
+                    <p>Đánh giá trung bình</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    
+        
     </main>
 </div>
 

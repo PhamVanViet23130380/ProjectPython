@@ -300,3 +300,53 @@ body {
     background: rgba(93, 64, 55, 0.1);
 }
 
+
+
+/* Phần chỉnh sửa hồ sơ mé bên phải */
+
+
+.dashboard {
+  flex: 1;                 /* 🔥 DÒNG QUAN TRỌNG */
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  align-content: flex-start;
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.stat-card i {
+  font-size: 32px;
+  color: #8b5e3c;
+}
+
+.stat-card h3 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.stat-card p {
+  margin: 0;
+  color: #777;
+}
+
+
+.dashboard-title {
+  grid-column: 1 / -1;
+  margin-bottom: 10px;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--dark-brown);
+}
+
+.tab-item {
+    text-decoration: none;
+}

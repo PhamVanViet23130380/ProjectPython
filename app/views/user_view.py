@@ -2,17 +2,52 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.utils.timezone import now
+from django.db.models import Sum, Avg
+from django.utils.timezone import now
+from app.models import Booking, Review
+
+
+
+
+def build_profile_stats(user):
+    bookings = Booking.objects.filter(user=user)
+
+    return {
+        'total_trips': bookings.count(),
+
+        'upcoming_trips': bookings.filter(
+            booking_status='da_xac_nhan',
+            check_in__gt=now().date()   # ← PHẢI là check_in
+        ).count(),
+
+        'completed_trips': bookings.filter(
+            booking_status='da_hoan_thanh'
+        ).count(),
+
+        'total_spent': bookings.filter(
+            booking_status='da_hoan_thanh'
+        ).aggregate(total=Sum('total_price'))['total'] or 0,
+
+        'avg_rating': (
+            Review.objects.filter(listing__host=user)
+            .aggregate(avg=Avg('rating'))['avg']
+            if hasattr(user, 'listings') and user.listings.exists()
+            else None
+        )
+    }
+
+
+
 
 
 def user_profile(request, username=None):
+    print(">>> request.user.id =", request.user.id)
+
     """Display a user's public profile.
 
     If `username` is None, show the current user's profile (login required).
     """
-    try:
-        from .models import User
-    except Exception:
-        return render(request, 'app/user/profile.html', {'error': 'User model unavailable'})
 
     if username is None:
         if not request.user.is_authenticated:
@@ -32,30 +67,40 @@ def user_profile(request, username=None):
         'bio': getattr(user, 'bio', '') if hasattr(user, 'bio') else '',
     }
 
-    return render(request, 'app/user/profile.html', {'profile_user': user, 'public': public_info, 'is_owner': is_owner})
+    stats = build_profile_stats(user)
+
+
+    return render(request, 'app/user/profile.html', {'profile_user': user, 'public': public_info, 
+            'is_owner': is_owner,
+            **stats,})
 
 
 @login_required
+@login_required
 def edit_profile(request):
-    """Allow authenticated user to update a few profile fields via POST.
-
-    Keeps updates minimal and safe: `full_name`, `phone`, `bio`.
-    """
     user = request.user
+
     if request.method == 'POST':
         user.full_name = request.POST.get('full_name')
         user.phone_number = request.POST.get('phone_number')
-        
+
         if 'avatar' in request.FILES:
             user.avatar = request.FILES['avatar']
-            
 
         user.save()
-        return redirect('profile')    
+        return redirect('profile')
 
-        
+    stats = build_profile_stats(user)
 
-    return render(request, 'app/user/profile.html', {'edit_mode': True})
+    return render(
+        request,
+        'app/user/profile.html',
+        {
+            'edit_mode': True,
+            'profile_user': user,
+            **stats
+        }
+    )
 
 
 def user_listings(request, username=None):
@@ -105,3 +150,71 @@ def user_bookings(request):
         page_obj = paginator.page(paginator.num_pages)
 
     return render(request, 'app/pages/user_bookings.html', {'page_obj': page_obj})
+
+
+@login_required
+def profile_trips(request):
+    today = now().date()
+
+    bookings = Booking.objects.filter(user=request.user)
+
+    upcoming = bookings.filter(
+        booking_status='da_xac_nhan',
+        check_in__gt=today
+    )
+
+    ongoing = bookings.filter(
+        booking_status='da_xac_nhan',
+        check_in__lte=today,
+        check_out__gte=today
+    )
+
+    completed = bookings.filter(
+        booking_status='da_hoan_thanh'
+    )
+
+    return render(
+        request,
+        'app/user/profile_trips.html',
+        {
+            'upcoming': upcoming,
+            'ongoing': ongoing,
+            'completed': completed,
+        }
+    )
+
+@login_required
+def profile_host(request):
+    user = request.user
+
+    # Listings của host (prefetch ảnh để đỡ query)
+    listings = user.listings.prefetch_related('images')
+
+    total_listings = listings.count()
+
+    # Booking cho các listing của host
+    bookings = Booking.objects.filter(listing__host=user)
+
+    total_bookings = bookings.exclude(
+        booking_status='da_huy'
+    ).count()
+
+    total_revenue = bookings.filter(
+        booking_status='da_hoan_thanh'
+    ).aggregate(total=Sum('total_price'))['total'] or 0
+
+    avg_rating = Review.objects.filter(
+        listing__host=user
+    ).aggregate(avg=Avg('rating'))['avg'] or None
+
+    return render(
+        request,
+        'app/user/profile_host.html',
+        {
+            'listings': listings,
+            'total_listings': total_listings,
+            'total_bookings': total_bookings,
+            'total_revenue': total_revenue,
+            'avg_rating': avg_rating,
+        }
+    )

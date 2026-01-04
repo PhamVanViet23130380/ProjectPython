@@ -12,7 +12,11 @@ from .home_views import home_view
 from .category_views import category_view
 from .bnb_information import listing_detail
 from .result_view import search_results
-from .user_view import user_profile, edit_profile, user_listings, user_bookings
+
+
+from .user_view import user_profile, edit_profile, user_listings, user_bookings, profile_trips , profile_host
+
+
 from .book_view import create_booking, booking_detail, cancel_booking, host_bookings
 from .sub_info_view import amenity_detail, host_policy_view, verification_status, payment_info
 from .add_new_bnb import create_listing

@@ -1,0 +1,166 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chuyến đi của tôi</title>
+
+    <link rel="stylesheet" href="{% static 'app/css/profile_trips.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ========== HEADER ========== -->
+    <header class="header">
+        <a href="{% url 'home' %}" class="logo">
+            <i class="fas fa-home"></i>
+        </a>
+
+        <div class="user-nav">
+            {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" class="nav-avatar">
+            {% else %}
+                <img src="https://i.pinimg.com/736x/ed/57/43/ed574383727c119220c3934c79a191fb.jpg"
+                     class="nav-avatar">
+            {% endif %}
+
+            <span>{{ user.full_name|default:user.username }}</span>
+            <i class="fas fa-chevron-down" onclick="toggleDropdown()"></i>
+
+            <div id="userDropdown">
+                <a href="{% url 'logout' %}">
+                    <i class="fas fa-right-from-bracket"></i> Đăng xuất
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========== TABS ========== -->
+    <nav class="tabs">
+        <a href="{% url 'profile' %}" class="tab-item">
+            Thông tin tài khoản
+        </a>
+
+        <a href="{% url 'profile_trips' %}" class="tab-item active">
+            Chuyến đi
+        </a>
+
+        <a href="{% url 'profile_host' %}" class="tab-item">
+            Cho thuê
+        </a>
+    </nav>
+
+    <!-- ========== CONTENT ========== -->
+    <main class="profile-content trips-page">
+
+        <div class="trips-content">
+            <h2 class="trips-title">Chuyến đi của tôi</h2>
+
+            <!-- ===== SẮP TỚI ===== -->
+            {% if upcoming %}
+            <div class="trip-group">
+                <h3>Sắp tới</h3>
+
+                {% for booking in upcoming %}
+                <div class="history-item">
+                    <img src="{{ booking.listing.images.first.image_url|default:'https://via.placeholder.com/100x80' }}">
+
+                    <div class="item-details">
+                        <h4>{{ booking.listing.title }}</h4>
+                        <p>
+                            {{ booking.check_in|date:"d/m/Y" }}
+                            -
+                            {{ booking.check_out|date:"d/m/Y" }}
+                        </p>
+
+                        <span class="status {{ booking.booking_status }}">
+                            {{ booking.get_booking_status_display }}
+                        </span>
+                    </div>
+
+                    <i class="fas fa-calendar-check icon-right"></i>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- ===== ĐANG Ở ===== -->
+            {% if ongoing %}
+            <div class="trip-group">
+                <h3>Đang ở</h3>
+
+                {% for booking in ongoing %}
+                <div class="history-item">
+                    <img src="{{ booking.listing.images.first.image_url|default:'https://via.placeholder.com/100x80' }}">
+
+                    <div class="item-details">
+                        <h4>{{ booking.listing.title }}</h4>
+                        <p>
+                            {{ booking.check_in|date:"d/m/Y" }}
+                            -
+                            {{ booking.check_out|date:"d/m/Y" }}
+                        </p>
+
+                        <span class="status {{ booking.booking_status }}">
+                            {{ booking.get_booking_status_display }}
+                        </span>
+                    </div>
+
+                    <i class="fas fa-door-open icon-right"></i>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- ===== ĐÃ HOÀN THÀNH ===== -->
+            {% if completed %}
+            <div class="trip-group">
+                <h3>Đã hoàn thành</h3>
+
+                {% for booking in completed %}
+                <div class="history-item">
+                    <img src="{{ booking.listing.images.first.image_url|default:'https://via.placeholder.com/100x80' }}">
+
+                    <div class="item-details">
+                        <h4>{{ booking.listing.title }}</h4>
+                        <p>
+                            {{ booking.check_in|date:"d/m/Y" }}
+                            -
+                            {{ booking.check_out|date:"d/m/Y" }}
+                        </p>
+
+                        <span class="status {{ booking.booking_status }}">
+                            {{ booking.get_booking_status_display }}
+                        </span>
+                    </div>
+
+                    <i class="fas fa-check-circle icon-right"></i>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if not upcoming and not ongoing and not completed %}
+                <div class="empty-trips">
+                    Bạn chưa có chuyến đi nào.
+                </div>
+            {% endif %}
+        </div>
+
+    </main>
+</div>
+
+<script>
+function toggleDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+    dropdown.style.display =
+        dropdown.style.display === 'block' ? 'none' : 'block';
+}
+</script>
+
+</body>
+</html>
