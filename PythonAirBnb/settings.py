@@ -147,6 +147,11 @@ JAZZMIN_UI_TWEAKS = {
 }
 
 
+# Phần thay avtar
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
 
 
 # Email Backend - Gửi email thật qua Gmail
@@ -164,3 +169,5 @@ SERVICE_FEE_FIXED = '350000'
 # Percentage fee (e.g. '0.10' for 10%) kept for fallback but not used when SERVICE_FEE_FIXED is set.
 SERVICE_FEE_PCT = '0.10'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

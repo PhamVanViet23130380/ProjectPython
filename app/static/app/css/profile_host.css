@@ -1,0 +1,148 @@
+@import url("./profile.css");
+
+/* ============================= */
+/* HOST PAGE – FIX HOÀN CHỈNH */
+/* ============================= */
+
+/* ❌ KHÔNG KHÓA SCROLL BODY */
+body {
+    height: 100vh;
+    overflow: hidden; /* ❌ không cho scroll toàn trang */
+}
+
+/* ===== MAIN CONTENT ===== */
+.profile-content.host-page {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 140px); /* header + tabs */
+    padding: 30px;
+    overflow: hidden; /* chỉ scroll bên trong */
+}
+
+/* ===== TITLE ===== */
+.host-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--dark-brown);
+    margin-bottom: 24px;
+}
+
+/* ===== DASHBOARD ===== */
+.host-dashboard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-bottom: 30px;
+    flex-shrink: 0; /* không bị co */
+}
+
+.stat-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+.stat-card h3 {
+    margin: 0;
+    font-size: 26px;
+    color: var(--dark-brown);
+}
+
+.stat-card p {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #777;
+}
+
+/* ===== SCROLL CONTAINER ===== */
+.host-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+/* scrollbar đẹp */
+.host-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.host-scroll::-webkit-scrollbar-thumb {
+    background: #c7b7af;
+    border-radius: 10px;
+}
+
+/* ===== SECTION ===== */
+.host-section {
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+}
+
+.host-section h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 16px;
+}
+
+/* ===== HOST LISTING CARD ===== */
+.host-listing-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #fff;
+    padding: 14px 16px;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+}
+
+.host-listing-img img {
+    width: 120px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+.host-listing-info h4 {
+    margin: 0 0 6px;
+    font-size: 16px;
+    color: var(--dark-brown);
+}
+
+.host-listing-info p {
+    margin: 0;
+    font-size: 14px;
+    color: #777;
+}
+
+/* ===== EMPTY ===== */
+.empty-text {
+    color: #777;
+    font-size: 15px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1100px) {
+    .host-dashboard {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .host-dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .host-listing-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .host-listing-img img {
+        width: 100%;
+        height: 160px;
+    }
+}

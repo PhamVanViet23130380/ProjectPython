@@ -1,0 +1,240 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ sơ người dùng - Guest</title>
+    <link rel="stylesheet" href="{% static 'app/css/profile.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<div class="container">
+    <header class="header">
+        <a href="{% url 'home' %}" class="logo">
+            <i class="fas fa-home"></i>
+        </a>
+        <div class="user-nav">
+            {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" class="nav-avatar">
+            {% else %}
+                <img src="https://i.pinimg.com/736x/ed/57/43/ed574383727c119220c3934c79a191fb.jpg"
+                    class="nav-avatar">
+            {% endif %}
+
+            <span>{{ user.full_name|default:user.username }}</span>
+            <i class="fas fa-chevron-down" onclick="toggleDropdown()"></i>
+            
+            <!-- Dropdown menu -->
+            <div id="userDropdown">
+                <a href="{% url 'logout' %}">
+                    <i class="fas fa-right-from-bracket"></i> Đăng xuất
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        // Đóng dropdown khi click bên ngoài
+        window.onclick = function(event) {
+            if (!event.target.matches('.fa-chevron-down')) {
+                const dropdown = document.getElementById('userDropdown');
+                if (dropdown.style.display === 'block') {
+                    dropdown.style.display = 'none';
+                }
+            }
+        }
+    </script>
+
+    <nav class="tabs">
+        <a href="{% url 'profile' %}" class="tab-item active">
+            Thông tin tài khoản
+        </a>
+
+        <a href="{% url 'profile_trips' %}" class="tab-item">
+            Chuyến đi
+        </a>
+
+        <a href="{% url 'profile_host' %}" class="tab-item">
+            Cho thuê
+        </a>
+    </nav>
+
+
+    <main class="profile-content">
+        <aside class="sidebar">
+            <div class="profile-card">
+
+                {% if edit_mode %}
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="avatar-container">
+                        <label for="avatarInput" class="avatar-label">
+                            <img
+                                id="avatarPreview"
+                                src="{% if user.avatar %}{{ user.avatar.url }}{% else %}https://i.pinimg.com/736x/ed/57/43/ed574383727c119220c3934c79a191fb.jpg{% endif %}"
+                                class="main-avatar"
+                            >
+                            <div class="avatar-overlay">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                        </label>
+
+                        <input
+                            type="file"
+                            id="avatarInput"
+                            name="avatar"
+                            accept="image/*"
+                            hidden
+                        >
+
+                        <small>Thay ảnh đại diện</small>
+                    </div>
+
+
+                    <input type="text"
+                        name="full_name"
+                        value="{{ user.full_name|default:user.username }}"
+                        placeholder="Họ và tên"
+                        class="input"
+                        required>
+
+                    <input type="text"
+                        name="phone_number"
+                        value="{{ user.phone_number }}"
+                        placeholder="Số điện thoại"
+                        class="input">
+
+                    <input type="email"
+                        value="{{ user.email }}"
+                        class="input"
+                        disabled>
+
+                    <div class="actions">
+                        <button type="submit" class="btn-save">Lưu thay đổi</button>
+                        <a href="{% url 'profile' %}" class="btn-cancel">Hủy</a>
+                    </div>
+                </form>
+
+                {% else %}
+                <div class="avatar-container">
+                    {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" class="main-avatar">
+                {% else %}
+                    <img src="https://i.pinimg.com/736x/ed/57/43/ed574383727c119220c3934c79a191fb.jpg"
+                        class="main-avatar">
+                {% endif %}
+
+                </div>
+
+                <h3>Xin chào, {{ user.full_name|default:user.username }}!</h3>
+
+                <ul class="info-list">
+                    <li><i class="fas fa-envelope"></i> {{ user.email }}</li>
+                    <li><i class="fas fa-phone"></i> {{ user.phone_number|default:'Chưa cập nhật số điện thoại' }}</li>
+                    <li>
+                        <i class="fas fa-user-tag"></i>
+                        Trạng thái:
+                        {% if profile_user.listings.exists %}
+                            Đang cho thuê nhà
+                        {% else %}
+                            Đang thuê nhà
+                        {% endif %}
+                    </li>
+                </ul>
+
+                <a href="{% url 'profile_edit' %}" class="btn-edit">
+                    Chỉnh sửa hồ sơ
+                </a>
+                {% endif %}
+
+                
+
+            </div>
+        </aside>
+
+        <div class="dashboard">
+            <h2 class="dashboard-title">Tổng quan tài khoản</h2>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-suitcase"></i>
+                <div>
+                    <h3>{{ total_trips }}</h3>
+                    <p>Tổng chuyến đi</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-calendar-check"></i>
+                <div>
+                    <h3>{{ upcoming_trips }}</h3>
+
+                    <p>Chuyến sắp tới</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-circle-check"></i>
+                <div>
+                    <h3>{{ completed_trips }}</h3>
+                    <p>Đã hoàn thành</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <i class="fa-solid fa-wallet"></i>
+                <div>
+                    <h3>{{ total_spent|floatformat:0|intcomma }}đ</h3>
+                    <p>Tổng chi tiêu</p>
+                </div>
+            </div>
+
+            {% if profile_user.listings.exists %}
+            <div class="stat-card">
+                <i class="fa-solid fa-star"></i>
+                <div>
+                    <h3>{{ avg_rating|default:"Chưa có" }} ⭐</h3>
+                    <p>Đánh giá trung bình</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    
+        
+    </main>
+</div>
+
+
+<script>
+    const avatarInput = document.getElementById("avatarInput");
+    const avatarPreview = document.getElementById("avatarPreview");
+
+    if (avatarInput) {
+        avatarInput.addEventListener("change", function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith("image/")) {
+                alert("Vui lòng chọn file ảnh");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                avatarPreview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+</script>
+
+</body>
+</html>

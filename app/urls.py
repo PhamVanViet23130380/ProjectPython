@@ -17,7 +17,16 @@ urlpatterns = [
     path('search/', views.search_results, name='search_results'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
-    path('profile/', views.profile_view, name='profile'),
+
+
+    path('profile/', views.user_profile , name='profile'),
+    path('profile/edit/', views.edit_profile , name='profile_edit'),
+    path('profile/trips/', views.profile_trips, name='profile_trips'),
+    path('profile/host/', views.profile_host, name='profile_host'),
+
+
+
+
     path('become-host/', views.taobaidang, name='become_host'),
     path('taobaidang/', views.taobaidang, name='taobaidang'),
 

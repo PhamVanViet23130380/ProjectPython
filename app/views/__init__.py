@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from .user_view import user_profile
+
+
 
 # auth views live at top-level app/auth_views.py
 from ..auth_views import login_view, logout_view
@@ -11,7 +14,11 @@ from .home_views import home_view
 from .category_views import category_view
 from .bnb_information import listing_detail
 from .result_view import search_results
-from .user_view import user_profile, edit_profile, user_listings, user_bookings
+
+
+from .user_view import user_profile, edit_profile, user_listings, user_bookings, profile_trips , profile_host
+
+
 from .book_view import create_booking, booking_detail, cancel_booking, host_bookings
 from .booking_success_view import booking_success
 from .user_booking_history_view import user_booking_history

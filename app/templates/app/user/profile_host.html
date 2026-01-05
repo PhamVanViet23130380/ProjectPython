@@ -1,0 +1,142 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chuyến đi của tôi</title>
+
+    <link rel="stylesheet" href="{% static 'app/css/profile_host.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ========== HEADER ========== -->
+    <header class="header">
+        <a href="{% url 'home' %}" class="logo">
+            <i class="fas fa-home"></i>
+        </a>
+
+        <div class="user-nav">
+            {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" class="nav-avatar">
+            {% else %}
+                <img src="https://i.pinimg.com/736x/ed/57/43/ed574383727c119220c3934c79a191fb.jpg"
+                     class="nav-avatar">
+            {% endif %}
+
+            <span>{{ user.full_name|default:user.username }}</span>
+            <i class="fas fa-chevron-down" onclick="toggleDropdown()"></i>
+
+            <div id="userDropdown">
+                <a href="{% url 'logout' %}">
+                    <i class="fas fa-right-from-bracket"></i> Đăng xuất
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========== TABS ========== -->
+    <nav class="tabs">
+        <a href="{% url 'profile' %}" class="tab-item">
+            Thông tin tài khoản
+        </a>
+
+        <a href="{% url 'profile_trips' %}" class="tab-item ">
+            Chuyến đi
+        </a>
+
+        <a href="{% url 'profile_host' %}" class="tab-item active">
+            Cho thuê
+        </a>
+    </nav>
+
+    <!-- ========== CONTENT ========== -->
+    <main class="profile-content host-page">
+
+        <div class="host-wrapper">
+                <!-- ===== TITLE ===== -->
+            <h2 class="host-title">Trang chủ Host</h2>
+
+            <!-- ===== DASHBOARD ===== -->
+            <div class="host-dashboard">
+                <div class="stat-card">
+                    <h3>{{ total_listings }}</h3>
+                    <p>Tổng phòng</p>
+                </div>
+
+                <div class="stat-card">
+                    <h3>{{ total_bookings }}</h3>
+                    <p>Tổng lượt đặt</p>
+                </div>
+
+                <div class="stat-card">
+                    <h3>{{ total_revenue|intcomma }}đ</h3>
+                    <p>Doanh thu</p>
+                </div>
+
+                <div class="stat-card">
+                    <h3>{{ avg_rating|default:"Chưa có" }}</h3>
+                    <p>Đánh giá trung bình</p>
+                </div>
+            </div>  
+        </div>
+
+        <div class="host-scroll">
+            <!-- ===== LISTINGS ===== -->
+            <section class="host-section">
+                <h3>Danh sách phòng</h3>
+
+                {% for l in listings %}
+                <div class="host-listing-card">
+                    
+                    <div class="host-listing-img">
+                        {% if l.images.first %}
+                            <img
+                                src="{{ l.images.first.image_url }}"
+                                class="listing-img"
+                                alt="{{ l.title }}"
+                            >
+                        {% endif %}
+
+                    </div>
+
+                    <div class="host-listing-info">
+                        <h4>{{ l.title }}</h4>
+                        <p>{{ l.price_per_night|intcomma }}đ / đêm</p>
+                    </div>
+
+                </div>
+                {% empty %}
+                <p class="empty-text">Bạn chưa đăng phòng nào.</p>
+                {% endfor %}
+
+            </section>
+
+            <!-- ===== BOOKINGS (sau này) ===== -->
+            <section class="host-section">
+                <h3>Danh sách đặt phòng</h3>
+                <p class="empty-text">Chưa có lượt đặt.</p>
+            </section>
+        </div>
+
+        
+
+    </main>         
+
+
+
+
+<script>
+function toggleDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+    dropdown.style.display =
+        dropdown.style.display === 'block' ? 'none' : 'block';
+}
+</script>
+
+</body>
+</html>

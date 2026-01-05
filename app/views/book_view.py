@@ -19,7 +19,23 @@ from app.models import Listing, Booking, Payment
 @login_required
 def create_booking(request, listing_id):
     """Create a booking for a listing. GET shows a simple form, POST attempts creation."""
-    listing = get_object_or_404(Listing, pk=listing_id)
+
+
+    try:
+        from .models import Listing, Booking
+    except Exception:
+        messages.error(request, 'Models unavailable')
+        return redirect('home')
+
+    listing = get_object_or_404(Listing, pk=listing_id , is_active=True)
+
+    # ❌ Host không được tự book phòng của mình
+    if listing.host_id == request.user.id:
+        messages.error(request, 'Bạn không thể đặt phòng của chính mình')
+        return redirect('listing_detail', listing_id=listing_id)
+    
+
+
 
     if request.method == 'POST':
         checkin_raw = request.POST.get('checkin')

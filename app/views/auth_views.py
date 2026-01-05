@@ -54,7 +54,7 @@ def login_view(request):
                     user.full_name = full_name
                 if hasattr(user, 'role'):
                     try:
-                        user.role = 'guest'
+                        user.role = 'USER'
                     except Exception:
                         pass
                 if hasattr(user, 'registered_time'):

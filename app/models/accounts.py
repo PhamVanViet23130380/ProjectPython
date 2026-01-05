@@ -19,7 +19,11 @@ class User(AbstractUser):
     full_name = models.CharField(max_length=150, blank=True, verbose_name='Họ tên đầy đủ')
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='guest', verbose_name='Phân quyền')
     phone_number = models.CharField(max_length=20, null=True, blank=True, verbose_name='Số điện thoại')
-    avatar_url = models.URLField(max_length=255, null=True, blank=True, verbose_name='Ảnh đại diện')
+    avatar = models.ImageField(
+    upload_to='avatars/',
+    null=True,
+    blank=True,
+    verbose_name='Ảnh đại diện')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -57,7 +61,7 @@ class Booking(models.Model):
     service_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Phí dịch vụ')
     cleaning_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Phí vệ sinh')
     total_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Tổng tiền')
-    booking_status = models.CharField(max_length=10, choices=BOOKING_STATUS_CHOICES, default='pending', verbose_name='Trạng thái đặt phòng')
+    booking_status = models.CharField(max_length=20, choices=BOOKING_STATUS_CHOICES, default='cho_xac_nhan', verbose_name='Trạng thái đặt phòng')
     created_at = models.DateTimeField(auto_now_add=True)
     note = models.TextField(blank=True, null=True, default='', verbose_name='Ghi chú')
 
