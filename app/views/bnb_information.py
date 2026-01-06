@@ -264,16 +264,33 @@ def listing_detail(request, listing_id):
             
             # Chạy AI ViSoBERT phân tích cảm xúc
             try:
-                sentiment, confidence = analyze_sentiment(comment)
+                sentiment, raw_confidence = analyze_sentiment(comment)
+                word_count = len(comment.split())
+
+                confidence = raw_confidence
+
+                # 1. Câu quá ngắn → giảm độ tin cậy
+                if word_count <= 3:
+                    confidence *= 0.7
+                elif word_count <= 6:
+                    confidence *= 0.85
+
+                # 2. Trung tính thì không nên quá cao
+                if sentiment == "neutral":
+                    confidence *= 0.8
+
+                # 3. Chặn biên hợp lý
+                confidence = max(0.4, min(confidence, 0.98))
+                confidence = round(confidence, 2)
+
                 ReviewAnalysis.objects.create(
                     review=new_review,
                     sentiment=sentiment,
                     confidence_score=confidence
                 )
+
             except Exception as e:
                 print(f"Lỗi AI: {e}")
-
-            return redirect(request.path)
 
     # 6. Tính avatar URL cho host (tránh lỗi ImageField rỗng)
     def get_avatar_url(user, size=100):
