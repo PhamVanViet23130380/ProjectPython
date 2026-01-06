@@ -4,9 +4,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from .user_view import user_profile
 
-
-
-# auth views live at top-level app/auth_views.py
 from ..auth_views import login_view, logout_view
 
 # Import submodules from this package
@@ -115,12 +112,30 @@ def chitietnoio(request):
                 comment=comment
             )
 
-            sentiment, confidence = analyze_sentiment(comment)
-            ReviewAnalysis.objects.create(
-                review=review,
-                sentiment=sentiment,
-                confidence_score=confidence
-            )
+            # Try to analyze sentiment but don't fail the request if model errors occur
+            try:
+                from decimal import Decimal, ROUND_HALF_UP
+
+                sentiment, confidence = analyze_sentiment(comment)
+                # Normalize confidence to Decimal with 2 decimal places
+                try:
+                    conf_dec = Decimal(str(confidence)).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+                except Exception:
+                    conf_dec = Decimal('0.00')
+
+                ReviewAnalysis.objects.create(
+                    review=review,
+                    sentiment=sentiment,
+                    confidence_score=conf_dec
+                )
+            except Exception as e:
+                # Log error but allow the review to be saved
+                print('Sentiment analysis error:', e)
+            # Clear any prefetched review caches on the listing so the new
+            # review and its analysis are visible when rendering below.
+            if hasattr(listing, '_prefetched_objects_cache'):
+                listing._prefetched_objects_cache.pop('reviews', None)
+                listing._prefetched_objects_cache.pop('reviews__analysis', None)
     # ===============================================================
 
     reviews = listing.reviews.all()

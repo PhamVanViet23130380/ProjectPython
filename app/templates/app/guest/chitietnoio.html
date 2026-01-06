@@ -285,16 +285,16 @@
                         {% if r.analysis %}
                         <div class="ai-analysis">
                             {% if r.analysis.sentiment == 'positive' %}
-                                <span class="badge rounded-pill bg-success-subtle text-success border border-success">
-                                    <i class="fa-solid fa-robot me-1"></i>AI: Tích cực ({{ r.analysis.confidence_score }}%)
+                                <span class="badge rounded-pill bg-success text-white">
+                                    Tích Cực
                                 </span>
                             {% elif r.analysis.sentiment == 'neutral' %}
-                                <span class="badge rounded-pill bg-secondary-subtle text-secondary border border-secondary">
-                                    <i class="fa-solid fa-robot me-1"></i>AI: Trung tính ({{ r.analysis.confidence_score }}%)
+                                <span class="badge rounded-pill bg-warning text-dark">
+                                    Trung Tính
                                 </span>
                             {% else %}
-                                <span class="badge rounded-pill bg-danger-subtle text-danger border border-danger">
-                                    <i class="fa-solid fa-robot me-1"></i>AI: Tiêu cực ({{ r.analysis.confidence_score }}%)
+                                <span class="badge rounded-pill bg-danger text-white">
+                                    Tiêu Cực
                                 </span>
                             {% endif %}
                         </div>

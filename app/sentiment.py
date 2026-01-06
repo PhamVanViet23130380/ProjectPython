@@ -7,43 +7,60 @@ MODEL_PATH = os.path.join("app", "models", "visobert")
 
 _tokenizer = None
 _model = None
+MODEL_AVAILABLE = False
 
 LABELS = ["negative", "neutral", "positive"]
 
 
 def load_model():
     global _tokenizer, _model
-
     if _tokenizer is None or _model is None:
-        print("Loading local ViSoBERT model...")
-        _tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-        _model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH)
-        _model.eval()
+        try:
+            print("Loading local ViSoBERT model...")
+            _tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
+            _model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH)
+            _model.eval()
+            global MODEL_AVAILABLE
+            MODEL_AVAILABLE = True
+        except Exception as e:
+            # If the model or weights are missing/corrupt, fall back to rule-based
+            print("Failed to load ViSoBERT model, falling back to rule-based sentiment. Error:", e)
+            _tokenizer = None
+            _model = None
+            MODEL_AVAILABLE = False
 
 
 def analyze_sentiment(text: str):
     if not text or not text.strip():
         return "neutral", 0.0
-
-    load_model()
-
-    inputs = _tokenizer(
-        text,
-        return_tensors="pt",
-        truncation=True,
-        padding=True,
-        max_length=256
-    )
-
-    with torch.no_grad():
-        outputs = _model(**inputs)
-
-    probs = torch.nn.functional.softmax(outputs.logits, dim=1)[0]
-    confidence, label_id = torch.max(probs, dim=0)
-
-    sentiment = LABELS[label_id.item()]
-
+    # Attempt to use the transformer model if available; otherwise use rules
     text_lower = text.lower()
+    try:
+        load_model()
+        if MODEL_AVAILABLE and _tokenizer is not None and _model is not None:
+            inputs = _tokenizer(
+                text,
+                return_tensors="pt",
+                truncation=True,
+                padding=True,
+                max_length=256
+            )
+
+            with torch.no_grad():
+                outputs = _model(**inputs)
+
+            probs = torch.nn.functional.softmax(outputs.logits, dim=1)[0]
+            confidence, label_id = torch.max(probs, dim=0)
+
+            sentiment = LABELS[label_id.item()]
+        else:
+            # Model not available; set defaults and fall through to rule-based checks
+            sentiment = None
+            confidence = 0.0
+    except Exception as e:
+        print('Error during transformer sentiment analysis, falling back to rules:', e)
+        sentiment = None
+        confidence = 0.0
 
     # Rule-based boost (rất tốt cho tiếng Việt)
     strong_positive = [
@@ -65,13 +82,19 @@ def analyze_sentiment(text: str):
 
     # Nếu chứa từ mạnh → ép thành positive
     if any(k in text_lower for k in strong_positive):
-        return "positive", round(confidence.item(), 4)
+        return "positive", round(float(confidence) if not hasattr(confidence, 'item') else confidence.item(), 4)
 
     # Nếu chứa từ tiêu cực mạnh → ép negative
     if any(k in text_lower for k in strong_negative):
-        return "negative", round(confidence.item(), 4)
+        return "negative", round(float(confidence) if not hasattr(confidence, 'item') else confidence.item(), 4)
     
     if any(k in text_lower for k in neutral_keywords):
-        return "neutral", round(confidence.item(), 4)
+        return "neutral", round(float(confidence) if not hasattr(confidence, 'item') else confidence.item(), 4)
 
-    return sentiment, round(confidence.item(), 4)
+    # If transformer produced a sentiment, prefer it; otherwise derive from rules
+    if sentiment:
+        return sentiment, round(float(confidence) if not hasattr(confidence, 'item') else confidence.item(), 4)
+
+    # Fallback: basic heuristic using star keywords
+    # If none matched above, return neutral with low confidence
+    return "neutral", round(float(confidence) if not hasattr(confidence, 'item') else confidence.item(), 4)
