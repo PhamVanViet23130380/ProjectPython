@@ -43,6 +43,7 @@
 
     {% if user.is_authenticated %}
     <a href="{% url 'profile' %}" class="md-item"><i class="fa-regular fa-user"></i> Hồ sơ người dùng</a>
+    <a href="{% url 'user_booking_history' %}" class="md-item"><i class="fa-solid fa-calendar-days"></i> Lịch sử thuê nhà</a>
     <a href="{% url 'logout' %}" class="md-item"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
     {% else %}
     <a href="{% url 'login' %}" class="md-item">Đăng nhập hoặc đăng ký</a>

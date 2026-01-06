@@ -17,16 +17,16 @@ def build_profile_stats(user):
         'total_trips': bookings.count(),
 
         'upcoming_trips': bookings.filter(
-            booking_status='da_xac_nhan',
+            booking_status='confirmed' ,
             check_in__gt=now().date()   # ← PHẢI là check_in
         ).count(),
 
         'completed_trips': bookings.filter(
-            booking_status='da_hoan_thanh'
+            booking_status='completed'
         ).count(),
 
         'total_spent': bookings.filter(
-            booking_status='da_hoan_thanh'
+            booking_status='completed'
         ).aggregate(total=Sum('total_price'))['total'] or 0,
 
         'avg_rating': (
@@ -159,18 +159,18 @@ def profile_trips(request):
     bookings = Booking.objects.filter(user=request.user)
 
     upcoming = bookings.filter(
-        booking_status='da_xac_nhan',
+        booking_status='confirmed',
         check_in__gt=today
     )
 
     ongoing = bookings.filter(
-        booking_status='da_xac_nhan',
+        booking_status='confirmed',
         check_in__lte=today,
         check_out__gte=today
     )
 
     completed = bookings.filter(
-        booking_status='da_hoan_thanh'
+        booking_status='completed'
     )
 
     return render(

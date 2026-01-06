@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 from .views import payment_views
 from django.contrib.auth import views as auth_views
+from app.views.auth_views import login_view, logout_view
+
 
 from .views.admin_api import booking_total_price, listing_price, listing_detail
 from .views.availability_views import check_availability
@@ -9,14 +11,19 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from app.views.bnb_information import listing_detail
+from app.views.auth_views import verify_otp
+
+
 
 
 
 urlpatterns = [
     path('', views.home_view, name='home'),
     path('search/', views.search_results, name='search_results'),
-    path('login/', views.login_view, name='login'),
-    path('logout/', views.logout_view, name='logout'),
+    path('login/', login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
+
+    path('verify-otp/', verify_otp, name='verify_otp'),
 
 
     path('profile/', views.user_profile , name='profile'),
@@ -69,6 +76,13 @@ urlpatterns = [
     path('thietlapgia/', views.thietlapgia, name='thietlapgia'),
     path('giacuoituan/', views.giacuoituan, name='giacuoituan'),
     path('chiasett/', views.chiasett, name='chiasett'),
+
+    
+    path(
+    'booking/history/',
+    views.user_booking_history,
+    name='user_booking_history'),
+
     
 
 

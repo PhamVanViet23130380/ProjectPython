@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from .user_view import user_profile
 
-from ..auth_views import login_view, logout_view
+from .auth_views import login_view, logout_view
 
 # Import submodules from this package
 from .home_views import home_view
