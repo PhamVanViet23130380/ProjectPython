@@ -112,7 +112,7 @@
         </div>
         <div class="cards-wrapper">
             <div class="cards-row">
-                {% for item in vangiang_listings %}
+                {% for item in vungtau_listings %}
                 <div class="card" data-room-id="{{ item.listing_id }}">
                     {% with item.images.all|first as first_img %}
                         <img src="{{ first_img.image_url }}" alt="{{ item.title }}">

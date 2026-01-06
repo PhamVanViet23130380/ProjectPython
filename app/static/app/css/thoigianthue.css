@@ -1,0 +1,134 @@
+/* Thời gian thuê page styles */
+:root {
+    --brown-primary: #8B4513;
+    --brown-secondary: #A0522D;
+    --brown-light: #D2691E;
+    --brown-bg: #FDF5E6;
+    --brown-hover: #6b3410;
+}
+
+.time-selection-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.time-selection-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 40px rgba(139, 69, 19, 0.15);
+    border: 2px solid var(--brown-bg);
+}
+
+.time-selection-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.time-selection-header .icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--brown-primary), var(--brown-secondary));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.time-selection-header .icon i {
+    font-size: 36px;
+    color: white;
+}
+
+.time-selection-header p {
+    color: #666;
+    font-size: 16px;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.date-inputs-wrapper {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.date-input-group {
+    flex: 1;
+    min-width: 250px;
+    max-width: 320px;
+}
+
+.date-input-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--brown-primary);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.date-input-group label i {
+    margin-right: 8px;
+}
+
+.date-input-group input[type="date"] {
+    width: 100%;
+    padding: 16px 20px;
+    font-size: 16px;
+    border: 2px solid #e0d5c7;
+    border-radius: 12px;
+    background: #faf8f5;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.date-input-group input[type="date"]:hover {
+    border-color: var(--brown-light);
+    background: white;
+}
+
+.date-input-group input[type="date"]:focus {
+    outline: none;
+    border-color: var(--brown-primary);
+    box-shadow: 0 0 0 4px rgba(139, 69, 19, 0.1);
+    background: white;
+}
+
+.arrow-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 30px;
+}
+
+.arrow-icon i {
+    font-size: 24px;
+    color: var(--brown-light);
+}
+
+@media (max-width: 600px) {
+    .time-selection-card {
+        padding: 25px;
+    }
+
+    .date-inputs-wrapper {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .arrow-icon {
+        transform: rotate(90deg);
+        padding: 10px 0;
+    }
+
+    .date-input-group {
+        max-width: 100%;
+    }
+}

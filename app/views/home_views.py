@@ -8,12 +8,12 @@ def home_view(request):
     context = {
         'hcm_listings': listings.filter(listingaddress__city__icontains="Hồ Chí Minh"),
         'hanoi_listings': listings.filter(listingaddress__city__icontains="Hà Nội"),
-        'dalat_listings': listings.filter(listingaddress__city__icontains="Đà Lạt"),
+        'dalat_listings': listings.filter(listingaddress__city__icontains="Lâm Đồng"),  # Đà Lạt thuộc Lâm Đồng
         'danang_listings': listings.filter(listingaddress__city__icontains="Đà Nẵng"),
-        'vungtau_listings': listings.filter(listingaddress__city__icontains="Vũng Tàu"),
+        'vungtau_listings': listings.filter(listingaddress__city__icontains="Vũng Tàu"),  # "Bà Rịa - Vũng Tàu" chứa "Vũng Tàu"
         'other_listings': listings.exclude(listingaddress__city__icontains="Hồ Chí Minh")
                                   .exclude(listingaddress__city__icontains="Hà Nội")
-                                  .exclude(listingaddress__city__icontains="Đà Lạt")
+                                  .exclude(listingaddress__city__icontains="Lâm Đồng")
                                   .exclude(listingaddress__city__icontains="Đà Nẵng")
                                   .exclude(listingaddress__city__icontains="Vũng Tàu"),
     }

@@ -10,7 +10,6 @@
 <body>
 <div class="start-container">
 
-
     <div class="start-header fixed-header">
         <a href="{% url 'home' %}">
             <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
@@ -19,174 +18,69 @@
             <button class="btn batnThacMac">Bạn có thắc mắc?</button>
             <button class="btn btnLuuThoat">Lưu và thoát</button>
         </div>
-
     </div>
 
+    <form method="post" id="amenities-form">
+        {% csrf_token %}
+        <div class="start-main scroll-area">
+            <h1 class="question">Cho khách biết chỗ ở của bạn có những gì</h1>
 
-    <div class="start-main scroll-area">
-        <h1 class="question">Cho khách biết chỗ ở của bạn có những gì</h1>
-
-        <h3 class="subtitle">Bạn có những tiện nghi yêu thích của khách nào sau đây?</h3>
-        <div class="options-grid">
-            
-
-            <div class="option-item">
-                <i class="fas fa-wifi icon"></i>
-                <p>Wi-fi </p>
+            <!-- Tiện nghi cơ bản -->
+            <h3 class="subtitle">Bạn có những tiện nghi yêu thích của khách nào sau đây?</h3>
+            <div class="options-grid">
+                {% for amenity in basic_amenities %}
+                <div class="option-item" data-amenity-id="{{ amenity.amenity_id }}">
+                    <i class="{{ amenity.icon|default:'fas fa-check-circle' }} icon"></i>
+                    <p>{{ amenity.name }}</p>
+                </div>
+                {% empty %}
+                <p class="text-muted">Chưa có tiện nghi cơ bản.</p>
+                {% endfor %}
             </div>
 
-            <div class="option-item">
-                <i class="fas fa-tv icon"></i>
-                <p>TV</p>
+            <!-- Tiện nghi nổi bật -->
+            <h3 class="subtitle">Bạn có tiện nghi nào nổi bật không?</h3>
+            <div class="options-grid">
+                {% for amenity in featured_amenities %}
+                <div class="option-item" data-amenity-id="{{ amenity.amenity_id }}">
+                    <i class="{{ amenity.icon|default:'fas fa-star' }} icon"></i>
+                    <p>{{ amenity.name }}</p>
+                </div>
+                {% empty %}
+                <p class="text-muted">Chưa có tiện nghi nổi bật.</p>
+                {% endfor %}
             </div>
 
-            <div class="option-item">
-                <i class="fas fa-kitchen-set icon"></i>
-                <p>Bếp</p>
+            <!-- Tiện nghi an toàn -->
+            <h3 class="subtitle">Bạn có tiện nghi nào trong số những tiện nghi đảm bảo an toàn sau đây không?</h3>
+            <div class="options-grid">
+                {% for amenity in safety_amenities %}
+                <div class="option-item" data-amenity-id="{{ amenity.amenity_id }}">
+                    <i class="{{ amenity.icon|default:'fas fa-shield-halved' }} icon"></i>
+                    <p>{{ amenity.name }}</p>
+                </div>
+                {% empty %}
+                <p class="text-muted">Chưa có tiện nghi an toàn.</p>
+                {% endfor %}
             </div>
-
-            <div class="option-item">
-                <i class="fas fa-jug-detergent icon"></i>
-                <p>Máy giặt</p>
-            </div>
-
-            <div class="option-item">
-                <i class="fas fa-square-parking icon"></i>
-                <p>Chỗ đỗ xe miễn phí</p>
-            </div>
-
-            <div class="option-item">
-                <i class="fas fa-car icon"></i>
-                <p>Chỗ đỗ xe có thu phí trong khuôn viên</p>
-            </div>
-
-            <div class="option-item">
-                <i class="fas fa-snowflake icon"></i>
-                <p>Điều hòa nhiệt độ</p>
-            </div>
-
-            <div class="option-item">
-                <i class="fas fa-laptop-house icon"></i>
-                <p>Không gian riêng để làm việc</p>
-            </div>          
-
         </div>
 
-        <h3 class="subtitle">Bạn có tiện nghi nào nổi bật không?</h3>
-        <div class="options-grid">
-            
+        <!-- Hidden inputs để lưu các tiện nghi đã chọn -->
+        <div id="selected-amenities-container"></div>
 
-            <div class="option-item">
-                <i class="fas fa-person-swimming icon"></i>
-                <p>Bể bơi</p>
-            </div>
-
-            <div class="option-item">
-                <i class="fas fa-hot-tub-person icon"></i>
-                <p>Bồn tắm nước nóng</p>
-            </div>
-
-            <div class="option-item">
-                <i class="fas fa-tree icon"></i>
-                <p>Sân</p>
-            </div>
-
-            <div class="option-item">
-                <i class="fas fa-fire-burner icon"></i>
-                <p>Lò nướng BBQ</p>
-            </div>
-
-            <div class="option-item">
-                <i class="fas fa-utensils icon"></i>
-                <p>Khu vực ăn uống ngoài trời</p>
-            </div>
-
-            <div class="option-item">
-                <i class="fas fa-campground icon"></i>
-                <p>Bếp đốt lửa trại</p>
-            </div>
-
-            <div class="option-item">
-                <i class="fas fa-bowling-ball icon"></i>
-                <p>Bàn bi-da</p>
-            </div>
-
-            <div class="option-item">
-                <i class="fas fa-fire icon"></i>
-                <p>Lò sưởi trong nhà</p>
-            </div>          
-
-            <div class="option-item">
-                <i class="fas fa-music icon"></i>
-                <p>Đàn piano</p>
-            </div>  
-
-            <div class="option-item">
-                <i class="fas fa-dumbbell icon"></i>
-                <p>Thiết bị tập thể dục</p>
-            </div> 
-            
-            <div class="option-item">
-                <i class="fas fa-water icon"></i>
-                <p>Lối ra hồ</p>
-            </div>  
-
-            <div class="option-item">
-                <i class="fas fa-umbrella-beach icon"></i>
-                <p>Lối ra bãi biển</p>
-            </div>  
-
-            <div class="option-item">
-                <i class="fas fa-person-skiing icon"></i>
-                <p>Đường trượt tuyết</p>
-            </div>  
-
-            <div class="option-item">
-                <i class="fas fa-shower icon"></i>
-                <p>Vòi sen tắm ngoài trời</p>
-            </div>  
-        </div>
-
-        <h3 class="subtitle">Bạn có tiện nghi nào trong số những tiện nghi đảm bảo an toàn sau đây không?</h3>
-        <div class="options-grid">
-            
-
-            <div class="option-item">
-                <i class="fas fa-volume-high icon"></i>
-                <p>Máy báo khói</p>
-            </div>
-
-            <div class="option-item">
-                <i class="fas fa-kit-medical icon"></i>
-                <p>Bộ sơ cứu</p>
-            </div>
-
-            <div class="option-item">
-                <i class="fas fa-fire-extinguisher icon"></i>
-                <p>Bình chữa cháy</p>
-            </div>
-            <div class="option-item">
-                <i class="fas fa-wind icon"></i>
-                <p>Máy phát hiện khí CO</p>
-            </div>
-    </div>
-
-    <div class="start-footer fixed-footer">
+        <div class="start-footer fixed-footer">
             <a href="{% url 'buoc2' %}" class="back-link">Quay lại</a>
-
-            <a href="{% url 'themanh' %}" class="next-btn">Tiếp theo</a>
-    </div>
+            <button type="submit" class="next-btn">Tiếp theo</button>
+        </div>
+    </form>
 </div>
 
 </body>
 <script>
-  // Lấy tất cả ô tiện nghi và nút Tiếp theo
+  // Lấy tất cả ô tiện nghi
   const items = document.querySelectorAll('.option-item');
-  const nextBtn = document.querySelector('.next-btn');
-
-  // Cho phép nhấn "Tiếp theo" dù chưa chọn gì
-  nextBtn.disabled = false;
-  nextBtn.classList.remove('disabled');
+  const form = document.getElementById('amenities-form');
+  const container = document.getElementById('selected-amenities-container');
 
   // Thiết lập toggle chọn / bỏ chọn cho từng ô
   items.forEach(item => {
@@ -199,6 +93,7 @@
       item.classList.toggle('selected');
       const selected = item.classList.contains('selected');
       item.setAttribute('aria-pressed', selected ? 'true' : 'false');
+      updateHiddenInputs();
     };
 
     // Click chuột
@@ -212,6 +107,25 @@
       }
     });
   });
+
+  // Cập nhật hidden inputs dựa trên các tiện nghi đã chọn
+  function updateHiddenInputs() {
+    // Xóa tất cả hidden inputs cũ
+    container.innerHTML = '';
+    
+    // Thêm hidden input cho mỗi tiện nghi được chọn
+    const selectedItems = document.querySelectorAll('.option-item.selected');
+    selectedItems.forEach(item => {
+      const amenityId = item.getAttribute('data-amenity-id');
+      if (amenityId) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'amenities';
+        input.value = amenityId;
+        container.appendChild(input);
+      }
+    });
+  }
 </script>
 
 </html>

@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Bạn muốn cho thuê trong khoảng thời gian nào?</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'app/css/loaichoo.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/thoigianthue.css' %}">
 </head>
 <body>
 <div class="start-container">
@@ -13,35 +15,83 @@
             <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
         </a>
         <div class="header-actions">
-            <button class="btn btnThacMac">Bạn có thắc mắc?</button>
-            <button class="btn btnLuuThoat">Lưu và thoát</button>
+            <button type="button" class="btn btnThacMac">Bạn có thắc mắc?</button>
+            <button type="button" class="btn btnLuuThoat">Lưu và thoát</button>
         </div>
     </div>
 
     <form method="POST" action="{% url 'thoigianthue' %}">
         {% csrf_token %}
         <div class="start-main scroll-area">
-            <h1 class="question">Bạn muốn cho thuê nơi ở của bạn trong khoảng thời gian nào?</h1>
+            <h1 class="question">Bạn muốn cho thuê nơi ở trong khoảng thời gian nào?</h1>
 
-            <div style="max-width:700px;margin:30px auto;display:flex;gap:16px;justify-content:center;align-items:center;">
-                <div style="flex:1;">
-                    <label for="available_from">Từ</label>
-                    <input type="date" id="available_from" name="available_from" class="option-input" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;" required>
-                </div>
-                <div style="flex:1;">
-                    <label for="available_to">Đến</label>
-                    <input type="date" id="available_to" name="available_to" class="option-input" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;" required>
+            <div class="time-selection-container">
+                <div class="time-selection-card">
+                    <div class="time-selection-header">
+                        <div class="icon">
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </div>
+                        <p>Chọn khoảng thời gian mà bạn muốn cho khách đặt phòng. Khách chỉ có thể đặt trong khoảng thời gian này.</p>
+                    </div>
+
+                    <div class="date-inputs-wrapper">
+                        <div class="date-input-group">
+                            <label for="available_from">
+                                <i class="fa-solid fa-calendar-check"></i>Ngày bắt đầu
+                            </label>
+                            <input type="date" id="available_from" name="available_from" required>
+                        </div>
+
+                        <div class="arrow-icon">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+
+                        <div class="date-input-group">
+                            <label for="available_to">
+                                <i class="fa-solid fa-calendar-xmark"></i>Ngày kết thúc
+                            </label>
+                            <input type="date" id="available_to" name="available_to" required>
+                        </div>
+                    </div>
                 </div>
             </div>
 
         </div>
 
         <div class="start-footer fixed-footer">
-            <a href="{% url 'thietlapgia' %}" class="back-link">Quay lại</a>
+            <a href="{% url 'diachi' %}" class="back-link">Quay lại</a>
             <button type="submit" class="next-btn">Tiếp theo</button>
         </div>
     </form>
 
 </div>
+
+<script>
+    // Set min date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('available_from').setAttribute('min', today);
+    document.getElementById('available_to').setAttribute('min', today);
+
+    // When start date changes, update end date min
+    document.getElementById('available_from').addEventListener('change', function() {
+        document.getElementById('available_to').setAttribute('min', this.value);
+        const endDate = document.getElementById('available_to');
+        if (endDate.value && endDate.value < this.value) {
+            endDate.value = '';
+        }
+    });
+
+    // Help button
+    document.querySelector('.btnThacMac')?.addEventListener('click', function() {
+        alert('Liên hệ support: support@homenest.com');
+    });
+
+    // Exit button
+    document.querySelector('.btnLuuThoat')?.addEventListener('click', function() {
+        if (confirm('Bạn chắc chắn muốn thoát? Dữ liệu chưa lưu sẽ bị mất.')) {
+            window.location.href = '/';
+        }
+    });
+</script>
 </body>
 </html>

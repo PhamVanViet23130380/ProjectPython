@@ -1,12 +1,13 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Địa chỉ</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <title>Địa chỉ - HomeNest</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="{% static 'app/css/diachi.css' %}">
 </head>
 
@@ -17,40 +18,82 @@
                 <img src="{% static 'app/images/logo.jpg' %}" alt="logo">
             </a>
             <div class="header-actions">
-                <button class="btn btnThacMac">Bạn có thắc mắc?</button>
-                <button class="btn btnLuuThoat">Lưu và thoát</button>
+                <button type="button" class="btn btnThacMac">Bạn có thắc mắc?</button>
+                <button type="button" class="btn btnLuuThoat">Lưu và thoát</button>
             </div>
         </div>
 
-        <form method="POST">
-        {% csrf_token %}
-        <div class="location-main scroll-area">
-            <div class="location-content">
-                <h1 class="title">Chỗ ở của bạn nằm ở đâu?</h1>
-                <p class="desc">Địa chỉ của bạn chỉ được chia sẻ với khách sau khi họ đặt phòng thành công.</p>
+        <form method="POST" id="addressForm">
+            {% csrf_token %}
+            <div class="location-main scroll-area">
+                <div class="location-content">
+                    <h1 class="title">Chỗ ở của bạn nằm ở đâu?</h1>
+                    <p class="desc">Địa chỉ của bạn chỉ được chia sẻ với khách sau khi họ đặt phòng thành công.</p>
 
-                <div class="search-section">
-            <input type="text" name="street" class="address-input" placeholder="Số nhà / Tên đường" required style="margin-bottom: 10px; width: 100%;">
-            <input type="text" name="district" class="address-input" placeholder="Quận / Huyện" required style="margin-bottom: 10px; width: 100%;">
-            <input type="text" name="city" class="address-input" placeholder="Tỉnh / Thành phố" required style="width: 100%;">
-        </div>
-                </div>
+                    <div class="search-section">
+                        <!-- Tỉnh/Thành phố -->
+                        <div class="form-group">
+                            <label for="citySelect"><i class="fa-solid fa-city"></i> Tỉnh / Thành phố <span class="required">*</span></label>
+                            <select name="city" id="citySelect" class="address-select" required>
+                                <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                            </select>
+                        </div>
 
-                <div class="map-container">
-                    <div id="map" class="map-placeholder">
-                        <i class="fas fa-map-location-dot"></i>
-                        <p>Bản đồ sẽ hiển thị tại đây</p>
+                        <!-- Quận/Huyện -->
+                        <div class="form-group">
+                            <label for="districtSelect"><i class="fa-solid fa-map-location"></i> Quận / Huyện <span class="required">*</span></label>
+                            <select name="district" id="districtSelect" class="address-select" required disabled>
+                                <option value="">-- Chọn Quận/Huyện --</option>
+                            </select>
+                        </div>
+
+                        <!-- Số nhà / Tên đường -->
+                        <div class="form-group">
+                            <label for="streetInput"><i class="fa-solid fa-road"></i> Số nhà / Tên đường <span class="required">*</span></label>
+                            <input type="text" name="street" id="streetInput" class="address-input" 
+                                   placeholder="Ví dụ: 123 Nguyễn Văn Linh" required>
+                        </div>
+
+                        <!-- Địa chỉ đầy đủ (hiển thị) -->
+                        <div class="form-group address-preview" id="addressPreview" style="display: none;">
+                            <label><i class="fa-solid fa-location-dot"></i> Địa chỉ đầy đủ</label>
+                            <div class="preview-text" id="fullAddressText"></div>
+                        </div>
+
+                        <!-- Nút tìm trên bản đồ -->
+                        <button type="button" class="btn-find-map" id="findOnMap">
+                            <i class="fa-solid fa-magnifying-glass-location"></i> Xác định vị trí trên bản đồ
+                        </button>
                     </div>
+
+                    <!-- Bản đồ -->
+                    <div class="map-container">
+                        <div id="map" class="map-placeholder"></div>
+                        <div class="map-loading" id="mapLoading" style="display: none;">
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+                            <p>Đang tìm vị trí...</p>
+                        </div>
+                        <p class="map-hint"><i class="fa-solid fa-hand-pointer"></i> Kéo thả marker để điều chỉnh vị trí chính xác</p>
+                    </div>
+
+                    <!-- Hidden inputs for coordinates -->
+                    <input type="hidden" name="latitude" id="latitudeInput">
+                    <input type="hidden" name="longitude" id="longitudeInput">
                 </div>
             </div>
-        </div>
 
-   <div class="start-footer fixed-footer">
-        <a href="{% url 'duocuse' %}" class="back-link">Quay lại</a>
-        <button type="submit" class="next-btn">Tiếp theo</button>
+            <div class="start-footer fixed-footer">
+                <a href="{% url 'duocuse' %}" class="back-link">Quay lại</a>
+                <button type="submit" class="next-btn" id="nextBtn" disabled>Tiếp theo</button>
+            </div>
+        </form>
     </div>
-</form>
-    </div>
-</body>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Vietnam Provinces Data -->
+    <script src="{% static 'app/js/vietnam-provinces.js' %}"></script>
+    <!-- Address Page Script -->
     <script src="{% static 'app/js/diachi.js' %}"></script>
+</body>
 </html>

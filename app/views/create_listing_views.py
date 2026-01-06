@@ -48,20 +48,26 @@ def step_diachi(request):
         listing_data['city'] = request.POST.get('city')
         listing_data['district'] = request.POST.get('district')
         listing_data['street'] = request.POST.get('street')
+        # Lưu tọa độ nếu có
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
+        if latitude and longitude:
+            listing_data['latitude'] = latitude
+            listing_data['longitude'] = longitude
         request.session['listing_data'] = listing_data
-        return redirect('thongtincb')
+        return redirect('thoigianthue')  # Đi qua trang thời gian thuê
     return render(request, 'app/host/diachi.html')
 
 
 @login_required
 def step_thoigianthue(request):
-    """Bước (thêm): Khoảng thời gian cho thuê"""
+    """Bước 4: Khoảng thời gian cho thuê"""
     if request.method == 'POST':
         listing_data = request.session.get('listing_data', {})
         listing_data['available_from'] = request.POST.get('available_from')
         listing_data['available_to'] = request.POST.get('available_to')
         request.session['listing_data'] = listing_data
-        return redirect('thoigianthue')
+        return redirect('thongtincb')  # Tiếp tục đến trang thông tin cơ bản
     return render(request, 'app/host/thoigianthue.html')
 
 
@@ -90,9 +96,13 @@ def step_tiennghii(request):
         request.session['listing_data'] = listing_data
         return redirect('themanh')
     
-    # Lấy danh sách tiện nghi có sẵn
-    amenities = Amenity.objects.all()
-    return render(request, 'app/host/tiennghii.html', {'amenities': amenities})
+    # Lấy danh sách tiện nghi theo category
+    context = {
+        'basic_amenities': Amenity.objects.filter(category='basic'),
+        'featured_amenities': Amenity.objects.filter(category='featured'),
+        'safety_amenities': Amenity.objects.filter(category='safety'),
+    }
+    return render(request, 'app/host/tiennghii.html', context)
 
 
 @login_required
@@ -183,12 +193,20 @@ def step_chiasett(request):
             )
             
             # Tạo địa chỉ
-            ListingAddress.objects.create(
-                listing=listing,
-                city=listing_data.get('city', ''),
-                district=listing_data.get('district', ''),
-                street=listing_data.get('street', '')
-            )
+            address_data = {
+                'listing': listing,
+                'city': listing_data.get('city', ''),
+                'district': listing_data.get('district', ''),
+                'street': listing_data.get('street', '')
+            }
+            # Thêm tọa độ nếu có
+            if listing_data.get('latitude') and listing_data.get('longitude'):
+                try:
+                    address_data['latitude'] = Decimal(listing_data.get('latitude'))
+                    address_data['longitude'] = Decimal(listing_data.get('longitude'))
+                except:
+                    pass
+            ListingAddress.objects.create(**address_data)
             
             # Thêm ảnh
             # Ảnh: di chuyển từ staged vào thư mục theo listing
@@ -223,9 +241,9 @@ def step_chiasett(request):
             amenity_ids = listing_data.get('amenities', [])
             for amenity_id in amenity_ids:
                 try:
-                    amenity = Amenity.objects.get(amenity_id=amenity_id)
+                    amenity = Amenity.objects.get(amenity_id=int(amenity_id))
                     listing.amenities.add(amenity)
-                except Amenity.DoesNotExist:
+                except (Amenity.DoesNotExist, ValueError, TypeError):
                     pass
             
             # Xóa session

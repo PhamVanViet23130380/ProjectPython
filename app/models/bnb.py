@@ -9,21 +9,48 @@ LISTING_STATUS_CHOICES = [
 ]
 
 
+# --- PROPERTY TYPE CHOICES ---
+PROPERTY_TYPE_CHOICES = [
+    ('Nhà riêng', 'Nhà riêng / nguyên căn'),
+    ('Căn hộ', 'Căn hộ / chung cư'),
+    ('Phòng riêng', 'Phòng riêng'),
+    ('Biệt thự', 'Biệt thự'),
+    ('Khách sạn / resort', 'Khách sạn / resort'),
+    ('Nhà khách / nhà nghỉ', 'Nhà khách / nhà nghỉ'),
+    ('Cabin / nhà gỗ', 'Cabin / nhà gỗ'),
+    ('Tiny house', 'Tiny house'),
+    ('Nhà trên cây', 'Nhà trên cây'),
+    ('Nhà thuyền', 'Nhà thuyền'),
+    ('Glamping / lều', 'Glamping / lều'),
+    ('Nông trại / farmstay', 'Nông trại / farmstay'),
+]
+
+# --- USAGE TYPE CHOICES ---
+USAGE_TYPE_CHOICES = [
+    ('Toàn bộ nhà', 'Toàn bộ nhà'),
+    ('Phòng riêng', 'Phòng riêng'),
+    ('Phòng chung', 'Phòng chung'),
+]
+
+
 # --- LISTINGS ---
 class Listing(models.Model):
     listing_id = models.BigAutoField(primary_key=True, verbose_name='Khóa chính')
     host = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='listings', verbose_name='Chủ nhà')
     title = models.CharField(max_length=255, verbose_name='Tiêu đề')
     description = models.TextField(verbose_name='Mô tả')
+    property_type = models.CharField(max_length=50, choices=PROPERTY_TYPE_CHOICES, default='Nhà riêng', verbose_name='Loại chỗ ở')
+    usage_type = models.CharField(max_length=50, choices=USAGE_TYPE_CHOICES, default='Toàn bộ nhà', verbose_name='Loại sử dụng')
     price_per_night = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Giá / đêm')
     cleaning_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='Phí vệ sinh')
-    extra_guest_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Phí khách thêm/đêm')
-    weekend_multiplier = models.DecimalField(max_digits=3, decimal_places=2, default=1.00, verbose_name='Hệ số cuối tuần')
     available_from = models.DateField(null=True, blank=True, verbose_name='Ngày bắt đầu cho thuê')
     available_to = models.DateField(null=True, blank=True, verbose_name='Ngày kết thúc cho thuê')
     max_adults = models.IntegerField(verbose_name='Số người lớn')
     max_children = models.IntegerField(default=0, verbose_name='Số trẻ em')
     max_pets = models.IntegerField(default=0, verbose_name='Số thú cưng')
+    bedrooms = models.IntegerField(default=1, verbose_name='Số phòng ngủ')
+    beds = models.IntegerField(default=1, verbose_name='Số giường')
+    bathrooms = models.IntegerField(default=1, verbose_name='Số phòng tắm')
     is_active = models.BooleanField(default=True, verbose_name='Có hiển thị không')
     status = models.CharField(max_length=10, choices=LISTING_STATUS_CHOICES, default='pending', verbose_name='Trạng thái duyệt')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Ngày tạo')
@@ -73,12 +100,21 @@ class ListingImage(models.Model):
         verbose_name_plural = "Ảnh chỗ ở"
 
 
+AMENITY_CATEGORY_CHOICES = [
+    ('basic', 'Tiện nghi cơ bản'),
+    ('featured', 'Tiện nghi nổi bật'),
+    ('safety', 'An toàn'),
+]
+
+
 class Amenity(models.Model):
     amenity_id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=100, unique=True, verbose_name='Tên tiện nghi')
+    category = models.CharField(max_length=20, choices=AMENITY_CATEGORY_CHOICES, default='basic', verbose_name='Loại')
+    icon = models.CharField(max_length=50, blank=True, null=True, verbose_name='Icon class (FontAwesome)')
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.get_category_display()})"
 
     class Meta:
         db_table = 'amenities'

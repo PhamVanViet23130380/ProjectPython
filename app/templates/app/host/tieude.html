@@ -46,13 +46,13 @@
         const input = document.getElementById('titleInput');
         const countEl = document.getElementById('charCount');
         const nextBtn = document.querySelector('.next-btn');
-        const MAX = 50;
+        const MAX = 200;
 
         function update() {
             const len = input.value.length;
             countEl.textContent = len;
             // highlight khi gần giới hạn
-            if (len >= 45 && len < MAX) {
+            if (len >= 180 && len < MAX) {
                 document.querySelector('.char-row').classList.add('limit-near');
             } else {
                 document.querySelector('.char-row').classList.remove('limit-near');

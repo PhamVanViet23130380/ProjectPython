@@ -90,11 +90,19 @@ class UserAdmin(admin.ModelAdmin):
 @admin.register(Listing)
 class ListingAdmin(admin.ModelAdmin):
     list_display = ('title', 'host_link', 'price_display', 'status', 'is_active', 'created_at')
-    list_editable = ('is_active',)
+    list_editable = ('status', 'is_active',)
     list_filter = ('status', 'is_active', 'created_at')
     search_fields = ('title', 'host__full_name')
     inlines = [ListingAddressInline, ListingImageInline, ListingAmenityInline]
     actions = ('approve_listings', 'reject_listings')
+    
+    def save_model(self, request, obj, form, change):
+        """Auto-set is_active based on status when saving"""
+        if obj.status == 'approved':
+            obj.is_active = True
+        elif obj.status in ('rejected', 'pending'):
+            obj.is_active = False
+        super().save_model(request, obj, form, change)
     
     def host_link(self, obj):
         # use primary key `id` (or `pk`) — User model does not have `user_id` attribute

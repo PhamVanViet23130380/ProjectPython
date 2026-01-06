@@ -29,7 +29,7 @@ def create_booking(request, listing_id):
 
     listing = get_object_or_404(Listing, pk=listing_id , is_active=True)
 
-    # ❌ Host không được tự book phòng của mình
+    # Host không được tự book phòng của mình
     if listing.host_id == request.user.id:
         messages.error(request, 'Bạn không thể đặt phòng của chính mình')
         return redirect('listing_detail', listing_id=listing_id)
