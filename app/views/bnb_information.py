@@ -288,9 +288,21 @@ def listing_detail(request, listing_id):
     
     # Thêm avatar URL cho mỗi review
     reviews_with_avatar = []
+
     for r in reviews:
         r.user_avatar_url = get_avatar_url(r.user, 40)
+
+        analysis = getattr(r, "analysis", None)
+
+        if analysis:
+            r.ai_sentiment = analysis.sentiment
+            r.ai_confidence_percent = round(analysis.confidence_score * 100)
+        else:
+            r.ai_sentiment = None
+            r.ai_confidence_percent = None
+
         reviews_with_avatar.append(r)
+
 
     # 7. Đổ dữ liệu vào Context để HTML sử dụng
     context = {

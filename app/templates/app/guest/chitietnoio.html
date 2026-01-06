@@ -297,6 +297,12 @@
                                     Tiêu Cực
                                 </span>
                             {% endif %}
+
+                            {% if r.ai_confidence_percent %}
+                                <span class="confidence text-muted ms-2">
+                                    (AI tin cậy {{ r.ai_confidence_percent }}%)
+                                </span>
+                            {% endif %}
                         </div>
                         {% endif %}
                     </div>
