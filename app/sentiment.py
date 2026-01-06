@@ -67,17 +67,35 @@ def analyze_sentiment(text: str):
         "rất đẹp", "cực đẹp", "đẹp lắm", "tuyệt vời",
         "xuất sắc", "sạch sẽ", "rất sạch", "hài lòng",
         "tuyệt", "trải nghiệm tốt", "quá tốt",
-        "đáng tiền", "giá tốt", "siêu đẹp"
+        "đáng tiền", "giá tốt", "siêu đẹp",
+        "ấn tượng", "hết ý", "quá tuyệt", "miễn chê", "số một", "hàng đầu", "tuyệt hảo", "đáng ngưỡng mộ",
+        "đỉnh cao", "vượt trội", "đáng khen", "xuất sắc nhất", "hoàn hảo", "tuyệt diệu", "đáng giá", "đáng đồng tiền bát gạo",
+        "đáng đồng tiền", "tuyệt vời nhất", "đáng đồng tiền nhất", "đáng đồng tiền bát gạo nhất",
+        "chất lượng cao", "cao cấp", "sang trọng", "hoàn hảo", "đỉnh của chóp", "đỉnh của đỉnh",
+        "nhiệt tình", "chu đáo", "thân thiện", "hỗ trợ tốt", "tận tâm"
     ]
 
     strong_negative = [
         "dơ", "bẩn", "rất tệ", "kinh",
-        "xấu", "không hài lòng", "quá tệ", "bừa bộn"
+        "xấu", "không hài lòng", "quá tệ", "bừa bộn",
+        
+        # Bổ sung
+        "tồi tệ", "kém chất lượng", "hỏng", "cũ kỹ", "xuống cấp", "rách nát", 
+        "thất vọng", "bực mình", "quá dở", "không chấp nhận được", "không tốt", 
+        "mùi", "ẩm mốc", "cáu bẩn", "chuột", "gián", "bụi bẩn", "lộn xộn", 
+        "chật chội", "thờ ơ", "không chuyên nghiệp", "thái độ tệ",
+        "hư hỏng", "lỗi thời", "đắt đỏ", "quá đắt", "đắt quá", "không đáng tiền",
+        "không xứng đáng", "kém xa", "thua kém", "tệ hại", "khủng khiếp", "kinh khủng",
+        "khó chịu", "bất tiện", "phiền toái", "rắc rối",
     ]
 
     neutral_keywords = [
     "bình thường", "tạm ổn", "tàm tạm", "ổn",
-    "không có gì đặc biệt", "được"
+    "không có gì đặc biệt", "được",
+    "chấp nhận được", "không quá tệ", "đúng như mô tả", "đúng ý", "đúng giá", 
+    "chỉ vậy thôi", "không hơn không kém",
+    "vừa đủ", "hài lòng ở mức độ vừa phải", "không tốt lắm", "không quá xuất sắc",
+    "trung bình", "bình thường thôi", "tạm được", "không có gì nổi bật",
     ]
 
     # Nếu chứa từ mạnh → ép thành positive
