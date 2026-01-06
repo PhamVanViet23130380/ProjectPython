@@ -89,7 +89,7 @@ class UserAdmin(admin.ModelAdmin):
 # --- QUẢN LÝ CHỖ Ở (LISTINGS) ---
 @admin.register(Listing)
 class ListingAdmin(admin.ModelAdmin):
-    list_display = ('title', 'host_link', 'price_display', 'status', 'is_active', 'created_at')
+    list_display = ('title', 'host_link', 'price_display', 'review_sentiment_chart', 'status', 'is_active', 'created_at')
     list_editable = ('status', 'is_active',)
     list_filter = ('status', 'is_active', 'created_at')
     search_fields = ('title', 'host__full_name')
@@ -124,6 +124,68 @@ class ListingAdmin(admin.ModelAdmin):
         self.message_user(request, f"Rejected {updated} listing(s) and set inactive.")
     reject_listings.short_description = 'Reject selected listings'
 
+    def review_sentiment_chart(self, obj):
+        qs = Review.objects.filter(listing=obj).select_related('analysis')
+
+        pos = qs.filter(analysis__sentiment='positive').count()
+        neu = qs.filter(analysis__sentiment='neutral').count()
+        neg = qs.filter(analysis__sentiment='negative').count()
+
+        total = pos + neu + neg
+        if total == 0:
+            return format_html('<span style="color:#999;">Chưa có đánh giá</span>')
+
+        pos_pct = round(pos * 100 / total)
+        neu_pct = round(neu * 100 / total)
+        neg_pct = 100 - pos_pct - neu_pct  # tránh lệch %
+
+        return format_html(
+            '''
+            <div style="display:flex; align-items:center; gap:10px;">
+                
+                <!-- PIE -->
+                <div style="
+                    width:64px;
+                    height:64px;
+                    border-radius:50%;
+                    background:
+                        conic-gradient(
+                            #2e7d32 0% {pos_pct}%,
+                            #f9a825 {pos_pct}% {pos_pct_neu}%,
+                            #c62828 {pos_pct_neu}% 100%
+                        );
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    font-size:13px;
+                    font-weight:600;
+                    color:#333;
+                    box-shadow: inset 0 0 0 6px #fff;
+                ">
+                    {pos_pct}%
+                </div>
+
+                <!-- LEGEND -->
+                <div style="font-size:11px; line-height:1.4;">
+                    <div style="color:#2e7d32;">● 👍 {pos_pct}% ({pos})</div>
+                    <div style="color:#f9a825;">● 😐 {neu_pct}% ({neu})</div>
+                    <div style="color:#c62828;">● 👎 {neg_pct}% ({neg})</div>
+                </div>
+            </div>
+            ''',
+            pos_pct=pos_pct,
+            neu_pct=neu_pct,
+            neg_pct=neg_pct,
+            pos_pct_neu=pos_pct + neu_pct,
+            pos=pos,
+            neu=neu,
+            neg=neg
+        )
+
+
+
+
+    review_sentiment_chart.short_description = "Đánh giá (AI)"
 # --- QUẢN LÝ ĐẶT PHÒNG (BOOKINGS) ---
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):

@@ -71,7 +71,7 @@ def analyze_sentiment(text: str):
         "ấn tượng", "hết ý", "quá tuyệt", "miễn chê", "số một", "hàng đầu", "tuyệt hảo", "đáng ngưỡng mộ",
         "đỉnh cao", "vượt trội", "đáng khen", "xuất sắc nhất", "hoàn hảo", "tuyệt diệu", "đáng giá", "đáng đồng tiền bát gạo",
         "đáng đồng tiền", "tuyệt vời nhất", "đáng đồng tiền nhất", "đáng đồng tiền bát gạo nhất",
-        "chất lượng cao", "cao cấp", "sang trọng", "hoàn hảo", "đỉnh của chóp", "đỉnh của đỉnh",
+"chất lượng cao", "cao cấp", "sang trọng", "hoàn hảo", "đỉnh của chóp", "đỉnh của đỉnh",
         "nhiệt tình", "chu đáo", "thân thiện", "hỗ trợ tốt", "tận tâm"
     ]
 
