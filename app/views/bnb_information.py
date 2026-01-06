@@ -188,6 +188,11 @@
 
 # #     return redirect("listing_detail", listing_id=listing_id)
 
+
+
+
+
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Avg
 from django.http import HttpResponseForbidden
@@ -214,67 +219,67 @@ def listing_detail(request, listing_id):
     safety_amenities = all_amenities.filter(category='safety')
     address = getattr(listing, 'listingaddress', None)  # Lấy từ OneToOneField (có thể None)
 
-    # 3. Lấy đánh giá và tích hợp AI Sentiment
-    reviews = listing.reviews.select_related("user", "analysis").all().order_by("-created_at")
-    avg_rating = reviews.aggregate(avg=Avg("rating"))["avg"] or 0
+    reviews = listing.reviews.select_related("user", "analysis").all()
+    avg_rating = reviews.aggregate(avg=Avg("rating"))["avg"]
 
-    # 4. Logic kiểm tra quyền đánh giá (Chỉ khách đã ở xong mới được đánh giá)
-    booking_to_review = None
+    booking = None
     can_review = False
     review_status = None
 
+    # ====== XÁC ĐỊNH BOOKING ======
     if request.user.is_authenticated:
         today = timezone.localdate()
 
-        # Tìm booking đã hoàn tất (Completed), đã trả phòng và chưa có review
-        booking_to_review = Booking.objects.filter(
+        # 🔥 TÌM BOOKING COMPLETED CHƯA CÓ REVIEW
+        booking = Booking.objects.filter(
             listing=listing,
             user=request.user,
-            booking_status="completed", # Hoặc "confirmed" tùy status bạn đặt
+            booking_status="completed",
             check_out__lt=today,
-            review__isnull=True   
+            review__isnull=True   # 👈 MẤU CHỐT
         ).order_by("-check_out").first()
 
-        if booking_to_review:
+        if booking:
             can_review = True
             review_status = "pending_review"
         else:
-            # Kiểm tra nếu đã từng review rồi
-            has_reviewed = Review.objects.filter(listing=listing, user=request.user).exists()
-            if has_reviewed:
-                review_status = "reviewed"
-
-    # 5. Xử lý khi khách gửi đánh giá (POST)
-    if request.method == "POST":
-        if not can_review or booking_to_review is None:
-            return HttpResponseForbidden("Bạn không có quyền đánh giá phòng này.")
-
-        rating = int(request.POST.get("rating", 5))
-        comment = request.POST.get("comment", "").strip()
-
-        if comment:
-            # Lưu Review vào DB
-            new_review = Review.objects.create(
-                booking=booking_to_review,
+            # Nếu user có booking completed nhưng tất cả đã review
+            has_completed = Booking.objects.filter(
                 listing=listing,
                 user=request.user,
-                rating=rating,
-                comment=comment
-            )
-            
-            # Chạy AI ViSoBERT phân tích cảm xúc
-            try:
-                sentiment, confidence = analyze_sentiment(comment)
-                ReviewAnalysis.objects.create(
-                    review=new_review,
-                    sentiment=sentiment,
-                    confidence_score=confidence
-                )
-            except Exception as e:
-                print(f"Lỗi AI: {e}")
+                booking_status="completed",
+                check_out__lt=today
+            ).exists()
 
-            return redirect(request.path)
+            if has_completed:
+                review_status = "reviewed"
 
+    # ====== SUBMIT REVIEW ======
+    if request.method == "POST":
+        if not can_review or booking is None:
+            return HttpResponseForbidden("Không có booking hợp lệ để đánh giá")
+
+        rating = int(request.POST.get("rating"))
+        comment = request.POST.get("comment", "").strip()
+
+        # 1. Tạo review → PHẢI gán biến
+        review = Review.objects.create(
+            booking=booking,
+            listing=listing,
+            user=request.user,
+            rating=rating,
+            comment=comment
+)
+        # 2. Chạy ViSoBERT
+        sentiment, confidence = analyze_sentiment(comment)
+
+        # 3. Lưu kết quả phân tích
+        ReviewAnalysis.objects.create(
+            review=review,
+            sentiment=sentiment,
+            confidence_score=confidence
+)
+        return redirect(request.path)
     # 6. Tính avatar URL cho host (tránh lỗi ImageField rỗng)
     def get_avatar_url(user, size=100):
         try:

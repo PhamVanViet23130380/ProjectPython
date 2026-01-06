@@ -3,7 +3,8 @@ import torch
 import os
 
 # Path tới model local
-MODEL_PATH = os.path.join("app", "models", "visobert")
+MODEL_NAME = "wonrax/phobert-base-vietnamese-sentiment"
+
 
 _tokenizer = None
 _model = None
@@ -13,11 +14,10 @@ LABELS = ["negative", "neutral", "positive"]
 
 def load_model():
     global _tokenizer, _model
-
     if _tokenizer is None or _model is None:
-        print("Loading local ViSoBERT model...")
-        _tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-        _model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH)
+        print("Loading ViSoBERT from HuggingFace...")
+        _tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+        _model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME)
         _model.eval()
 
 

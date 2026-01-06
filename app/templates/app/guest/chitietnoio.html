@@ -229,84 +229,99 @@
                     <button class="btn btn-outline-dark btn-sm">Nhắn tin cho chủ nhà</button>
                 </div>
 
-                <div class="reviews-section">
-                    <h4 class="fw-bold mb-4"><i class="fa-solid fa-star text-danger me-2"></i>{{ avg_rating|floatformat:1 }} · {{ review_count }} đánh giá</h4>
-                    
-                    <!-- Form đánh giá cho khách đã ở -->
-                    {% if can_review %}
-                    <div class="review-form-section bg-light p-4 rounded-4 mb-4">
-                        <h5 class="fw-bold mb-3"><i class="fa-solid fa-pen me-2"></i>Viết đánh giá của bạn</h5>
-                        <form method="POST" action="">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Điểm đánh giá</label>
-                                <div class="rating-input">
-                                    {% for i in "54321" %}
-                                    <input type="radio" name="rating" id="star{{ i }}" value="{{ i }}" {% if forloop.first %}checked{% endif %}>
-                                    <label for="star{{ i }}" title="{{ i }} sao"><i class="fa-solid fa-star"></i></label>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Nhận xét của bạn</label>
-                                <textarea name="comment" class="form-control" rows="4" placeholder="Chia sẻ trải nghiệm của bạn về chỗ ở này..." required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-danger">
-                                <i class="fa-solid fa-paper-plane me-2"></i>Gửi đánh giá
-                            </button>
-                        </form>
+                <!-- Reviews Section -->
+                <section class="mb-5 pb-5 border-bottom">
+                    {% if review_status == "pending_review" %}
+                    <div class="alert alert-warning mb-4">
+                        <strong>🟡 Bạn đã ở xong chỗ này</strong><br>
+                        Hãy để lại đánh giá để giúp những khách khác nhé!
                     </div>
-                    {% elif review_status == 'reviewed' %}
-                    <div class="alert alert-success">
-                        <i class="fa-solid fa-check-circle me-2"></i>Bạn đã đánh giá chỗ ở này. Cảm ơn bạn!
+                    {% elif review_status == "reviewed" %}
+                    <div class="alert alert-success mb-4">
+                        ✅ Bạn đã đánh giá chỗ ở này
                     </div>
                     {% endif %}
 
-                    <!-- Danh sách đánh giá -->
+                    <h2 class="h5 fw-bold mb-4">
+                        <i class="fa-solid fa-star" style="color: #ff385c;"></i>
+                        {{ avg_rating|floatformat:1 }} · {{ reviews|length }} đánh giá
+                    </h2>
+                    
                     {% for r in reviews %}
-                    <div class="review-item mb-4 pb-3 border-bottom">
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex align-items-center">
-                                <img src="{{ r.user_avatar_url }}" 
-                                     class="rounded-circle me-2" width="40" height="40" alt="Avatar">
-                                <div>
-                                    <h6 class="fw-bold mb-0">{{ r.user.full_name|default:r.user.username }}</h6>
-                                    <small class="text-muted">{{ r.created_at|date:"d/m/Y" }}</small>
+                    <div class="mb-4">
+                        <div class="d-flex align-items-start mb-3">
+                            <img src="{{ r.user_avatar_url }}" class="rounded-circle me-3" width="48" height="48" alt="{{ r.user.username }}">
+                            
+                            <div class="flex-grow-1">
+                                <p class="fw-bold mb-1">{{ r.user.get_full_name|default:r.user.username }}</p>
+                                <p class="text-muted small mb-2">{{ r.created_at|date:"m/Y" }}</p>
+                                <div class="mb-1">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= r.rating %}
+                                            <i class="fa-solid fa-star" style="color:#FFD700;font-size:12px;"></i>
+                                        {% else %}
+                                            <i class="fa-regular fa-star" style="color:#E0E0E0;font-size:12px;"></i>
+                                        {% endif %}
+                                    {% endfor %}
                                 </div>
+                                <p class="mb-0">{{ r.comment }}</p>
+
+                                {% if r.analysis %}
+                                    <div class="mt-1">
+                                        {% if r.analysis.sentiment == "positive" %}
+                                            <span class="badge bg-success">Tích cực</span>
+                                        {% elif r.analysis.sentiment == "negative" %}
+                                            <span class="badge bg-danger">Tiêu cực</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Trung tính</span>
+                                        {% endif %}
+                                        <small class="text-muted ms-1">
+                                        (AI {{ r.analysis.confidence_score }})
+                                        </small>
+                                    </div>
+                                {% endif %}
+
                             </div>
                         </div>
-                        <div class="stars my-2">
-                            {% for i in "12345" %}
-                                <i class="fa-solid fa-star {% if forloop.counter <= r.rating %}text-warning{% else %}text-secondary{% endif %}" style="font-size: 14px;"></i>
-                            {% endfor %}
-                        </div>
-                        <p class="mb-2">{{ r.comment }}</p>
-                        
-                        {% if r.analysis %}
-                        <div class="ai-analysis">
-                            {% if r.analysis.sentiment == 'positive' %}
-                                <span class="badge rounded-pill bg-success-subtle text-success border border-success">
-                                    <i class="fa-solid fa-robot me-1"></i>AI: Tích cực ({{ r.analysis.confidence_score }}%)
-                                </span>
-                            {% elif r.analysis.sentiment == 'neutral' %}
-                                <span class="badge rounded-pill bg-secondary-subtle text-secondary border border-secondary">
-                                    <i class="fa-solid fa-robot me-1"></i>AI: Trung tính ({{ r.analysis.confidence_score }}%)
-                                </span>
-                            {% else %}
-                                <span class="badge rounded-pill bg-danger-subtle text-danger border border-danger">
-                                    <i class="fa-solid fa-robot me-1"></i>AI: Tiêu cực ({{ r.analysis.confidence_score }}%)
-                                </span>
-                            {% endif %}
-                        </div>
-                        {% endif %}
                     </div>
                     {% empty %}
-                    <p class="text-muted text-center py-4">
-                        <i class="fa-regular fa-comment-dots fa-2x mb-2 d-block"></i>
-                        Chưa có đánh giá nào cho chỗ ở này.
-                    </p>
+                        <p class="text-muted">Chưa có đánh giá nào cho phòng này.</p>
                     {% endfor %}
-                </div>
+                </section>
+                {% if can_review %}
+                <section class="mb-5 pb-5 border-bottom">
+                    <h4 class="fw-bold mb-3">Đánh giá của bạn</h4>
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Số sao</label>
+                            <select name="rating" class="form-select" required>
+                                <option value="5">⭐⭐⭐⭐⭐ Rất tốt</option>
+                                <option value="4">⭐⭐⭐⭐ Tốt</option>
+                                <option value="3">⭐⭐⭐ Bình thường</option>
+                                <option value="2">⭐⭐ Tệ</option>
+                                <option value="1">⭐ Rất tệ</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nhận xét</label>
+                            <textarea
+                                name="comment"
+                                class="form-control"
+                                rows="4"
+                                placeholder="Chia sẻ trải nghiệm của bạn..."
+                                required></textarea>
+                        </div>
+
+                        <button class="btn btn-danger fw-bold">
+                            Gửi đánh giá
+                        </button>
+                    </form>
+                </section>
+                {% endif %}
             </div>
 
             <div class="col-lg-4">
