@@ -26,7 +26,15 @@
                         <img src="{{ first_img.image_url }}" alt="{{ item.title }}">
                     {% endwith %}
                     <h4>{{ item.title }}</h4>
-                    <p class="meta">₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm · ★5,0</p>
+                    <p class="meta">
+                        ₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm ·
+                        {% if item.review_count > 0 %}
+                            ★{{ item.avg_rating|floatformat:1 }}
+                            <span style="color:#777;">({{ item.review_count }})</span>
+                        {% else %}
+                            <span style="color:#999;">Mới đăng</span>
+                        {% endif %}
+                    </p>
                 </div>
                 {% endfor %}
             </div>
@@ -49,7 +57,15 @@
                         <img src="{{ first_img.image_url }}" alt="{{ item.title }}">
                     {% endwith %}
                     <h4>{{ item.title }}</h4>
-                    <p class="meta">₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm · ★{{ item.rating|default:"5,0" }}</p>
+                    <p class="meta">
+                        ₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm ·
+                        {% if item.review_count > 0 %}
+                            ★{{ item.avg_rating|floatformat:1 }}
+                            <span style="color:#777;">({{ item.review_count }})</span>
+                        {% else %}
+                            <span style="color:#999;">Mới đăng</span>
+                        {% endif %}
+                    </p>
                 </div>
                 {% endfor %}
             </div>
@@ -72,7 +88,15 @@
                         <img src="{{ first_img.image_url }}" alt="{{ item.title }}">
                     {% endwith %}
                     <h4>{{ item.title }}</h4>
-                    <p class="meta">₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm · ★5,0</p>
+                    <p class="meta">
+                        ₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm ·
+                        {% if item.review_count > 0 %}
+                            ★{{ item.avg_rating|floatformat:1 }}
+                            <span style="color:#777;">({{ item.review_count }})</span>
+                        {% else %}
+                            <span style="color:#999;">Mới đăng</span>
+                        {% endif %}
+                    </p>
                 </div>
                 {% endfor %}
             </div>
@@ -95,7 +119,15 @@
                         <img src="{{ first_img.image_url }}" alt="{{ item.title }}">
                     {% endwith %}
                     <h4>{{ item.title }}</h4>
-                    <p class="meta">₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm · ★5,0</p>
+                    <p class="meta">
+                        ₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm ·
+                        {% if item.review_count > 0 %}
+                            ★{{ item.avg_rating|floatformat:1 }}
+                            <span style="color:#777;">({{ item.review_count }})</span>
+                        {% else %}
+                            <span style="color:#999;">Mới đăng</span>
+                        {% endif %}
+                    </p>
                 </div>
                 {% endfor %}
             </div>
@@ -118,7 +150,15 @@
                         <img src="{{ first_img.image_url }}" alt="{{ item.title }}">
                     {% endwith %}
                     <h4>{{ item.title }}</h4>
-                    <p class="meta">₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm · ★5,0</p>
+                    <p class="meta">
+                        ₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm ·
+                        {% if item.review_count > 0 %}
+                            ★{{ item.avg_rating|floatformat:1 }}
+                            <span style="color:#777;">({{ item.review_count }})</span>
+                        {% else %}
+                            <span style="color:#999;">Mới đăng</span>
+                        {% endif %}
+                    </p>
                 </div>
                 {% endfor %}
             </div>
@@ -141,7 +181,15 @@
                         <img src="{{ first_img.image_url }}" alt="{{ item.title }}">
                     {% endwith %}
                     <h4>{{ item.title }}</h4>
-                    <p class="meta">₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm · ★5,0</p>
+                    <p class="meta">
+                        ₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm ·
+                        {% if item.review_count > 0 %}
+                            ★{{ item.avg_rating|floatformat:1 }}
+                            <span style="color:#777;">({{ item.review_count }})</span>
+                        {% else %}
+                            <span style="color:#999;">Mới đăng</span>
+                        {% endif %}
+                    </p>
                 </div>
                 {% empty %}
                 <p style="padding: 12px; color: #666;">Chưa có bài đăng ngoài các thành phố nổi bật.</p>

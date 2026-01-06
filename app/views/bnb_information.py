@@ -204,7 +204,7 @@ def listing_detail(request, listing_id):
         Listing.objects.select_related('host', 'listingaddress'), 
         pk=listing_id
     )
-
+    
     # 2. Lấy danh sách ảnh và tiện nghi (Dữ liệu thật từ Host đã đăng)
     images = listing.images.all()
     all_amenities = listing.amenities.all()
@@ -292,36 +292,8 @@ def listing_detail(request, listing_id):
             except Exception as e:
                 print(f"Lỗi AI: {e}")
 
-    # 6. Tính avatar URL cho host (tránh lỗi ImageField rỗng)
-    def get_avatar_url(user, size=100):
-        try:
-            if user.avatar and user.avatar.name:
-                return user.avatar.url
-        except (ValueError, AttributeError):
-            pass
-        return f"https://i.pravatar.cc/{size}?u={user.id}"
-    
-    host_avatar_url = get_avatar_url(listing.host, 60)
-    
-    # Thêm avatar URL cho mỗi review
-    reviews_with_avatar = []
+            return redirect(request.path)
 
-    for r in reviews:
-        r.user_avatar_url = get_avatar_url(r.user, 40)
-
-        analysis = getattr(r, "analysis", None)
-
-        if analysis:
-            r.ai_sentiment = analysis.sentiment
-            r.ai_confidence_percent = round(analysis.confidence_score * 100)
-        else:
-            r.ai_sentiment = None
-            r.ai_confidence_percent = None
-
-        reviews_with_avatar.append(r)
-
-
-    # 7. Đổ dữ liệu vào Context để HTML sử dụng
     context = {
         "listing": listing,
         "address": address,
@@ -331,8 +303,7 @@ def listing_detail(request, listing_id):
         "featured_amenities": featured_amenities,
         "safety_amenities": safety_amenities,
         "host": listing.host,
-        "host_avatar_url": host_avatar_url,
-        "reviews": reviews_with_avatar,
+        "reviews": reviews,
         "avg_rating": avg_rating,
         "can_review": can_review,
         "review_status": review_status,
