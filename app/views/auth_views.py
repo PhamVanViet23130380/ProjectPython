@@ -3,67 +3,77 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.utils import timezone
 from django.contrib.auth.forms import PasswordResetForm
+from django.core.mail import send_mail
+import random
+from django.conf import settings   
+
 
 User = get_user_model()
 
 
 def login_view(request):
-    """Handle login and lightweight register actions.
-
-    Renders the refactored template at `app/auth_template/login.html`.
     """
+    - Login bình thường
+    - Register → gửi OTP → verify OTP mới tạo user
+    """
+
     if request.method == 'POST':
         action = request.POST.get('action')
-        email = request.POST.get('email') or request.POST.get('username')
+        email = request.POST.get('email')
         password = request.POST.get('password')
 
+        # ======================
+        # LOGIN
+        # ======================
         if action == 'login':
             user = authenticate(request, username=email, password=password)
-            if user is not None:
+            if user:
                 login(request, user)
                 return redirect('home')
             messages.error(request, 'Email hoặc mật khẩu không chính xác')
+            return redirect('login')
 
+        # ======================
+        # REGISTER (GỬI OTP)
+        # ======================
         elif action == 'register':
-            full_name = request.POST.get('name') or request.POST.get('fullname')
+            full_name = request.POST.get('name')
 
-            if not email or not password or not full_name:
+            if not full_name or not email or not password:
                 messages.error(request, 'Vui lòng điền đầy đủ thông tin')
                 return redirect('login')
 
             if User.objects.filter(email=email).exists():
-                messages.error(request, 'Email này đã được đăng ký')
-                return redirect('login')
-
-            if User.objects.filter(username=email).exists():
-                messages.error(request, 'Username này đã tồn tại')
+                messages.error(request, 'Email đã được đăng ký')
                 return redirect('login')
 
             if len(password) < 6:
                 messages.error(request, 'Mật khẩu phải có ít nhất 6 ký tự')
                 return redirect('login')
 
-            try:
-                user = User.objects.create_user(
-                    username=email,
-                    email=email,
-                    password=password,
-                )
-                # optional fields if your custom user supports them
-                if hasattr(user, 'full_name'):
-                    user.full_name = full_name
-                if hasattr(user, 'role'):
-                    try:
-                        user.role = 'USER'
-                    except Exception:
-                        pass
-                if hasattr(user, 'registered_time'):
-                    user.registered_time = timezone.now()
-                user.save()
-                messages.success(request, 'Đăng ký thành công! Vui lòng đăng nhập')
-                return redirect('login')
-            except Exception as exc:
-                messages.error(request, f'Lỗi đăng ký: {exc}')
+            # Sinh OTP
+            otp = str(random.randint(100000, 999999))
+
+            # Lưu tạm vào session
+            request.session['register_data'] = {
+                'full_name': full_name,
+                'email': email,
+                'password': password,
+                'otp': otp,
+                'created_at': timezone.now().isoformat()
+            }
+
+            # Gửi email OTP
+            send_mail(
+                subject='Mã OTP đăng ký tài khoản',
+                message=f'Mã OTP của bạn là: {otp}',
+                from_email=settings.EMAIL_HOST_USER,   # 🔥 QUAN TRỌNG
+                recipient_list=[email],
+                fail_silently=False
+            )
+
+            messages.success(request, 'OTP đã được gửi tới email. Vui lòng xác nhận.')
+            return redirect('verify_otp')
 
     return render(request, 'app/auth_template/login.html')
 
@@ -104,3 +114,35 @@ def forgot_password(request):
         return redirect('forgot_password')
 
     return render(request, 'app/auth_template/forgot-password.html')
+
+
+def verify_otp(request):
+    data = request.session.get('register_data')
+
+    if not data:
+        messages.error(request, 'Phiên đăng ký đã hết hạn')
+        return redirect('login')
+
+    if request.method == 'POST':
+        input_otp = request.POST.get('otp')
+
+        if input_otp == data['otp']:
+            user = User.objects.create_user(
+                username=data['email'],
+                email=data['email'],
+                password=data['password']
+            )
+
+            if hasattr(user, 'full_name'):
+                user.full_name = data['full_name']
+
+            user.save()
+            del request.session['register_data']
+
+            messages.success(request, 'Đăng ký thành công! Mời đăng nhập.')
+            return redirect('login')
+
+        messages.error(request, 'OTP không đúng')
+
+    return render(request, 'app/auth_template/verify_otp.html')
+
