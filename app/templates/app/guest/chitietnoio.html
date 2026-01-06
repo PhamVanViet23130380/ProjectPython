@@ -295,6 +295,12 @@
                                     Tiêu Cực
                                 </span>
                             {% endif %}
+
+                            {% if r.ai_confidence_percent %}
+                                <span class="confidence text-muted ms-2">
+                                    (AI tin cậy {{ r.ai_confidence_percent }}%)
+                                </span>
+                            {% endif %}
                         </div>
                         {% endif %}
                     </div>
@@ -363,7 +369,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const price = {{ listing.price_per_night }};
+            const price = {{ listing.price_per_night|default:0 }};
             const cleaningFee = {{ listing.cleaning_fee|default:0 }};
             const checkin = document.getElementById('id_checkin');
             const checkout = document.getElementById('id_checkout');
@@ -441,8 +447,8 @@
             const fullAddress = `${addressStreet}, ${addressDistrict}, ${addressCity}, Vietnam`;
             
             // Check if we have coordinates stored
-            const storedLat = {{ address.latitude|default:"null" }};
-            const storedLng = {{ address.longitude|default:"null" }};
+            const storedLat = {{ address.latitude|default:"null"|safe }};
+            const storedLng = {{ address.longitude|default:"null"|safe }};
             
             // Initialize map
             const mapContainer = document.getElementById('listing-map');
