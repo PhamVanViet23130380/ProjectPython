@@ -1,0 +1,42 @@
+{% extends 'app/auth_template/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'app/css/verify_otp.css' %}">
+{% endblock %}
+
+{% block title %}Xác thực OTP{% endblock %}
+
+
+
+{% block content %}
+<div class="auth-container">
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+
+        <h2>Xác thực OTP</h2>
+        <p>Vui lòng nhập mã OTP đã được gửi về email của bạn</p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color:red; margin-bottom:10px;">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        {% endif %}
+
+        <input
+            type="text"
+            name="otp"
+            placeholder="Nhập mã OTP (6 chữ số)"
+            required
+        >
+
+        <button type="submit">Xác nhận</button>
+
+        <a href="{% url 'login' %}" style="display:block; margin-top:10px;">
+            Quay lại đăng nhập
+        </a>
+    </form>
+</div>
+{% endblock %}
