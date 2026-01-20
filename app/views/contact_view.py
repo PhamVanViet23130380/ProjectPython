@@ -87,7 +87,7 @@ def contact_host(request, listing_id):
 
         if not message_body:
             messages.error(request, 'Vui lòng nhập nội dung')
-            return redirect('listing_detail', listing_id=listing_id)
+            return redirect('chitietnoio', listing_id=listing_id)
 
         # Try to save Message if model available and user authenticated
         try:
@@ -96,7 +96,7 @@ def contact_host(request, listing_id):
                 try:
                     Message.objects.create(sender=request.user, receiver=host, content=f"{subject}\n\n{message_body}")
                     messages.success(request, 'Tin nhắn đã gửi tới chủ nhà')
-                    return redirect('listing_detail', listing_id=listing_id)
+                    return redirect('chitietnoio', listing_id=listing_id)
                 except Exception:
                     pass
         except Exception:
@@ -120,7 +120,7 @@ def contact_host(request, listing_id):
         else:
             messages.info(request, 'Không thể liên hệ chủ nhà trực tiếp — đã ghi nhận yêu cầu')
 
-        return redirect('listing_detail', listing_id=listing_id)
+        return redirect('chitietnoio', listing_id=listing_id)
 
     # GET: render a contact-host form
     context = {'listing': listing}

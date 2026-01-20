@@ -21,18 +21,13 @@ def create_booking(request, listing_id):
     """Create a booking for a listing. GET shows a simple form, POST attempts creation."""
 
 
-    try:
-        from .models import Listing, Booking
-    except Exception:
-        messages.error(request, 'Models unavailable')
-        return redirect('home')
 
     listing = get_object_or_404(Listing, pk=listing_id , is_active=True)
 
     # Host không được tự book phòng của mình
     if listing.host_id == request.user.id:
         messages.error(request, 'Bạn không thể đặt phòng của chính mình')
-        return redirect('listing_detail', listing_id=listing_id)
+        return redirect('chitietnoio', listing_id=listing_id)
     
 
 
@@ -48,7 +43,7 @@ def create_booking(request, listing_id):
             checkout = datetime.strptime(checkout_raw, '%Y-%m-%d').date()
         except Exception:
             messages.error(request, 'Ngày không hợp lệ (định dạng YYYY-MM-DD)')
-            return redirect('listing_detail', listing_id=listing_id)
+            return redirect('chitietnoio', listing_id=listing_id)
 
         # Validation 1: Check listing is still active
         if not listing.is_active:
@@ -60,11 +55,11 @@ def create_booking(request, listing_id):
         today = date.today()
         if checkin < today:
             messages.error(request, 'Ngày nhận phòng phải từ hôm nay trở đi')
-            return redirect('listing_detail', listing_id=listing_id)
+            return redirect('chitietnoio', listing_id=listing_id)
 
         if checkout <= checkin:
             messages.error(request, 'Ngày trả phải lớn hơn ngày nhận')
-            return redirect('listing_detail', listing_id=listing_id)
+            return redirect('chitietnoio', listing_id=listing_id)
 
         # Validation 3: Check number of guests doesn't exceed max_adults
         try:
@@ -74,11 +69,11 @@ def create_booking(request, listing_id):
 
         if guests > listing.max_adults:
             messages.error(request, f'Số khách không được vượt quá {listing.max_adults} người')
-            return redirect('listing_detail', listing_id=listing_id)
+            return redirect('chitietnoio', listing_id=listing_id)
 
         if guests < 1:
             messages.error(request, 'Số khách phải ít nhất 1 người')
-            return redirect('listing_detail', listing_id=listing_id)
+            return redirect('chitietnoio', listing_id=listing_id)
 
         # calculate price breakdown using helper (returns Decimal values)
         try:
@@ -108,13 +103,12 @@ def create_booking(request, listing_id):
                     if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
                         return JsonResponse({'error': 'Khoảng thời gian này đã có người đặt. Vui lòng chọn ngày khác.'}, status=409)
                     messages.error(request, 'Khoảng thời gian này đã có người đặt. Vui lòng chọn ngày khác.')
-                    return redirect('chitietnoio')
+                    return redirect('chitietnoio', listing_id=listing.listing_id)
 
                 # create booking in pending state; confirm after payment succeeds
                 # persist breakdown fields when available
                 base_price = price_data.get('base') if isinstance(price_data, dict) else None
                 service_fee_val = price_data.get('service_fee') if isinstance(price_data, dict) else None
-                cleaning_fee_val = price_data.get('cleaning_fee') if isinstance(price_data, dict) else None
 
                 booking = Booking.objects.create(
                     user=request.user,
@@ -125,7 +119,6 @@ def create_booking(request, listing_id):
                     total_price=total_price,
                     base_price=base_price,
                     service_fee=service_fee_val,
-                    cleaning_fee=cleaning_fee_val,
                     booking_status='pending',  # Đặt status là pending, chờ thanh toán
                     note=note,  # Lưu ghi chú cho host
                 )
@@ -146,7 +139,7 @@ def create_booking(request, listing_id):
             return redirect('payment_start', booking_id=booking.booking_id)
         except Exception as exc:
             messages.error(request, f'Lỗi khi tạo booking: {exc}')
-            return redirect('listing_detail', listing_id=listing_id)
+            return redirect('chitietnoio', listing_id=listing_id)
 
     # GET: render a simple booking form template (create if missing)
     return render(request, 'app/pages/create_booking.html', {'listing': listing})
@@ -166,15 +159,6 @@ def _user_can_view_booking(user, booking):
 
 @login_required
 def booking_detail(request, booking_id):
-    try:
-        from .models import Booking
-    except Exception:
-        return render(request, 'app/pages/booking_detail.html', {'error': 'Booking model unavailable'})
-
-    booking = get_object_or_404(Booking, pk=booking_id)
-    if not _user_can_view_booking(request.user, booking):
-        messages.error(request, 'Bạn không có quyền xem booking này')
-        return redirect('home')
 
     return render(request, 'app/pages/booking_detail.html', {'booking': booking})
 
@@ -249,32 +233,25 @@ def cancel_booking(request, booking_id):
 
 
 @login_required
+
+
+@login_required
 def host_bookings(request):
     """List bookings for listings owned by current user (host)."""
-    try:
-        from .models import Booking
-    except Exception:
-        return render(request, 'app/pages/host_bookings.html', {'error': 'Booking model unavailable'})
-
     qs = Booking.objects.filter(listing__host=request.user).order_by('-check_in')
     return render(request, 'app/pages/host_bookings.html', {'bookings': qs})
 
 
 def send_booking_confirmation_email(request, booking, listing, checkin, checkout, guests, price_data):
-    """
-    Gửi email xác nhận đặt phòng cho khách hàng
-    """
+    """Send booking confirmation email to the guest."""
     try:
-        # Tính số đêm
         nights = (checkout - checkin).days
-        
-        # Format giá tiền
+
         def format_price(price):
             if price is None:
                 return "0"
             return f"{int(price):,}".replace(",", ".")
-        
-        # Chuẩn bị context cho email template
+
         context = {
             'user_name': booking.user.get_full_name() or booking.user.username,
             'listing_title': listing.title,
@@ -290,42 +267,35 @@ def send_booking_confirmation_email(request, booking, listing, checkin, checkout
             'booking_url': request.build_absolute_uri(reverse('booking_success', args=[booking.booking_id])),
             'booking_history_url': request.build_absolute_uri(reverse('user_booking_history')),
         }
-        
-        # Render HTML email
+
         html_message = render_to_string('app/emails/booking_confirmation.html', context)
         plain_message = strip_tags(html_message)
-        
-        # Gửi email
+
         send_mail(
-            subject=f'Xác nhận đặt phòng #{booking.booking_id} - Home Nest',
+            subject=f'Xac nhan dat phong #{booking.booking_id} - Home Nest',
             message=plain_message,
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[booking.user.email],
             html_message=html_message,
             fail_silently=False,
         )
-        
+
         return True
     except Exception as e:
-        print(f"Lỗi chi tiết khi gửi email: {e}")
+        print(f"Email confirmation error: {e}")
         raise
 
 
 def send_cancellation_email(request, booking, refund_amount=0):
-    """
-    Gửi email thông báo hủy đặt phòng cho khách hàng
-    """
+    """Send booking cancellation email to the guest."""
     try:
-        # Tính số đêm
         nights = (booking.check_out - booking.check_in).days
-        
-        # Format giá tiền
+
         def format_price(price):
             if price is None:
                 return "0"
             return f"{int(price):,}".replace(",", ".")
-        
-        # Chuẩn bị context cho email template
+
         context = {
             'user_name': booking.user.get_full_name() or booking.user.username,
             'listing_title': booking.listing.title,
@@ -340,23 +310,20 @@ def send_cancellation_email(request, booking, refund_amount=0):
             'booking_history_url': request.build_absolute_uri(reverse('user_booking_history')),
             'home_url': request.build_absolute_uri(reverse('home')),
         }
-        
-        # Render HTML email
+
         html_message = render_to_string('app/emails/booking_cancellation.html', context)
         plain_message = strip_tags(html_message)
-        
-        # Gửi email
+
         send_mail(
-            subject=f'Xác nhận hủy đặt phòng #{booking.booking_id} - Home Nest',
+            subject=f'Xac nhan huy dat phong #{booking.booking_id} - Home Nest',
             message=plain_message,
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[booking.user.email],
             html_message=html_message,
             fail_silently=False,
         )
-        
+
         return True
     except Exception as e:
-        print(f"Lỗi chi tiết khi gửi email hủy: {e}")
+        print(f"Email cancellation error: {e}")
         raise
-

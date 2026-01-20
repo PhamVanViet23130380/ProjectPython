@@ -147,7 +147,6 @@ def step_thietlapgia(request):
     if request.method == 'POST':
         listing_data = request.session.get('listing_data', {})
         listing_data['price_per_night'] = request.POST.get('price_per_night')
-        listing_data['cleaning_fee'] = request.POST.get('cleaning_fee')
         request.session['listing_data'] = listing_data
         return redirect('chiasett')
     return render(request, 'app/host/thietlapgia.html')
@@ -182,7 +181,6 @@ def step_chiasett(request):
                 title=listing_data.get('title', 'Chưa có tiêu đề'),
                 description=listing_data.get('description', 'Chưa có mô tả'),
                 price_per_night=Decimal(listing_data.get('price_per_night', '0')),
-                cleaning_fee=Decimal(listing_data.get('cleaning_fee', '0') or '0'),
                 available_from=listing_data.get('available_from') or None,
                 available_to=listing_data.get('available_to') or None,
                 max_adults=listing_data.get('max_adults', 1),

@@ -136,7 +136,7 @@ def create_listing(request):
                             pass
 
             messages.success(request, 'Tạo listing thành công')
-            return redirect('listing_detail', listing_id=getattr(listing, 'listing_id', listing.pk))
+            return redirect('chitietnoio', listing_id=getattr(listing, 'listing_id', listing.pk))
         except Exception as exc:
             messages.error(request, f'Không thể tạo listing: {exc}')
             return redirect('add_new_bnb')
