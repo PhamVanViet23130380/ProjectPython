@@ -628,6 +628,40 @@ document.addEventListener('DOMContentLoaded', function() {
     // Submit booking with inline validation
     const submitBtn = document.getElementById('submitBooking');
     const paymentForm = document.getElementById('paymentForm');
+    const paymentTypeInputs = document.querySelectorAll('input[name="payment_type"]');
+
+    function initPaymentFormRequired() {
+        if (!paymentForm) return;
+        paymentForm.querySelectorAll('input, select, textarea').forEach((el) => {
+            if (el.required) {
+                el.dataset.wasRequired = '1';
+            }
+        });
+    }
+
+    function setCardFormEnabled(isEnabled) {
+        if (!paymentForm) return;
+        paymentForm.style.display = isEnabled ? 'block' : 'none';
+        paymentForm.setAttribute('aria-hidden', isEnabled ? 'false' : 'true');
+        paymentForm.querySelectorAll('input, select, textarea').forEach((el) => {
+            el.disabled = !isEnabled;
+            if (el.dataset.wasRequired === '1') {
+                el.required = isEnabled;
+            }
+        });
+    }
+
+    function syncPaymentForm() {
+        const selected = document.querySelector('input[name="payment_type"]:checked');
+        const isCard = !selected || selected.value === 'card';
+        setCardFormEnabled(isCard);
+    }
+
+    initPaymentFormRequired();
+    paymentTypeInputs.forEach((input) => {
+        input.addEventListener('change', syncPaymentForm);
+    });
+    syncPaymentForm();
 
     function showFieldError(fieldEl, msg) {
         if (!fieldEl) return;
@@ -683,7 +717,7 @@ document.addEventListener('DOMContentLoaded', function() {
         clearAllPaymentErrors();
         clearFormError();
         if (!window.__isAuthenticated) {
-            showFormError('Vui long dang nhap de dat phong.');
+            showFormError('Vui l\u00f2ng \u0111\u0103ng nh\u1eadp \u0111\u1ec3 \u0111\u1eb7t ph\u00f2ng.');
             return;
         }
 
@@ -711,27 +745,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Card number: exactly 16 digits
             if (!/^\d{16}$/.test(cardNumber)) {
-                showFieldError(cardNumberEl, 'So the phai la 16 chu so.');
+                showFieldError(cardNumberEl, 'S\u1ed1 th\u1ebb ph\u1ea3i l\u00e0 16 ch\u1eef s\u1ed1.');
                 if (valid) cardNumberEl.focus();
                 valid = false;
             }
 
             // Expiry: MM/YY or MM/YYYY, must be later than current month
             if (!expiry) {
-                showFieldError(expiryEl, 'Vui long nhap ngay het han (MM/YY).');
+                showFieldError(expiryEl, 'Vui l\u00f2ng nh\u1eadp ng\u00e0y h\u1ebft h\u1ea1n (MM/YY).');
                 if (valid) expiryEl.focus();
                 valid = false;
             } else {
                 const parts = expiry.split('/').map(p => p.trim());
                 if (parts.length != 2) {
-                    showFieldError(expiryEl, 'Dinh dang phai la MM/YY.');
+                    showFieldError(expiryEl, '\u0110\u1ecbnh d\u1ea1ng ph\u1ea3i l\u00e0 MM/YY.');
                     if (valid) expiryEl.focus();
                     valid = false;
                 } else {
                     const mm = parseInt(parts[0], 10);
                     let yy = parseInt(parts[1], 10);
                     if (isNaN(mm) || mm < 1 || mm > 12 || isNaN(yy)) {
-                        showFieldError(expiryEl, 'Thang hoac nam khong hop le.');
+                        showFieldError(expiryEl, 'Th\u00e1ng ho\u1eb7c n\u0103m kh\u00f4ng h\u1ee3p l\u1ec7.');
                         if (valid) expiryEl.focus();
                         valid = false;
                     } else {
@@ -740,7 +774,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         const today = new Date();
                         const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
                         if (expiryDate <= todayDate) {
-                            showFieldError(expiryEl, 'The da het han.');
+                            showFieldError(expiryEl, 'Th\u1ebb \u0111\u00e3 h\u1ebft h\u1ea1n.');
                             if (valid) expiryEl.focus();
                             valid = false;
                         }
@@ -750,21 +784,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // CVV: exactly 3 digits
             if (!/^\d{3}$/.test(cvv)) {
-                showFieldError(cvvEl, 'CVV phai gom 3 chu so.');
+                showFieldError(cvvEl, 'CVV ph\u1ea3i g\u1ed3m 3 ch\u1eef s\u1ed1.');
                 if (valid) cvvEl.focus();
                 valid = false;
             }
 
             // Postal code: required (non-empty)
             if (!postal) {
-                showFieldError(postalEl, 'Ma buu chinh khong duoc de trong.');
+                showFieldError(postalEl, 'M\u00e3 b\u01b0u ch\u00ednh kh\u00f4ng \u0111\u01b0\u1ee3c \u0111\u1ec3 tr\u1ed1ng.');
                 if (valid) postalEl.focus();
                 valid = false;
             }
         }
 
         if (!valid) {
-            showFormError('Vui long sua cac truong mau do phia tren truoc khi tiep tuc.');
+            showFormError('Vui l\u00f2ng s\u1eeda c\u00e1c tr\u01b0\u1eddng m\u00e0u \u0111\u1ecf ph\u00eda tr\u00ean tr\u01b0\u1edbc khi ti\u1ebfp t\u1ee5c.');
             return;
         }
 
@@ -773,7 +807,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // disable submit to prevent double clicks
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Dang xu ly...';
+        submitBtn.textContent = '\u0110ang x\u1eed l\u00fd...';
 
         // helper to get CSRF token from cookie
         function getCookie(name) {
@@ -809,15 +843,15 @@ document.addEventListener('DOMContentLoaded', function() {
             body: formBody.toString()
         }).then(resp => {
             if (resp.status === 401 || (resp.redirected && resp.url && resp.url.includes('/login'))) {
-                showFormError('Vui long dang nhap de dat phong.');
+                showFormError('Vui l\u00f2ng \u0111\u0103ng nh\u1eadp \u0111\u1ec3 \u0111\u1eb7t ph\u00f2ng.');
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Xac nhan va thanh toan';
+                submitBtn.textContent = 'X\u00e1c nh\u1eadn v\u00e0 thanh to\u00e1n';
                 return Promise.reject({skipErrorHandling: true});
             }
             if (resp.status === 302 || resp.redirected) {
                 showFormError('Bạn đang là Admin và không thể đặt được phòng.');
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Xac nhan va thanh toan';
+                submitBtn.textContent = 'X\u00e1c nh\u1eadn v\u00e0 thanh to\u00e1n';
                 return Promise.reject({skipErrorHandling: true});
             }
             
@@ -826,7 +860,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }).then(result => {
             if (!result.ok) {
-                const errorMsg = result.data.error || 'Loi server khi tao booking.';
+                const errorMsg = result.data.error || 'L\u1ed7i m\u00e1y ch\u1ee7 khi t\u1ea1o \u0111\u1eb7t ph\u00f2ng.';
                 throw { error: errorMsg };
             }
             
@@ -858,15 +892,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Xac nhan va thanh toan';
+            submitBtn.textContent = 'X\u00e1c nh\u1eadn v\u00e0 thanh to\u00e1n';
         }).catch(err => {
             if (err && err.skipErrorHandling) {
                 return;
             }
-            const msg = (err && err.error) ? err.error : 'Loi khi tao booking. Vui long thu lai.';
+            const msg = (err && err.error) ? err.error : 'L\u1ed7i khi t\u1ea1o \u0111\u1eb7t ph\u00f2ng. Vui l\u00f2ng th\u1eed l\u1ea1i.';
             showFormError(msg);
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Xac nhan va thanh toan';
+            submitBtn.textContent = 'X\u00e1c nh\u1eadn v\u00e0 thanh to\u00e1n';
         });
     });
 
@@ -887,7 +921,7 @@ document.addEventListener('DOMContentLoaded', function() {
             confirmBtn.onclick = function() {
                 // disable submit to prevent double clicks
                 confirmBtn.disabled = true;
-                confirmBtn.textContent = 'Dang xu ly...';
+                confirmBtn.textContent = '\u0110ang x\u1eed l\u00fd...';
 
                 // helper to get CSRF token from cookie
                 function getCookie(name) {
@@ -915,10 +949,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         const errEl = document.getElementById('confirmErrorMsg');
                         if (errEl) {
                             errEl.style.display = 'block';
-                            errEl.textContent = 'Missing pending booking. Please try again.';
+                            errEl.textContent = 'Thi\u1ebfu m\u00e3 \u0111\u1eb7t ph\u00f2ng t\u1ea1m. Vui l\u00f2ng th\u1eed l\u1ea1i.';
                         }
                         confirmBtn.disabled = false;
-                        confirmBtn.textContent = 'Thanh toan';
+                        confirmBtn.textContent = 'Thanh to\u00e1n';
                         return;
                     }
 
@@ -929,7 +963,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         credentials: 'same-origin',
                     }).then(resp => {
                         if (resp.status === 401 || (resp.redirected && resp.url && resp.url.includes('/login'))) {
-                            throw new Error('Vui long dang nhap de dat phong.');
+                            throw new Error('Vui l\u00f2ng \u0111\u0103ng nh\u1eadp \u0111\u1ec3 \u0111\u1eb7t ph\u00f2ng.');
                         }
                         return resp.json();
                     })
@@ -944,10 +978,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         const errEl = document.getElementById('confirmErrorMsg');
                         if (errEl) {
                             errEl.style.display = 'block';
-                            errEl.textContent = (err && err.message) ? err.message : 'Payment error.';
+                            errEl.textContent = (err && err.message) ? err.message : 'L\u1ed7i thanh to\u00e1n.';
                         }
                         confirmBtn.disabled = false;
-                        confirmBtn.textContent = 'Thanh toan';
+                        confirmBtn.textContent = 'Thanh to\u00e1n';
                     });
 
                     return;
@@ -971,7 +1005,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: body.toString()
                 }).then(resp => {
                     if (resp.status === 401 || (resp.redirected && resp.url && resp.url.includes('/login'))) {
-                        throw new Error('Vui long dang nhap de dat phong.');
+                        throw new Error('Vui l\u00f2ng \u0111\u0103ng nh\u1eadp \u0111\u1ec3 \u0111\u1eb7t ph\u00f2ng.');
                     }
                     return resp.json();
                 })
@@ -987,10 +1021,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     const errEl = document.getElementById('confirmErrorMsg');
                     if (errEl) { 
                         errEl.style.display = 'block'; 
-                        errEl.textContent = (err && err.message) ? err.message : 'Loi khi thanh toan. Vui long thu lai.';
+                        errEl.textContent = (err && err.message) ? err.message : 'L\u1ed7i khi thanh to\u00e1n. Vui l\u00f2ng th\u1eed l\u1ea1i.';
                     }
                     confirmBtn.disabled = false;
-                    confirmBtn.textContent = 'Thanh toan';
+                    confirmBtn.textContent = 'Thanh to\u00e1n';
                 });
             };
         }
