@@ -263,27 +263,34 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Card number formatting
     const cardNumberInput = document.getElementById('cardNumber');
-    cardNumberInput.addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\s/g, '');
-        let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
-        e.target.value = formattedValue;
-    });
+    if (cardNumberInput) {
+        cardNumberInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formattedValue;
+        });
+    }
     
     // Expiry date formatting
     const expiryDateInput = document.getElementById('expiryDate');
-    expiryDateInput.addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length >= 2) {
-            value = value.substring(0, 2) + '/' + value.substring(2, 4);
-        }
-        e.target.value = value;
-    });
+    if (expiryDateInput) {
+        expiryDateInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+    }
     
     // CVV validation (numbers only)
     const cvvInput = document.getElementById('cvv');
-    cvvInput.addEventListener('input', function(e) {
-        e.target.value = e.target.value.replace(/\D/g, '');
-    });
+    if (cvvInput) {
+        cvvInput.addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+    }
+
     
     // Modal functionality
     const dateModal = document.getElementById('dateModal');
@@ -676,90 +683,93 @@ document.addEventListener('DOMContentLoaded', function() {
         clearAllPaymentErrors();
         clearFormError();
 
+        const paymentTypeEl = document.querySelector('input[name="payment_type"]:checked');
+        const paymentType = paymentTypeEl ? paymentTypeEl.value : 'card';
+
         // Basic HTML5 validity first
-        if (paymentForm && !paymentForm.checkValidity()) {
+        if (paymentForm && paymentType === 'card' && !paymentForm.checkValidity()) {
             paymentForm.reportValidity();
             return;
         }
 
-        const cardNumberEl = document.getElementById('cardNumber');
-        const expiryEl = document.getElementById('expiryDate');
-        const cvvEl = document.getElementById('cvv');
-        const postalEl = document.getElementById('postalCode');
-
-        const cardNumber = cardNumberEl ? cardNumberEl.value.replace(/\s/g, '') : '';
-        const expiry = expiryEl ? expiryEl.value.trim() : '';
-        const cvv = cvvEl ? cvvEl.value.trim() : '';
-        const postal = postalEl ? postalEl.value.trim() : '';
-
         let valid = true;
 
-        // Card number: exactly 16 digits
-        if (!/^\d{16}$/.test(cardNumber)) {
-            showFieldError(cardNumberEl, 'Số thẻ phải là 16 chữ số (không khoảng trắng, không chữ).');
-            if (valid) cardNumberEl.focus();
-            valid = false;
-        }
+        if (paymentType === 'card') {
+            const cardNumberEl = document.getElementById('cardNumber');
+            const expiryEl = document.getElementById('expiryDate');
+            const cvvEl = document.getElementById('cvv');
+            const postalEl = document.getElementById('postalCode');
 
-        // Expiry: MM/YY or MM/YYYY, must be later than current month
-        if (!expiry) {
-            showFieldError(expiryEl, 'Vui lòng nhập ngày hết hạn (MM/YY).');
-            if (valid) expiryEl.focus();
-            valid = false;
-        } else {
-            const parts = expiry.split('/').map(p => p.trim());
-            if (parts.length !== 2) {
-                showFieldError(expiryEl, 'Định dạng phải là MM/YY.');
+            const cardNumber = cardNumberEl ? cardNumberEl.value.replace(/\s/g, '') : '';
+            const expiry = expiryEl ? expiryEl.value.trim() : '';
+            const cvv = cvvEl ? cvvEl.value.trim() : '';
+            const postal = postalEl ? postalEl.value.trim() : '';
+
+            // Card number: exactly 16 digits
+            if (!/^\d{16}$/.test(cardNumber)) {
+                showFieldError(cardNumberEl, 'So the phai la 16 chu so.');
+                if (valid) cardNumberEl.focus();
+                valid = false;
+            }
+
+            // Expiry: MM/YY or MM/YYYY, must be later than current month
+            if (!expiry) {
+                showFieldError(expiryEl, 'Vui long nhap ngay het han (MM/YY).');
                 if (valid) expiryEl.focus();
                 valid = false;
             } else {
-                const mm = parseInt(parts[0], 10);
-                let yy = parseInt(parts[1], 10);
-                if (isNaN(mm) || mm < 1 || mm > 12 || isNaN(yy)) {
-                    showFieldError(expiryEl, 'Tháng hoặc năm không hợp lệ.');
+                const parts = expiry.split('/').map(p => p.trim());
+                if (parts.length != 2) {
+                    showFieldError(expiryEl, 'Dinh dang phai la MM/YY.');
                     if (valid) expiryEl.focus();
                     valid = false;
                 } else {
-                    // normalize year
-                    if (yy < 100) yy += 2000;
-                    // expiry considered as last millisecond of month
-                    const expiryDate = new Date(yy, mm, 0, 23, 59, 59, 999);
-                    const today = new Date();
-                    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                    if (expiryDate <= todayDate) {
-                        showFieldError(expiryEl, 'Thẻ đã hết hạn. Vui lòng kiểm tra lại.');
+                    const mm = parseInt(parts[0], 10);
+                    let yy = parseInt(parts[1], 10);
+                    if (isNaN(mm) || mm < 1 || mm > 12 || isNaN(yy)) {
+                        showFieldError(expiryEl, 'Thang hoac nam khong hop le.');
                         if (valid) expiryEl.focus();
                         valid = false;
+                    } else {
+                        if (yy < 100) yy += 2000;
+                        const expiryDate = new Date(yy, mm, 0, 23, 59, 59, 999);
+                        const today = new Date();
+                        const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                        if (expiryDate <= todayDate) {
+                            showFieldError(expiryEl, 'The da het han.');
+                            if (valid) expiryEl.focus();
+                            valid = false;
+                        }
                     }
                 }
             }
-        }
 
-        // CVV: exactly 3 digits
-        if (!/^\d{3}$/.test(cvv)) {
-            showFieldError(cvvEl, 'CVV phải gồm 3 chữ số.');
-            if (valid) cvvEl.focus();
-            valid = false;
-        }
+            // CVV: exactly 3 digits
+            if (!/^\d{3}$/.test(cvv)) {
+                showFieldError(cvvEl, 'CVV phai gom 3 chu so.');
+                if (valid) cvvEl.focus();
+                valid = false;
+            }
 
-        // Postal code: required (non-empty)
-        if (!postal) {
-            showFieldError(postalEl, 'Mã bưu chính không được để trống.');
-            if (valid) postalEl.focus();
-            valid = false;
+            // Postal code: required (non-empty)
+            if (!postal) {
+                showFieldError(postalEl, 'Ma buu chinh khong duoc de trong.');
+                if (valid) postalEl.focus();
+                valid = false;
+            }
         }
 
         if (!valid) {
-            showFormError('Vui lòng sửa các trường màu đỏ phía trên trước khi tiếp tục.');
+            showFormError('Vui long sua cac truong mau do phia tren truoc khi tiep tuc.');
             return;
         }
 
-        // All validations passed — create booking first (with pending status)
+        // All validations passed ? create booking first (with pending status)
         // Then show confirmation modal
         
         // disable submit to prevent double clicks
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Đang xử lý...';
+        submitBtn.textContent = 'Dang xu ly...';
 
         // helper to get CSRF token from cookie
         function getCookie(name) {
@@ -774,8 +784,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const guestsVal = new URLSearchParams(window.location.search).get('guests') || '1';
         const listingId = (new URLSearchParams(window.location.search).get('room')) || currentRoom.id;
         const noteText = document.getElementById('hostMessage')?.value || '';
-
-        console.log('Creating pending booking with:', { checkin, checkout, guestsVal, listingId, noteText });
 
         const postUrl = `/booking/create/${listingId}/`;
         const formBody = new URLSearchParams();
@@ -796,7 +804,6 @@ document.addEventListener('DOMContentLoaded', function() {
             credentials: 'same-origin',
             body: formBody.toString()
         }).then(resp => {
-            // Check for authentication redirect
             if (resp.status === 302 || resp.status === 401 || resp.redirected) {
                 if (window.__loginUrl) {
                     window.location.href = window.__loginUrl + '?next=' + encodeURIComponent(window.location.pathname + window.location.search);
@@ -810,56 +817,52 @@ document.addEventListener('DOMContentLoaded', function() {
                 return { ok: resp.ok, status: resp.status, data: data };
             });
         }).then(result => {
-            console.log('Booking created:', result);
-            
             if (!result.ok) {
-                const errorMsg = result.data.error || 'Lỗi server khi tạo booking.';
+                const errorMsg = result.data.error || 'Loi server khi tao booking.';
                 throw { error: errorMsg };
             }
             
-            // Success - show confirmation modal (do NOT create booking here anymore)
             const data = result.data;
-            {
-                // populate modal fields and open it
-                const confirmModal = document.getElementById('confirmBookingModal');
-                const confirmRoomTitleText = document.getElementById('confirmRoomTitleText');
-                const confirmDates = document.getElementById('confirmDates');
-                const confirmGuests = document.getElementById('confirmGuests');
-                const confirmSubtotal = document.getElementById('confirmSubtotal');
-                const confirmServiceFee = document.getElementById('confirmServiceFee');
-                const confirmTotalPrice = document.getElementById('confirmTotalPrice');
-                const confirmRoomImage = document.getElementById('confirmRoomImage');
-
-                if (confirmRoomTitleText) confirmRoomTitleText.textContent = currentRoom.title || '';
-                if (confirmDates) confirmDates.textContent = document.getElementById('tripDates').textContent || '';
-                if (confirmGuests) confirmGuests.textContent = document.getElementById('reviewGuests').textContent || '';
-                if (confirmSubtotal) confirmSubtotal.textContent = document.getElementById('subtotal').textContent || '';
-                if (confirmServiceFee) confirmServiceFee.textContent = document.getElementById('serviceFee').textContent || '';
-                if (confirmTotalPrice) confirmTotalPrice.textContent = document.getElementById('totalPrice').textContent || '';
-                if (confirmRoomImage) confirmRoomImage.src = document.getElementById('roomImage').src || '';
-
-                // show modal
-                if (confirmModal) {
-                    confirmModal.style.display = 'flex';
-                    document.body.style.overflow = 'hidden';
-                }
-                
-                // Re-enable submit button
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Xác nhận và thanh toán';
+            if (data && data.booking_id) {
+                window.__pendingBookingId = data.booking_id;
             }
+
+            const confirmModal = document.getElementById('confirmBookingModal');
+            const confirmRoomTitleText = document.getElementById('confirmRoomTitleText');
+            const confirmDates = document.getElementById('confirmDates');
+            const confirmGuests = document.getElementById('confirmGuests');
+            const confirmSubtotal = document.getElementById('confirmSubtotal');
+            const confirmServiceFee = document.getElementById('confirmServiceFee');
+            const confirmTotalPrice = document.getElementById('confirmTotalPrice');
+            const confirmRoomImage = document.getElementById('confirmRoomImage');
+
+            if (confirmRoomTitleText) confirmRoomTitleText.textContent = currentRoom.title || '';
+            if (confirmDates) confirmDates.textContent = document.getElementById('tripDates').textContent || '';
+            if (confirmGuests) confirmGuests.textContent = document.getElementById('reviewGuests').textContent || '';
+            if (confirmSubtotal) confirmSubtotal.textContent = document.getElementById('subtotal').textContent || '';
+            if (confirmServiceFee) confirmServiceFee.textContent = document.getElementById('serviceFee').textContent || '';
+            if (confirmTotalPrice) confirmTotalPrice.textContent = document.getElementById('totalPrice').textContent || '';
+            if (confirmRoomImage) confirmRoomImage.src = document.getElementById('roomImage').src || '';
+
+            if (confirmModal) {
+                confirmModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+            
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Xac nhan va thanh toan';
         }).catch(err => {
             if (err && err.skipErrorHandling) {
                 return;
             }
-            console.error('Booking creation error:', err);
-            const msg = (err && err.error) ? err.error : 'Lỗi khi tạo booking. Vui lòng thử lại.';
+            const msg = (err && err.error) ? err.error : 'Loi khi tao booking. Vui long thu lai.';
             showFormError(msg);
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Xác nhận và thanh toán';
+            submitBtn.textContent = 'Xac nhan va thanh toan';
         });
+    });
 
-        // Attach handler on confirm button (idempotent) - moved outside
+// Attach handler on confirm button (idempotent) - moved outside
         const confirmBtn = document.getElementById('confirmPayBtn');
         const cancelBtn = document.getElementById('cancelPayBtn');
         const closeBtn = document.getElementById('confirmModalClose');
@@ -876,7 +879,7 @@ document.addEventListener('DOMContentLoaded', function() {
             confirmBtn.onclick = function() {
                 // disable submit to prevent double clicks
                 confirmBtn.disabled = true;
-                confirmBtn.textContent = 'Đang xử lý...';
+                confirmBtn.textContent = 'Dang xu ly...';
 
                 // helper to get CSRF token from cookie
                 function getCookie(name) {
@@ -894,6 +897,48 @@ document.addEventListener('DOMContentLoaded', function() {
                 const guestsVal = new URLSearchParams(window.location.search).get('guests') || '1';
                 const listingId = (new URLSearchParams(window.location.search).get('room')) || 1;
                 const noteText = document.getElementById('hostMessage')?.value || '';
+
+                const paymentTypeEl = document.querySelector('input[name="payment_type"]:checked');
+                const paymentType = paymentTypeEl ? paymentTypeEl.value : 'card';
+                const pendingBookingId = window.__pendingBookingId;
+
+                if (paymentType === 'vnpay') {
+                    if (!pendingBookingId) {
+                        const errEl = document.getElementById('confirmErrorMsg');
+                        if (errEl) {
+                            errEl.style.display = 'block';
+                            errEl.textContent = 'Missing pending booking. Please try again.';
+                        }
+                        confirmBtn.disabled = false;
+                        confirmBtn.textContent = 'Thanh toan';
+                        return;
+                    }
+
+                    const vnpUrl = `/payment/vnpay/create/${pendingBookingId}/`;
+                    fetch(vnpUrl, {
+                        method: 'GET',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                        credentials: 'same-origin',
+                    }).then(resp => resp.json())
+                    .then(data => {
+                        if (data.error) throw new Error(data.error);
+                        if (data.payment_url) {
+                            window.location.href = data.payment_url;
+                        } else {
+                            window.location.href = '/';
+                        }
+                    }).catch(err => {
+                        const errEl = document.getElementById('confirmErrorMsg');
+                        if (errEl) {
+                            errEl.style.display = 'block';
+                            errEl.textContent = (err && err.message) ? err.message : 'Payment error.';
+                        }
+                        confirmBtn.disabled = false;
+                        confirmBtn.textContent = 'Thanh toan';
+                    });
+
+                    return;
+                }
 
                 const paymentUrl = `/payment/create-and-pay/${listingId}/`;
                 const body = new URLSearchParams();
@@ -924,16 +969,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     const errEl = document.getElementById('confirmErrorMsg');
                     if (errEl) { 
                         errEl.style.display = 'block'; 
-                        errEl.textContent = (err && err.message) ? err.message : 'Lỗi khi thanh toán. Vui lòng thử lại.';
+                        errEl.textContent = (err && err.message) ? err.message : 'Loi khi thanh toan. Vui long thu lai.';
                     }
                     confirmBtn.disabled = false;
-                    confirmBtn.textContent = 'Thanh toán';
+                    confirmBtn.textContent = 'Thanh toan';
                 });
             };
         }
-    });
-    
-    // Policy link
+
+// Policy link
     const policyLink = document.querySelector('.policy-link');
     if (policyLink) {
         policyLink.addEventListener('click', function(e) {

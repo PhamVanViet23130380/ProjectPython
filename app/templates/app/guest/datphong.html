@@ -180,10 +180,10 @@
                         </div>
                     </div>
 
-                    <!-- Payment Method -->
+                                                                                                    <!-- Payment Method -->
                     <section class="booking-section collapsible-section">
                         <div class="section-header" data-toggle="collapse">
-                            <h2 class="section-title">1. Thêm phương thức thanh toán</h2>
+                            <h2 class="section-title">1. Them phuong thuc thanh toan</h2>
                             <i class="fa-solid fa-chevron-down toggle-icon"></i>
                         </div>
                         
@@ -196,14 +196,23 @@
                                             <i class="fa-brands fa-cc-visa"></i>
                                             <i class="fa-brands fa-cc-mastercard"></i>
                                         </div>
-                                        <span>Thẻ tín dụng hoặc thẻ ghi nợ</span>
+                                        <span>The tin dung hoac the ghi no</span>
+                                    </div>
+                                </label>
+                                <label class="payment-option">
+                                    <input type="radio" name="payment_type" value="vnpay">
+                                    <div class="payment-content">
+                                        <div class="payment-icons">
+                                            <span class="fw-bold">VNPay</span>
+                                        </div>
+                                        <span>Thanh toan qua VNPay (sandbox)</span>
                                     </div>
                                 </label>
                             </div>
 
                             <form class="payment-form" id="paymentForm">
                                 <div class="form-group">
-                                    <label for="cardNumber">Số thẻ <i class="fa-solid fa-lock"></i></label>
+                                    <label for="cardNumber">So the <i class="fa-solid fa-lock"></i></label>
                                     <input type="text" id="cardNumber" class="form-control" 
                                            placeholder="1234 5678 9012 3456" 
                                            maxlength="19" required>
@@ -211,7 +220,7 @@
 
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label for="expiryDate">Ngày hết hạn</label>
+                                        <label for="expiryDate">Ngay het han</label>
                                         <input type="text" id="expiryDate" class="form-control" 
                                                placeholder="MM/YY" maxlength="5" required>
                                     </div>
@@ -223,15 +232,15 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="postalCode">Mã bưu chính</label>
+                                    <label for="postalCode">Ma buu chinh</label>
                                     <input type="text" id="postalCode" class="form-control" 
-                                           placeholder="Nhập mã bưu chính" required>
+                                           placeholder="Nhap ma buu chinh" required>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="country">Quốc gia/khu vực</label>
+                                    <label for="country">Quoc gia/khu vuc</label>
                                     <select id="country" class="form-control" required>
-                                        <option value="VN">Việt Nam</option>
+                                        <option value="VN">Viet Nam</option>
                                         <option value="US">United States</option>
                                         <option value="UK">United Kingdom</option>
                                         <option value="JP">Japan</option>
@@ -242,7 +251,7 @@
                         </div>
                     </section>
 
-                    <!-- Message to Host -->
+<!-- Message to Host -->
                     <section class="booking-section collapsible-section">
                         <div class="section-header" data-toggle="collapse">
                             <h2 class="section-title">2. Nhắn tin cho host</h2>
@@ -434,8 +443,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
-    <script src="{% static 'app/js/datphong_api.js' %}?v=11"></script>
-    <script src="{% static 'app/js/datphong.js' %}?v=11"></script>
+    <script src="{% static 'app/js/datphong_api.js' %}?v=14"></script>
+    <script src="{% static 'app/js/datphong.js' %}?v=14"></script>
 </body>
 
 </html>

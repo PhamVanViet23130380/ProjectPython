@@ -2,9 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 from django.urls import reverse
 import json
+import hmac
+import hashlib
+from urllib.parse import urlencode
 
 from ..models import Booking, Payment, Listing
 
@@ -58,6 +61,55 @@ def calculate_total_price(listing, check_in, check_out, guests,
     }
 
 # --- end helper ---
+
+
+def _vnpay_get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        return x_forwarded_for.split(',')[0].strip()
+    return request.META.get('REMOTE_ADDR', '')
+
+
+def _vnpay_build_payment_url(request, booking):
+    tmn_code = getattr(settings, 'VNPAY_TMN_CODE', '')
+    hash_secret = getattr(settings, 'VNPAY_HASH_SECRET', '')
+    vnp_url = getattr(settings, 'VNPAY_URL', '')
+    if not tmn_code or not hash_secret or not vnp_url:
+        raise ValueError('VNPAY config missing')
+
+    vnp_return = getattr(settings, 'VNPAY_RETURN_URL', '')
+    if not vnp_return:
+        vnp_return = request.build_absolute_uri(reverse('vnpay_return'))
+
+    amount = int(Decimal(str(booking.total_price)) * Decimal('100'))
+    txn_ref = str(booking.booking_id)
+    create_date = timezone.now().strftime('%Y%m%d%H%M%S')
+
+    vnp_params = {
+        'vnp_Version': getattr(settings, 'VNPAY_VERSION', '2.1.0'),
+        'vnp_Command': 'pay',
+        'vnp_TmnCode': tmn_code,
+        'vnp_Amount': amount,
+        'vnp_CurrCode': 'VND',
+        'vnp_TxnRef': txn_ref,
+        'vnp_OrderInfo': f'Booking {txn_ref}',
+        'vnp_OrderType': 'other',
+        'vnp_Locale': 'vn',
+        'vnp_ReturnUrl': vnp_return,
+        'vnp_IpAddr': _vnpay_get_client_ip(request),
+        'vnp_CreateDate': create_date,
+    }
+
+    sorted_items = sorted(vnp_params.items())
+    hash_data = urlencode(sorted_items, doseq=True)
+    secure_hash = hmac.new(
+        hash_secret.encode('utf-8'),
+        hash_data.encode('utf-8'),
+        hashlib.sha512
+    ).hexdigest()
+
+    query = urlencode(sorted_items, doseq=True)
+    return f"{vnp_url}?{query}&vnp_SecureHash={secure_hash}"
 
 
 @login_required
@@ -310,3 +362,144 @@ def create_booking_and_pay(request, listing_id):
     if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
         return JsonResponse({'redirect': redirect_url})
     return redirect(redirect_url)
+
+
+@login_required
+def vnpay_create(request, booking_id):
+    """Create VNPay sandbox payment URL for a pending booking."""
+    booking = get_object_or_404(Booking, booking_id=booking_id, user=request.user)
+    if booking.booking_status != 'pending':
+        msg = 'Booking is not pending.'
+        if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+            return JsonResponse({'error': msg}, status=400)
+        messages.error(request, msg)
+        return redirect('booking_success', booking_id=booking.booking_id)
+
+    try:
+        payment_url = _vnpay_build_payment_url(request, booking)
+    except Exception as exc:
+        if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+            return JsonResponse({'error': str(exc)}, status=400)
+        messages.error(request, 'Unable to create VNPay URL.')
+        return redirect('booking_detail', booking_id=booking.booking_id)
+
+    if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+        return JsonResponse({'payment_url': payment_url})
+    return redirect(payment_url)
+
+
+def _vnpay_verify_request(params):
+    params = dict(params)
+    secure_hash = params.pop('vnp_SecureHash', None)
+    params.pop('vnp_SecureHashType', None)
+    if not secure_hash:
+        return False
+    hash_secret = getattr(settings, 'VNPAY_HASH_SECRET', '')
+    if not hash_secret:
+        return False
+    sorted_items = sorted(params.items())
+    hash_data = urlencode(sorted_items, doseq=True)
+    expected = hmac.new(
+        hash_secret.encode('utf-8'),
+        hash_data.encode('utf-8'),
+        hashlib.sha512
+    ).hexdigest()
+    return secure_hash == expected
+
+
+def vnpay_return(request):
+    """Handle VNPay return URL and update booking/payment on success."""
+    params = request.GET.dict()
+    if not params:
+        return HttpResponseBadRequest('Missing VNPay params')
+
+    if not _vnpay_verify_request(params):
+        messages.error(request, 'Invalid VNPay signature.')
+        return redirect('home')
+
+    txn_ref = params.get('vnp_TxnRef')
+    resp_code = params.get('vnp_ResponseCode')
+    amount = params.get('vnp_Amount')
+    txn_no = params.get('vnp_TransactionNo', '')
+
+    booking = get_object_or_404(Booking, booking_id=txn_ref)
+    expected_amount = int(Decimal(str(booking.total_price)) * Decimal('100'))
+    if str(expected_amount) != str(amount):
+        messages.error(request, 'Invalid VNPay amount.')
+        return redirect('home')
+
+    if resp_code != '00':
+        messages.error(request, 'Payment failed or cancelled.')
+        return redirect('payment_cancel', booking_id=booking.booking_id)
+
+    payment = Payment.objects.filter(booking=booking).first()
+    if payment is None:
+        payment = Payment.objects.create(
+            booking=booking,
+            method='vnpay',
+            amount=booking.total_price,
+            status='paid',
+            paid_at=timezone.now(),
+            transaction_id=txn_no or None,
+        )
+    else:
+        payment.method = 'vnpay'
+        payment.amount = booking.total_price
+        payment.status = 'paid'
+        payment.paid_at = timezone.now()
+        payment.transaction_id = txn_no or payment.transaction_id
+        payment.save()
+
+    if booking.booking_status != 'confirmed':
+        booking.booking_status = 'confirmed'
+        booking.save(update_fields=['booking_status'])
+
+    return redirect('booking_success', booking_id=booking.booking_id)
+
+
+def vnpay_ipn(request):
+    """VNPay IPN endpoint (server-to-server)."""
+    params = request.GET.dict()
+    if not params:
+        return JsonResponse({'RspCode': '99', 'Message': 'Missing params'})
+
+    if not _vnpay_verify_request(params):
+        return JsonResponse({'RspCode': '97', 'Message': 'Invalid signature'})
+
+    txn_ref = params.get('vnp_TxnRef')
+    resp_code = params.get('vnp_ResponseCode')
+    amount = params.get('vnp_Amount')
+    txn_no = params.get('vnp_TransactionNo', '')
+
+    booking = Booking.objects.filter(booking_id=txn_ref).first()
+    if not booking:
+        return JsonResponse({'RspCode': '01', 'Message': 'Order not found'})
+
+    expected_amount = int(Decimal(str(booking.total_price)) * Decimal('100'))
+    if str(expected_amount) != str(amount):
+        return JsonResponse({'RspCode': '04', 'Message': 'Invalid amount'})
+
+    if resp_code == '00':
+        payment = Payment.objects.filter(booking=booking).first()
+        if payment is None:
+            payment = Payment.objects.create(
+                booking=booking,
+                method='vnpay',
+                amount=booking.total_price,
+                status='paid',
+                paid_at=timezone.now(),
+                transaction_id=txn_no or None,
+            )
+        else:
+            payment.method = 'vnpay'
+            payment.amount = booking.total_price
+            payment.status = 'paid'
+            payment.paid_at = timezone.now()
+            payment.transaction_id = txn_no or payment.transaction_id
+            payment.save()
+        if booking.booking_status != 'confirmed':
+            booking.booking_status = 'confirmed'
+            booking.save(update_fields=['booking_status'])
+        return JsonResponse({'RspCode': '00', 'Message': 'Confirm Success'})
+
+    return JsonResponse({'RspCode': '00', 'Message': 'Confirm Success'})

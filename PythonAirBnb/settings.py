@@ -171,3 +171,11 @@ SERVICE_FEE_PCT = '0.10'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# VNPay sandbox settings (demo)
+VNPAY_TMN_CODE = os.getenv('VNPAY_TMN_CODE', 'I60TOR98')
+VNPAY_HASH_SECRET = os.getenv('VNPAY_HASH_SECRET', '9N5CQAEOQZNR90COBLAXDRLSFA191QGR')
+VNPAY_URL = os.getenv('VNPAY_URL', 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html')
+VNPAY_RETURN_URL = os.getenv('VNPAY_RETURN_URL', 'http://127.0.0.1:8000/payment/vnpay/return/')
+VNPAY_IPN_URL = os.getenv('VNPAY_IPN_URL', 'http://127.0.0.1:8000/payment/vnpay/ipn/')
+VNPAY_VERSION = os.getenv('VNPAY_VERSION', '2.1.0')
