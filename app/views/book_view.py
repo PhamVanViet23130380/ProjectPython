@@ -61,6 +61,19 @@ def create_booking(request, listing_id):
             messages.error(request, 'Ngày trả phải lớn hơn ngày nhận')
             return redirect('chitietnoio', listing_id=listing_id)
 
+
+        if listing.available_from and listing.available_to and listing.available_from > listing.available_to:
+            messages.error(request, 'Khoang thoi gian cho thue khong hop le')
+            return redirect('chitietnoio', listing_id=listing_id)
+
+        if listing.available_from and checkin < listing.available_from:
+            messages.error(request, 'Ngay nhan phong phai tu ngay bat dau cho thue')
+            return redirect('chitietnoio', listing_id=listing_id)
+
+        if listing.available_to and checkout > listing.available_to:
+            messages.error(request, 'Ngay tra phong khong duoc sau ngay ket thuc cho thue')
+            return redirect('chitietnoio', listing_id=listing_id)
+
         # Validation 3: Check number of guests doesn't exceed max_adults
         try:
             guests = int(guests_raw) if guests_raw else 1
@@ -92,6 +105,8 @@ def create_booking(request, listing_id):
                 # Check overlap with non-cancelled bookings
                 overlap = []
                 for other in existing:
+                    if other.booking_status == 'pending' and other.user_id == request.user.id:
+                        continue
                     if getattr(other, 'booking_status', None) == 'cancelled':
                         continue
                     # Check overlap: booking overlaps if it's NOT (ends before OR starts after)
@@ -110,18 +125,37 @@ def create_booking(request, listing_id):
                 base_price = price_data.get('base') if isinstance(price_data, dict) else None
                 service_fee_val = price_data.get('service_fee') if isinstance(price_data, dict) else None
 
-                booking = Booking.objects.create(
+                booking = Booking.objects.filter(
                     user=request.user,
                     listing=listing,
-                    check_in=checkin,
-                    check_out=checkout,
-                    guests=guests,
-                    total_price=total_price,
-                    base_price=base_price,
-                    service_fee=service_fee_val,
-                    booking_status='pending',  # Đặt status là pending, chờ thanh toán
-                    note=note,  # Lưu ghi chú cho host
-                )
+                    booking_status='pending'
+                ).order_by('-created_at').first()
+
+                if booking:
+                    booking.check_in = checkin
+                    booking.check_out = checkout
+                    booking.guests = guests
+                    booking.total_price = total_price
+                    booking.base_price = base_price
+                    booking.service_fee = service_fee_val
+                    booking.note = note
+                    booking.save(update_fields=[
+                        'check_in', 'check_out', 'guests', 'total_price',
+                        'base_price', 'service_fee', 'note'
+                    ])
+                else:
+                    booking = Booking.objects.create(
+                        user=request.user,
+                        listing=listing,
+                        check_in=checkin,
+                        check_out=checkout,
+                        guests=guests,
+                        total_price=total_price,
+                        base_price=base_price,
+                        service_fee=service_fee_val,
+                        booking_status='pending',  # pending until payment
+                        note=note,  # host note
+                    )
 
                 # KHÔNG tạo Payment và KHÔNG gửi email ở đây
                 # Sẽ tạo Payment và gửi email khi user click "Thanh toán" trong popup

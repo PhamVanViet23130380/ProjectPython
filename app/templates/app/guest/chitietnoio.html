@@ -317,6 +317,14 @@
                     </div>
                     {% endif %}
 
+                    {% if messages %}
+                    <div class="alert alert-warning py-2 px-3 mb-3" style="font-size: 13px; border-radius: 8px;">
+                        {% for message in messages %}
+                        <div>{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
                     <form action="{% url 'datphong' %}" method="GET">
                         <input type="hidden" name="room" value="{{ listing.listing_id }}">
                         <div class="booking-inputs border rounded-3 mb-3">

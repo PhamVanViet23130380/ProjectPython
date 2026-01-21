@@ -178,6 +178,16 @@ def create_booking_and_pay(request, listing_id):
             raise ValueError('Ngày nhận phòng phải từ hôm nay trở đi')
         if checkout <= checkin:
             raise ValueError('Ngày trả phải lớn hơn ngày nhận')
+
+        if listing.available_from and listing.available_to and listing.available_from > listing.available_to:
+            raise ValueError('Khoang thoi gian cho thue khong hop le')
+
+        if listing.available_from and checkin < listing.available_from:
+            raise ValueError('Ngay nhan phong phai tu ngay bat dau cho thue')
+
+        if listing.available_to and checkout > listing.available_to:
+            raise ValueError('Ngay tra phong khong duoc sau ngay ket thuc cho thue')
+
     except Exception as e:
         if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
             return JsonResponse({'error': str(e)}, status=400)
@@ -200,54 +210,83 @@ def create_booking_and_pay(request, listing_id):
 
     from django.db import transaction
     with transaction.atomic():
-        # Cancel any existing pending bookings from this user for this listing
-        # This handles cases where user clicks "Đặt phòng" multiple times
-        # or changes dates before completing payment
-        Booking.objects.filter(
-            user=request.user,
-            listing=listing,
-            booking_status='pending'
-        ).update(booking_status='cancelled')
-        
-        # Overlap check with select_for_update - only check confirmed bookings
+        # Lock existing bookings for this listing
         existing = Booking.objects.select_for_update().filter(
-            listing=listing,
-            booking_status='confirmed'
-        )
+            listing=listing
+        ).exclude(booking_status='cancelled')
+
         conflict = False
         for other in existing:
+            if other.booking_status == 'pending' and other.user_id == request.user.id:
+                # allow reusing the user's pending booking
+                continue
             if not (other.check_out <= checkin or other.check_in >= checkout):
                 conflict = True
                 break
+
         if conflict:
-            msg = 'Khoảng thời gian này đã có người đặt. Vui lòng chọn ngày khác.'
+            msg = 'Khoang thoi gian nay da co nguoi dat. Vui long chon ngay khac.'
             if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
                 return JsonResponse({'error': msg}, status=409)
             messages.error(request, msg)
             return redirect('chitietnoio', listing_id=listing.listing_id)
 
-        # Create confirmed booking (since payment will be recorded immediately)
-        booking = Booking.objects.create(
+        # Reuse existing pending booking for this user+listing when possible
+        booking = Booking.objects.select_for_update().filter(
             user=request.user,
             listing=listing,
-            check_in=checkin,
-            check_out=checkout,
-            guests=guests,
-            total_price=price_data['total'],
-            base_price=price_data['base'],
-            service_fee=price_data['service_fee'],
-            booking_status='confirmed',
-            note=note,
-        )
+            booking_status='pending'
+        ).order_by('-created_at').first()
 
-        payment = Payment.objects.create(
-            booking=booking,
-            method='card',
-            amount=booking.total_price,
-            status='paid',
-            paid_at=timezone.now(),
-            transaction_id=f"TXN-{booking.booking_id}-{int(timezone.now().timestamp())}",
-        )
+        if booking:
+            booking.check_in = checkin
+            booking.check_out = checkout
+            booking.guests = guests
+            booking.total_price = price_data['total']
+            booking.base_price = price_data['base']
+            booking.service_fee = price_data['service_fee']
+            booking.note = note
+            booking.save(update_fields=[
+                'check_in', 'check_out', 'guests', 'total_price',
+                'base_price', 'service_fee', 'note'
+            ])
+        else:
+            booking = Booking.objects.create(
+                user=request.user,
+                listing=listing,
+                check_in=checkin,
+                check_out=checkout,
+                guests=guests,
+                total_price=price_data['total'],
+                base_price=price_data['base'],
+                service_fee=price_data['service_fee'],
+                booking_status='pending',
+                note=note,
+            )
+
+        payment = Payment.objects.filter(booking=booking).first()
+        txn_id = f"TXN-{booking.booking_id}-{int(timezone.now().timestamp())}"
+        if payment:
+            if payment.status != 'paid':
+                payment.method = 'card'
+                payment.amount = booking.total_price
+                payment.status = 'paid'
+                payment.paid_at = timezone.now()
+                payment.transaction_id = payment.transaction_id or txn_id
+                payment.save(update_fields=['method', 'amount', 'status', 'paid_at', 'transaction_id'])
+        else:
+            payment = Payment.objects.create(
+                booking=booking,
+                method='card',
+                amount=booking.total_price,
+                status='paid',
+                paid_at=timezone.now(),
+                transaction_id=txn_id,
+            )
+
+        if booking.booking_status != 'confirmed':
+            booking.booking_status = 'confirmed'
+            booking.save(update_fields=['booking_status'])
 
     # Send confirmation email after successful payment
     try:

@@ -14,14 +14,30 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         ttl_minutes = options.get('minutes', 30)
         cutoff = timezone.now() - timedelta(minutes=ttl_minutes)
-        qs = Booking.objects.filter(booking_status='pending', created_at__lte=cutoff)
-        total = qs.count()
-        if total == 0:
-            self.stdout.write(self.style.SUCCESS('No pending bookings to expire.'))
-            return
+        pending_qs = Booking.objects.filter(booking_status='pending', created_at__lte=cutoff)
+        pending_total = pending_qs.count()
 
-        for b in qs:
+        for b in pending_qs:
             b.booking_status = 'cancelled'
-            b.save()
+            b.save(update_fields=['booking_status'])
 
-        self.stdout.write(self.style.SUCCESS(f'Expired {total} pending bookings (TTL={ttl_minutes} minutes).'))
+        today = timezone.localdate()
+        in_progress_qs = Booking.objects.filter(
+            booking_status='confirmed',
+            check_in__lte=today,
+            check_out__gte=today
+        )
+        in_progress_total = in_progress_qs.count()
+        in_progress_qs.update(booking_status='in_progress')
+
+        completed_qs = Booking.objects.filter(
+            booking_status__in=['confirmed', 'in_progress'],
+            check_out__lt=today
+        )
+        completed_total = completed_qs.count()
+        completed_qs.update(booking_status='completed')
+
+        self.stdout.write(self.style.SUCCESS(
+            f'Expired pending: {pending_total} (TTL={ttl_minutes} minutes); '
+            f'in_progress: {in_progress_total}; completed: {completed_total}.'
+        ))

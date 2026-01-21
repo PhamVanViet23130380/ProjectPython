@@ -239,7 +239,7 @@ def trungtamtrogiup(request):
 @login_required
 def datphong(request):
     """Trang đặt phòng với thông tin listing từ database."""
-    from ..models import Listing
+    from ..models import Listing, Booking
     from django.shortcuts import get_object_or_404
     
     # Lấy listing_id từ URL query hoặc form
@@ -247,11 +247,40 @@ def datphong(request):
     
     if not listing_id:
         # Nếu không có listing_id, chuyển về trang home
-        from django.shortcuts import redirect
-        return redirect('home')
+        back_url = request.META.get('HTTP_REFERER')
+        return redirect(back_url or 'home')
     
     try:
         listing = get_object_or_404(Listing, listing_id=int(listing_id))
+
+        from django.urls import reverse
+        back_url = request.META.get('HTTP_REFERER') or reverse('chitietnoio', listing_id=listing.listing_id)
+
+        checkin_raw = request.GET.get('checkin')
+        checkout_raw = request.GET.get('checkout')
+
+        if checkin_raw and checkout_raw:
+            try:
+                from datetime import datetime
+                checkin = datetime.strptime(checkin_raw, '%Y-%m-%d').date()
+                checkout = datetime.strptime(checkout_raw, '%Y-%m-%d').date()
+            except Exception:
+                messages.error(request, 'Ngay khong hop le')
+                return redirect(back_url)
+
+            if checkout <= checkin:
+                messages.error(request, 'Ngay tra phong phai sau ngay nhan phong')
+                return redirect(back_url)
+
+            conflict = Booking.objects.filter(listing=listing).exclude(booking_status='cancelled').filter(
+                check_in__lt=checkout,
+                check_out__gt=checkin,
+            ).exists()
+
+            if conflict:
+                messages.error(request, 'Chỗ ở này hiện tại đã có người đặt. This accommodation is currently booked.')
+                return redirect(back_url)
+
         
         # Lấy ảnh chính
         main_image = listing.images.filter(is_main=True).first()
@@ -281,10 +310,9 @@ def datphong(request):
         
         return render(request, 'app/guest/datphong.html', context)
     except Exception as e:
-        from django.shortcuts import redirect
-        from django.contrib import messages
         messages.error(request, f'Không tìm thấy chỗ ở: {str(e)}')
-        return redirect('home')
+        back_url = request.META.get('HTTP_REFERER')
+        return redirect(back_url or 'home')
 
 
 def phuongthucthanhtoan(request):

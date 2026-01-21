@@ -164,7 +164,7 @@ def profile_trips(request):
     )
 
     ongoing = bookings.filter(
-        booking_status='confirmed',
+        booking_status__in=['confirmed', 'in_progress'],
         check_in__lte=today,
         check_out__gte=today
     )
@@ -196,11 +196,11 @@ def profile_host(request):
     bookings = Booking.objects.filter(listing__host=user)
 
     total_bookings = bookings.exclude(
-        booking_status='da_huy'
+        booking_status='cancelled'
     ).count()
 
     total_revenue = bookings.filter(
-        booking_status='da_hoan_thanh'
+        booking_status='completed'
     ).aggregate(total=Sum('total_price'))['total'] or 0
 
     avg_rating = Review.objects.filter(

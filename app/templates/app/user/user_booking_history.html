@@ -386,13 +386,17 @@
             <div class="booking-details">
                 <h3 class="listing-title">{{ booking.listing.title }}</h3>
                 
-                <span class="booking-status {% if booking.booking_status == 'confirmed' %}status-confirmed{% elif booking.booking_status == 'pending' %}status-pending{% else %}status-cancelled{% endif %}">
+                <span class="booking-status {% if booking.booking_status == 'confirmed' %}status-confirmed{% elif booking.booking_status == 'pending' %}status-pending{% elif booking.booking_status == 'in_progress' %}status-confirmed{% elif booking.booking_status == 'completed' %}status-confirmed{% else %}status-cancelled{% endif %}">
                     {% if booking.booking_status == 'confirmed' %}
-                        Đã xác nhận
+                        Da xac nhan
                     {% elif booking.booking_status == 'pending' %}
-                        Chờ xác nhận
+                        Cho xac nhan
+                    {% elif booking.booking_status == 'in_progress' %}
+                        Dang o
+                    {% elif booking.booking_status == 'completed' %}
+                        Hoan thanh
                     {% else %}
-                        Đã hủy ({{ booking.booking_status }})
+                        Da huy
                     {% endif %}
                 </span>
                 
