@@ -28,6 +28,12 @@ def create_booking(request, listing_id):
     if listing.host_id == request.user.id:
         messages.error(request, 'Bạn không thể đặt phòng của chính mình')
         return redirect('chitietnoio', listing_id=listing_id)
+
+    if request.user.is_staff or request.user.is_superuser:
+        if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'B\u1ea1n \u0111ang l\u00e0m Admin v\u00e0 kh\u00f4ng \u0111\u01b0\u1ee3c ph\u00e9p \u0111\u1eb7t ph\u00f2ng'}, status=403)
+        messages.error(request, 'B\u1ea1n \u0111ang l\u00e0m Admin v\u00e0 kh\u00f4ng \u0111\u01b0\u1ee3c ph\u00e9p \u0111\u1eb7t ph\u00f2ng')
+        return redirect('chitietnoio', listing_id=listing_id)
     
 
 

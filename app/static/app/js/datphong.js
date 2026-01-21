@@ -682,6 +682,10 @@ document.addEventListener('DOMContentLoaded', function() {
         ev.preventDefault();
         clearAllPaymentErrors();
         clearFormError();
+        if (!window.__isAuthenticated) {
+            showFormError('Vui long dang nhap de dat phong.');
+            return;
+        }
 
         const paymentTypeEl = document.querySelector('input[name="payment_type"]:checked');
         const paymentType = paymentTypeEl ? paymentTypeEl.value : 'card';
@@ -804,12 +808,16 @@ document.addEventListener('DOMContentLoaded', function() {
             credentials: 'same-origin',
             body: formBody.toString()
         }).then(resp => {
-            if (resp.status === 302 || resp.status === 401 || resp.redirected) {
-                if (window.__loginUrl) {
-                    window.location.href = window.__loginUrl + '?next=' + encodeURIComponent(window.location.pathname + window.location.search);
-                } else {
-                    window.location.href = '/login/?next=' + encodeURIComponent(window.location.pathname + window.location.search);
-                }
+            if (resp.status === 401 || (resp.redirected && resp.url && resp.url.includes('/login'))) {
+                showFormError('Vui long dang nhap de dat phong.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Xac nhan va thanh toan';
+                return Promise.reject({skipErrorHandling: true});
+            }
+            if (resp.status === 302 || resp.redirected) {
+                showFormError('Bạn đang là Admin và không thể đặt được phòng.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Xac nhan va thanh toan';
                 return Promise.reject({skipErrorHandling: true});
             }
             
@@ -919,7 +927,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         method: 'GET',
                         headers: { 'X-Requested-With': 'XMLHttpRequest' },
                         credentials: 'same-origin',
-                    }).then(resp => resp.json())
+                    }).then(resp => {
+                        if (resp.status === 401 || (resp.redirected && resp.url && resp.url.includes('/login'))) {
+                            throw new Error('Vui long dang nhap de dat phong.');
+                        }
+                        return resp.json();
+                    })
                     .then(data => {
                         if (data.error) throw new Error(data.error);
                         if (data.payment_url) {
@@ -956,7 +969,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     credentials: 'same-origin',
                     body: body.toString()
-                }).then(resp => resp.json())
+                }).then(resp => {
+                    if (resp.status === 401 || (resp.redirected && resp.url && resp.url.includes('/login'))) {
+                        throw new Error('Vui long dang nhap de dat phong.');
+                    }
+                    return resp.json();
+                })
                 .then(data => {
                     if (data.error) throw new Error(data.error);
                     if (data.redirect) {
