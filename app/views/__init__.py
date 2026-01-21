@@ -8,7 +8,6 @@ from .auth_views import login_view, logout_view
 
 # Import submodules from this package
 from .home_views import home_view
-from .category_views import category_view
 from .bnb_information import listing_detail
 from .result_view import search_results
 
@@ -19,11 +18,6 @@ from .user_view import user_profile, edit_profile, user_listings, user_bookings,
 from .book_view import create_booking, booking_detail, cancel_booking, host_bookings
 from .booking_success_view import booking_success
 from .user_booking_history_view import user_booking_history
-from .sub_info_view import amenity_detail, host_policy_view, verification_status, payment_info
-from .add_new_bnb import create_listing
-from .owner_management_view import owner_dashboard, owner_listings, owner_bookings, suspend_host, reinstate_host
-from .info_owner_bnb_view import owner_listing_info
-from .contact_view import contact, contact_host
 from .create_listing_views import (
     step_loaichoo, step_dattieude, step_duocuse, step_diachi, step_thoigianthue, step_thongtincb,
     step_tiennghii, step_themanh, step_tieude, step_thietlapgia, step_chiasett
@@ -364,12 +358,9 @@ def error_403(request, exception=None):
 
 # Explicitly export commonly-used views from this package
 __all__ = [
-    'home', 'category_view', 'listing_detail', 'search_results',
+    'home', 'listing_detail', 'search_results',
     'user_profile', 'edit_profile', 'user_listings', 'user_bookings',
     'create_booking', 'booking_detail', 'cancel_booking', 'host_bookings', 'booking_success', 'user_booking_history',
-    'amenity_detail', 'host_policy_view', 'verification_status', 'payment_info',
-    'create_listing', 'owner_dashboard', 'owner_listings', 'owner_bookings',
-    'suspend_host', 'reinstate_host', 'owner_listing_info', 'contact', 'contact_host',
     'login_view', 'logout_view',
     'forgot_password', 'taobaidang', 'chitietnoio', 'buoc1', 'thietlapgia',
     'giacuoituan', 'chiasett', 'loaichoo', 'trungtamtrogiup', 'datphong',
