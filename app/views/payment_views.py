@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.urls import reverse
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 import json
 import hmac
 import hashlib
@@ -172,14 +174,15 @@ def payment_success(request, booking_id):
 @login_required
 def payment_cancel(request, booking_id):
     booking = get_object_or_404(Booking, booking_id=booking_id, user=request.user)
-    messages.info(request, 'Thanh toán bị huỷ.')
+    if booking.booking_status != 'cancelled':
+        booking.booking_status = 'cancelled'
+        booking.save(update_fields=['booking_status'])
+    payment = Payment.objects.filter(booking=booking).order_by('-paid_at', '-payment_id').first()
+    if payment and payment.status != 'cancelled':
+        payment.status = 'cancelled'
+        payment.save(update_fields=['status'])
+    messages.info(request, 'Thanh toan bi huy.')
     return render(request, 'app/pages/payment_failed.html', {'booking': booking})
-
-
-# --- payment signal handler (moved from app/signals.py) ---
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
 
 @receiver(post_save, sender=Payment)
 def payment_post_save(sender, instance, created, **kwargs):
@@ -429,7 +432,14 @@ def vnpay_return(request):
         return redirect('home')
 
     if resp_code != '00':
-        messages.error(request, 'Payment failed or cancelled.')
+        if booking.booking_status != 'cancelled':
+            booking.booking_status = 'cancelled'
+            booking.save(update_fields=['booking_status'])
+        payment = Payment.objects.filter(booking=booking).order_by('-paid_at', '-payment_id').first()
+        if payment and payment.status != 'cancelled':
+            payment.status = 'cancelled'
+            payment.save(update_fields=['status'])
+        messages.error(request, 'Payment failed or cancelled.') 
         return redirect('payment_cancel', booking_id=booking.booking_id)
 
     payment = Payment.objects.filter(booking=booking).first()

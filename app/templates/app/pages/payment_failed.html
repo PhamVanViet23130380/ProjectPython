@@ -1,19 +1,238 @@
 {% extends 'app/base.html' %}
 
+{% block title %}Payment not completed - Home Nest{% endblock %}
+
+{% block extra_css %}
+<style>
+  .payment-failed-wrap {
+    background: linear-gradient(180deg, #f6efe9 0%, #ffffff 100%);
+    padding: 140px 16px 96px;
+  }
+
+  .payment-failed-card {
+    max-width: 920px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 18px;
+    border: 1px solid rgba(107, 74, 52, 0.12);
+    box-shadow: 0 18px 60px rgba(107, 74, 52, 0.16);
+    padding: 40px 40px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .payment-failed-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(90deg, #6b4a34 0%, #9b6a4a 55%, #6b4a34 100%);
+  }
+
+  .status-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .status-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #fff3e8;
+    color: #b2562b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    box-shadow: 0 10px 20px rgba(178, 86, 43, 0.18);
+    flex-shrink: 0;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: #fbe4d6;
+    color: #8a4a2a;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+  }
+
+  .status-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #3b2518;
+    margin: 12px 0 8px;
+  }
+
+  .status-message {
+    color: #6a5a4f;
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .booking-panel {
+    margin-top: 28px;
+    background: #fffaf5;
+    border-radius: 14px;
+    border: 1px solid rgba(107, 74, 52, 0.15);
+    padding: 20px 22px;
+    display: grid;
+    gap: 12px;
+  }
+
+  .booking-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .booking-item h4 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: #8b7b70;
+    margin: 0 0 6px;
+  }
+
+  .booking-item p {
+    margin: 0;
+    font-weight: 600;
+    color: #3b2518;
+  }
+
+  .booking-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #7b6c62;
+    font-size: 14px;
+  }
+
+  .booking-note i {
+    color: #b2562b;
+    margin-top: 2px;
+  }
+
+  .action-row {
+    margin-top: 26px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .action-btn {
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .action-btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .action-primary {
+    background: #6b4a34;
+    color: #fff;
+    box-shadow: 0 12px 24px rgba(107, 74, 52, 0.2);
+  }
+
+  .action-secondary {
+    background: #fff;
+    color: #6b4a34;
+    border: 1px solid rgba(107, 74, 52, 0.2);
+  }
+
+  @media (max-width: 640px) {
+    .payment-failed-card {
+      padding: 28px 22px;
+    }
+
+    .status-title {
+      font-size: 22px;
+    }
+
+    .action-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .action-btn {
+      justify-content: center;
+    }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container" style="max-width: 720px; margin: 40px auto;">
-  <div class="card shadow-sm p-4">
-    <h2>Payment failed or cancelled</h2>
-    <p>Your payment was not completed. You can try again.</p>
+<section class="payment-failed-wrap">
+  <div class="payment-failed-card">
+    <div class="status-row">
+      <div class="status-icon">
+        <i class="fa-solid fa-xmark"></i>
+      </div>
+      <div>
+        <div class="status-pill">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          Payment not completed
+        </div>
+        <h1 class="status-title">Payment was canceled or failed</h1>
+        <p class="status-message">
+          We did not receive a successful payment. Your booking is not confirmed yet.
+          You can try again or return to the home page.
+        </p>
+      </div>
+    </div>
+
     {% if booking %}
-    <p>Booking ID: {{ booking.booking_id }}</p>
+    <div class="booking-panel">
+      <div class="booking-grid">
+        <div class="booking-item">
+          <h4>Booking ID</h4>
+          <p>#{{ booking.booking_id }}</p>
+        </div>
+        <div class="booking-item">
+          <h4>Listing</h4>
+          <p>{{ booking.listing.title }}</p>
+        </div>
+        <div class="booking-item">
+          <h4>Dates</h4>
+          <p>{{ booking.check_in|date:"d/m/Y" }} - {{ booking.check_out|date:"d/m/Y" }}</p>
+        </div>
+      </div>
+      <div class="booking-note">
+        <i class="fa-regular fa-circle-question"></i>
+        <span>If you were charged, the transaction will be reversed by the provider.</span>
+      </div>
+    </div>
     {% endif %}
-    <div class="mt-3">
-      <a href="{% url 'home' %}" class="btn btn-secondary">Back to home</a>
+
+    <div class="action-row">
+      <a href="{% url 'home' %}" class="action-btn action-secondary">
+        <i class="fa-solid fa-house"></i>
+        Back to home
+      </a>
       {% if booking %}
-      <a href="{% url 'datphong' %}?room={{ booking.listing_id }}&checkin={{ booking.check_in|date:'Y-m-d' }}&checkout={{ booking.check_out|date:'Y-m-d' }}" class="btn btn-primary">Try again</a>
+      <a href="{% url 'datphong' %}?room={{ booking.listing_id }}&checkin={{ booking.check_in|date:'Y-m-d' }}&checkout={{ booking.check_out|date:'Y-m-d' }}" class="action-btn action-primary">
+        <i class="fa-solid fa-rotate-right"></i>
+        Try again
+      </a>
       {% endif %}
     </div>
   </div>
-</div>
+</section>
 {% endblock %}
