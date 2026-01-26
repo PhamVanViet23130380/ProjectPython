@@ -67,7 +67,7 @@
                     <label>Phòng ngủ</label>
                     <div class="quantity-control">
                         <button type="button" class="qty-btn minus">−</button>
-                        <span class="qty-value">1</span>
+                        <span class="qty-value" data-target="bedrooms">1</span>
                         <button type="button" class="qty-btn plus">+</button>
                     </div>
                 </div>
@@ -75,7 +75,7 @@
                 <div class="info-item">
                     <label>Giường</label>
                     <div class="quantity-control">
-                        <span class="qty-value">1</span>
+                        <span class="qty-value" data-target="beds">1</span>
                         <button type="button" class="qty-btn plus">+</button>
                     </div>
                 </div>
@@ -84,7 +84,7 @@
                     <label>Phòng tắm</label>
                     <div class="quantity-control">
                         <button type="button" class="qty-btn minus">−</button>
-                        <span class="qty-value">1</span>
+                        <span class="qty-value" data-target="bathrooms">1</span>
                         <button type="button" class="qty-btn plus">+</button>
                     </div>
                 </div>
@@ -101,6 +101,9 @@
         <input type="hidden" name="max_adults" id="max_adults" value="2">
         <input type="hidden" name="max_children" id="max_children" value="2">
         <input type="hidden" name="max_pets" id="max_pets" value="0">
+        <input type="hidden" name="bedrooms" id="bedrooms" value="1">
+        <input type="hidden" name="beds" id="beds" value="1">
+        <input type="hidden" name="bathrooms" id="bathrooms" value="1">
         </form>
 </div>
 

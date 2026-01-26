@@ -302,7 +302,7 @@
                         {{ booking.listing.listingaddress.street }}, {{ booking.listing.listingaddress.district }}, {{ booking.listing.listingaddress.city }}
                     </p>
                     <p style="color: #717171; font-size: 14px;">
-                        <i class="fa-solid fa-user"></i> Chủ nhà: {{ booking.listing.host.get_full_name|default:booking.listing.host.username }}
+                        <i class="fa-solid fa-user"></i> Chủ nhà: {{ booking.listing.host.full_name|default:booking.listing.host.username }}
                     </p>
                 </div>
             </div>

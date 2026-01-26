@@ -49,6 +49,7 @@ BOOKING_STATUS_CHOICES = [
 PAYMENT_STATUS_CHOICES = [
     ('paid', 'Đã thanh toán'),
     ('failed', 'Thanh toán thất bại'),
+    ('refunded', 'Đã hoàn tiền'),
 ]
 
 

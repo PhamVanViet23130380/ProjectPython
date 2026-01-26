@@ -12,7 +12,7 @@ def booking_success(request, booking_id):
     payment = None
     try:
         payment = Payment.objects.filter(booking=booking).first()
-    except:
+    except Exception:
         pass
 
     # Ensure confirmation email is sent after successful payment

@@ -4,8 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.timezone import now
 from django.db.models import Sum, Avg
-from django.utils.timezone import now
-from app.models import Booking, Review
+from app.models import Booking, Review, Listing, User
 
 
 
@@ -42,8 +41,6 @@ def build_profile_stats(user):
 
 
 def user_profile(request, username=None):
-    print(">>> request.user.id =", request.user.id)
-
     """Display a user's public profile.
 
     If `username` is None, show the current user's profile (login required).
@@ -76,7 +73,6 @@ def user_profile(request, username=None):
 
 
 @login_required
-@login_required
 def edit_profile(request):
     user = request.user
 
@@ -105,11 +101,6 @@ def edit_profile(request):
 
 def user_listings(request, username=None):
     """List listings for a user. If `username` omitted, use current user (login required)."""
-    try:
-        from .models import Listing, User
-    except Exception:
-        return render(request, 'app/pages/user_listings.html', {'error': 'Models unavailable'})
-
     if username is None:
         if not request.user.is_authenticated:
             messages.error(request, 'Vui lòng đăng nhập để xem danh sách của bạn')
@@ -134,11 +125,6 @@ def user_listings(request, username=None):
 @login_required
 def user_bookings(request):
     """Show bookings for current authenticated user."""
-    try:
-        from .models import Booking
-    except Exception:
-        return render(request, 'app/pages/user_bookings.html', {'error': 'Booking model unavailable'})
-
     qs = Booking.objects.filter(user=request.user).order_by('-check_in')
     page = request.GET.get('page', 1)
     paginator = Paginator(qs, 12)

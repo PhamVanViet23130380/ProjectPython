@@ -80,6 +80,7 @@ def step_thongtincb(request):
         listing_data['max_children'] = int(request.POST.get('max_children', 0))
         listing_data['max_pets'] = int(request.POST.get('max_pets', 0))
         listing_data['bedrooms'] = int(request.POST.get('bedrooms', 1))
+        listing_data['beds'] = int(request.POST.get('beds', 1))
         listing_data['bathrooms'] = int(request.POST.get('bathrooms', 1))
         request.session['listing_data'] = listing_data
         return redirect('tiennghii')
@@ -180,12 +181,17 @@ def step_chiasett(request):
                 host=request.user,
                 title=listing_data.get('title', 'Chưa có tiêu đề'),
                 description=listing_data.get('description', 'Chưa có mô tả'),
+                property_type=listing_data.get('property_type', 'Nhà riêng'),
+                usage_type=listing_data.get('usage_type', 'Toàn bộ nhà'),
                 price_per_night=Decimal(listing_data.get('price_per_night', '0')),
                 available_from=listing_data.get('available_from') or None,
                 available_to=listing_data.get('available_to') or None,
                 max_adults=listing_data.get('max_adults', 1),
                 max_children=listing_data.get('max_children', 0),
                 max_pets=listing_data.get('max_pets', 0),
+                bedrooms=listing_data.get('bedrooms', 1),
+                beds=listing_data.get('beds', 1),
+                bathrooms=listing_data.get('bathrooms', 1),
                 is_active=False,
                 status='pending'
             )

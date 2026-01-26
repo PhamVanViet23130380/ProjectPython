@@ -233,9 +233,6 @@ def trungtamtrogiup(request):
 @login_required
 def datphong(request):
     """Trang đặt phòng với thông tin listing từ database."""
-    from ..models import Listing, Booking
-    from django.shortcuts import get_object_or_404
-    
     # Lấy listing_id từ URL query hoặc form
     listing_id = request.GET.get('room') or request.GET.get('listing')
     

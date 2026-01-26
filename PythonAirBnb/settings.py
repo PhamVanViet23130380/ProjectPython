@@ -164,8 +164,7 @@ EMAIL_HOST_PASSWORD = 'xhpjpqybfkuujdpg'
 DEFAULT_FROM_EMAIL = 'Home Nest <nguyenvananhhan555@gmail.com>'
 
 # Fixed service fee (VND) used in price breakdown when present. If not set, percentage fee applies.
-# Set as string to preserve Decimal parsing.
-SERVICE_FEE_FIXED = '350000'
+SERVICE_FEE_FIXED = 350000
 # Percentage fee (e.g. '0.10' for 10%) kept for fallback but not used when SERVICE_FEE_FIXED is set.
 SERVICE_FEE_PCT = '0.10'
 
