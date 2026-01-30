@@ -39,14 +39,17 @@ class User(AbstractUser):
 
 # --- BOOKINGS & PAYMENTS ---
 BOOKING_STATUS_CHOICES = [
-    ('pending', 'Chờ xác nhận'),
-    ('confirmed', 'Đã xác nhận'),
-    ('cancelled', 'Đã hủy'),
+    ('pending', 'Pending'),
+    ('confirmed', 'Confirmed'),
+    ('in_progress', 'In progress'),
+    ('completed', 'Completed'),
+    ('cancelled', 'Cancelled'),
 ]
 
 PAYMENT_STATUS_CHOICES = [
     ('paid', 'Đã thanh toán'),
     ('failed', 'Thanh toán thất bại'),
+    ('refunded', 'Đã hoàn tiền'),
 ]
 
 
@@ -59,9 +62,8 @@ class Booking(models.Model):
     guests = models.IntegerField(default=1, verbose_name='Số khách')
     base_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Giá cơ bản')
     service_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Phí dịch vụ')
-    cleaning_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Phí vệ sinh')
     total_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Tổng tiền')
-    booking_status = models.CharField(max_length=20, choices=BOOKING_STATUS_CHOICES, default='cho_xac_nhan', verbose_name='Trạng thái đặt phòng')
+    booking_status = models.CharField(max_length=20, choices=BOOKING_STATUS_CHOICES, default='pending', verbose_name='Trạng thái đặt phòng')
     created_at = models.DateTimeField(auto_now_add=True)
     note = models.TextField(blank=True, null=True, default='', verbose_name='Ghi chú')
 
@@ -104,6 +106,12 @@ class Booking(models.Model):
         verbose_name_plural = "Đơn đặt phòng"
 
 
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(check_out__gt=models.F('check_in')),
+                name='booking_check_out_gt_check_in',
+            ),
+        ]
 class Payment(models.Model):
     payment_id = models.BigAutoField(primary_key=True)
     booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name='payment')

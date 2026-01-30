@@ -28,10 +28,11 @@
                     <h4>{{ item.title }}</h4>
                     <p class="meta">
                         ₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm ·
-                        {% if item.avg_rating %}
+                        {% if item.review_count > 0 %}
                             ★{{ item.avg_rating|floatformat:1 }}
+                            <span style="color:#777;">({{ item.review_count }})</span>
                         {% else %}
-                            Chưa có đánh giá
+                            <span style="color:#999;">Mới đăng</span>
                         {% endif %}
                     </p>
                 </div>
@@ -58,10 +59,11 @@
                     <h4>{{ item.title }}</h4>
                     <p class="meta">
                         ₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm ·
-                        {% if item.avg_rating %}
+                        {% if item.review_count > 0 %}
                             ★{{ item.avg_rating|floatformat:1 }}
+                            <span style="color:#777;">({{ item.review_count }})</span>
                         {% else %}
-                            Chưa có đánh giá
+                            <span style="color:#999;">Mới đăng</span>
                         {% endif %}
                     </p>
                 </div>
@@ -88,10 +90,11 @@
                     <h4>{{ item.title }}</h4>
                     <p class="meta">
                         ₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm ·
-                        {% if item.avg_rating %}
+                        {% if item.review_count > 0 %}
                             ★{{ item.avg_rating|floatformat:1 }}
+                            <span style="color:#777;">({{ item.review_count }})</span>
                         {% else %}
-                            Chưa có đánh giá
+                            <span style="color:#999;">Mới đăng</span>
                         {% endif %}
                     </p>
                 </div>
@@ -118,13 +121,13 @@
                     <h4>{{ item.title }}</h4>
                     <p class="meta">
                         ₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm ·
-                        {% if item.avg_rating %}
+                        {% if item.review_count > 0 %}
                             ★{{ item.avg_rating|floatformat:1 }}
+                            <span style="color:#777;">({{ item.review_count }})</span>
                         {% else %}
-                            Chưa có đánh giá
+                            <span style="color:#999;">Mới đăng</span>
                         {% endif %}
                     </p>
-
                 </div>
                 {% endfor %}
             </div>
@@ -149,10 +152,11 @@
                     <h4>{{ item.title }}</h4>
                     <p class="meta">
                         ₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm ·
-                        {% if item.avg_rating %}
+                        {% if item.review_count > 0 %}
                             ★{{ item.avg_rating|floatformat:1 }}
+                            <span style="color:#777;">({{ item.review_count }})</span>
                         {% else %}
-                            Chưa có đánh giá
+                            <span style="color:#999;">Mới đăng</span>
                         {% endif %}
                     </p>
                 </div>
@@ -179,10 +183,11 @@
                     <h4>{{ item.title }}</h4>
                     <p class="meta">
                         ₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm ·
-                        {% if item.avg_rating %}
+                        {% if item.review_count > 0 %}
                             ★{{ item.avg_rating|floatformat:1 }}
+                            <span style="color:#777;">({{ item.review_count }})</span>
                         {% else %}
-                            Chưa có đánh giá
+                            <span style="color:#999;">Mới đăng</span>
                         {% endif %}
                     </p>
                 </div>

@@ -20,5 +20,7 @@ Thumbs.db
 # Django
 *.sqlite3
 staticfiles/
+media/
 
+# AI model weights
 app/models/visobert/model.safetensors

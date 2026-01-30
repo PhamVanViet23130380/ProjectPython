@@ -16,8 +16,8 @@ def listing_price(request):
     """Public API: calculate price breakdown for a listing.
 
     Query params: listing (id), checkin (YYYY-MM-DD), checkout (YYYY-MM-DD), guests (int)
-    Returns JSON with keys: nights, base, extra_guest_fee, cleaning_fee, weekend_extra,
-    service_fee, taxes, total (all strings for Decimal values).
+    Returns JSON with keys: nights, base, service_fee, taxes, total
+    (all strings for Decimal values).
     """
     listing_id = request.GET.get('listing') or request.GET.get('room')
     checkin = request.GET.get('checkin')

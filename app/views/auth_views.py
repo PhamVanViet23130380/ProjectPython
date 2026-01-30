@@ -67,7 +67,7 @@ def login_view(request):
             send_mail(
                 subject='Mã OTP đăng ký tài khoản',
                 message=f'Mã OTP của bạn là: {otp}',
-                from_email=settings.EMAIL_HOST_USER,   # 🔥 QUAN TRỌNG
+                from_email=settings.EMAIL_HOST_USER,   
                 recipient_list=[email],
                 fail_silently=False
             )
