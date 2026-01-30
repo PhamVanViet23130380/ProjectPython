@@ -1,0 +1,67 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Payment not completed - Home Nest{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'app/css/payment_failed.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="payment-failed-wrap">
+  <div class="payment-failed-card">
+    <div class="status-row">
+      <div class="status-icon">
+        <i class="fa-solid fa-xmark"></i>
+      </div>
+      <div>
+        <div class="status-pill">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          Payment not completed
+        </div>
+        <h1 class="status-title">Payment was canceled or failed</h1>
+        <p class="status-message">
+          We did not receive a successful payment. Your booking is not confirmed yet.
+          You can try again or return to the home page.
+        </p>
+      </div>
+    </div>
+
+    {% if booking %}
+    <div class="booking-panel">
+      <div class="booking-grid">
+        <div class="booking-item">
+          <h4>Booking ID</h4>
+          <p>#{{ booking.booking_id }}</p>
+        </div>
+        <div class="booking-item">
+          <h4>Listing</h4>
+          <p>{{ booking.listing.title }}</p>
+        </div>
+        <div class="booking-item">
+          <h4>Dates</h4>
+          <p>{{ booking.check_in|date:"d/m/Y" }} - {{ booking.check_out|date:"d/m/Y" }}</p>
+        </div>
+      </div>
+      <div class="booking-note">
+        <i class="fa-regular fa-circle-question"></i>
+        <span>If you were charged, the transaction will be reversed by the provider.</span>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="action-row">
+      <a href="{% url 'home' %}" class="action-btn action-secondary">
+        <i class="fa-solid fa-house"></i>
+        Back to home
+      </a>
+      {% if booking %}
+      <a href="{% url 'datphong' %}?room={{ booking.listing_id }}&checkin={{ booking.check_in|date:'Y-m-d' }}&checkout={{ booking.check_out|date:'Y-m-d' }}" class="action-btn action-primary">
+        <i class="fa-solid fa-rotate-right"></i>
+        Try again
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

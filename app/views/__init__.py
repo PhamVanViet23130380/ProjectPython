@@ -8,7 +8,6 @@ from .auth_views import login_view, logout_view
 
 # Import submodules from this package
 from .home_views import home_view
-from .category_views import category_view
 from .bnb_information import listing_detail
 from .result_view import search_results
 
@@ -19,11 +18,6 @@ from .user_view import user_profile, edit_profile, user_listings, user_bookings,
 from .book_view import create_booking, booking_detail, cancel_booking, host_bookings
 from .booking_success_view import booking_success
 from .user_booking_history_view import user_booking_history
-from .sub_info_view import amenity_detail, host_policy_view, verification_status, payment_info
-from .add_new_bnb import create_listing
-from .owner_management_view import owner_dashboard, owner_listings, owner_bookings, suspend_host, reinstate_host
-from .info_owner_bnb_view import owner_listing_info
-from .contact_view import contact, contact_host
 from .create_listing_views import (
     step_loaichoo, step_dattieude, step_duocuse, step_diachi, step_thoigianthue, step_thongtincb,
     step_tiennghii, step_themanh, step_tieude, step_thietlapgia, step_chiasett
@@ -239,19 +233,45 @@ def trungtamtrogiup(request):
 @login_required
 def datphong(request):
     """Trang đặt phòng với thông tin listing từ database."""
-    from ..models import Listing
-    from django.shortcuts import get_object_or_404
-    
     # Lấy listing_id từ URL query hoặc form
     listing_id = request.GET.get('room') or request.GET.get('listing')
     
     if not listing_id:
         # Nếu không có listing_id, chuyển về trang home
-        from django.shortcuts import redirect
-        return redirect('home')
+        back_url = request.META.get('HTTP_REFERER')
+        return redirect(back_url or 'home')
     
     try:
         listing = get_object_or_404(Listing, listing_id=int(listing_id))
+
+        from django.urls import reverse
+        back_url = request.META.get('HTTP_REFERER') or reverse('chitietnoio', listing_id=listing.listing_id)
+
+        checkin_raw = request.GET.get('checkin')
+        checkout_raw = request.GET.get('checkout')
+
+        if checkin_raw and checkout_raw:
+            try:
+                from datetime import datetime
+                checkin = datetime.strptime(checkin_raw, '%Y-%m-%d').date()
+                checkout = datetime.strptime(checkout_raw, '%Y-%m-%d').date()
+            except Exception:
+                messages.error(request, 'Ngay khong hop le')
+                return redirect(back_url)
+
+            if checkout <= checkin:
+                messages.error(request, 'Ngay tra phong phai sau ngay nhan phong')
+                return redirect(back_url)
+
+            conflict = Booking.objects.filter(listing=listing).exclude(booking_status='cancelled').filter(
+                check_in__lt=checkout,
+                check_out__gt=checkin,
+            ).exists()
+
+            if conflict:
+                messages.error(request, 'Chỗ ở này hiện tại đã có người đặt. This accommodation is currently booked.')
+                return redirect(back_url)
+
         
         # Lấy ảnh chính
         main_image = listing.images.filter(is_main=True).first()
@@ -270,9 +290,6 @@ def datphong(request):
             'listing_id': listing.listing_id,
             'title': listing.title,
             'price_per_night': listing.price_per_night,
-            'cleaning_fee': listing.cleaning_fee,
-            'extra_guest_fee': listing.extra_guest_fee or 0,
-            'weekend_multiplier': listing.weekend_multiplier,
             'max_adults': listing.max_adults,
             'max_children': listing.max_children,
             'max_pets': listing.max_pets,
@@ -284,10 +301,9 @@ def datphong(request):
         
         return render(request, 'app/guest/datphong.html', context)
     except Exception as e:
-        from django.shortcuts import redirect
-        from django.contrib import messages
         messages.error(request, f'Không tìm thấy chỗ ở: {str(e)}')
-        return redirect('home')
+        back_url = request.META.get('HTTP_REFERER')
+        return redirect(back_url or 'home')
 
 
 def phuongthucthanhtoan(request):
@@ -339,12 +355,9 @@ def error_403(request, exception=None):
 
 # Explicitly export commonly-used views from this package
 __all__ = [
-    'home', 'category_view', 'listing_detail', 'search_results',
+    'home', 'listing_detail', 'search_results',
     'user_profile', 'edit_profile', 'user_listings', 'user_bookings',
     'create_booking', 'booking_detail', 'cancel_booking', 'host_bookings', 'booking_success', 'user_booking_history',
-    'amenity_detail', 'host_policy_view', 'verification_status', 'payment_info',
-    'create_listing', 'owner_dashboard', 'owner_listings', 'owner_bookings',
-    'suspend_host', 'reinstate_host', 'owner_listing_info', 'contact', 'contact_host',
     'login_view', 'logout_view',
     'forgot_password', 'taobaidang', 'chitietnoio', 'buoc1', 'thietlapgia',
     'giacuoituan', 'chiasett', 'loaichoo', 'trungtamtrogiup', 'datphong',

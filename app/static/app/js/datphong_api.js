@@ -58,63 +58,24 @@
         const {
             nights,
             base,
-            cleaning_fee,
-            extra_guest_fee,
-            weekend_extra,
             service_fee,
             total
         } = priceData;
 
-        // Số đêm
         document.getElementById('numNights').textContent = nights;
-
-        // Giá cơ bản
         document.getElementById('subtotal').textContent = formatVND(base);
-
-        // Phí vệ sinh
-        const cleaningFeeRow = document.getElementById('cleaningFeeRow');
-        if (parseFloat(cleaning_fee || 0) > 0) {
-            document.getElementById('cleaningFee').textContent = formatVND(cleaning_fee);
-            cleaningFeeRow.style.display = 'flex';
-        } else {
-            cleaningFeeRow.style.display = 'none';
-        }
-
-        // Phí khách thêm
-        const extraGuestFeeRow = document.getElementById('extraGuestFeeRow');
-        if (parseFloat(extra_guest_fee || 0) > 0) {
-            document.getElementById('extraGuestFee').textContent = formatVND(extra_guest_fee);
-            extraGuestFeeRow.style.display = 'flex';
-        } else {
-            extraGuestFeeRow.style.display = 'none';
-        }
-
-        // Phí cuối tuần
-        const weekendFeeRow = document.getElementById('weekendFeeRow');
-        if (parseFloat(weekend_extra || 0) > 0) {
-            document.getElementById('weekendFee').textContent = formatVND(weekend_extra);
-            weekendFeeRow.style.display = 'flex';
-        } else {
-            weekendFeeRow.style.display = 'none';
-        }
-
-        // Phí dịch vụ
         document.getElementById('serviceFee').textContent = formatVND(service_fee);
-
-        // Tổng cộng
         document.getElementById('totalPrice').textContent = formatVND(total);
 
-        // Cập nhật modal xác nhận (nếu có)
         const confirmSubtotal = document.getElementById('confirmSubtotal');
         const confirmServiceFee = document.getElementById('confirmServiceFee');
         const confirmTotalPrice = document.getElementById('confirmTotalPrice');
-        
+
         if (confirmSubtotal) confirmSubtotal.textContent = formatVND(base);
         if (confirmServiceFee) confirmServiceFee.textContent = formatVND(service_fee);
         if (confirmTotalPrice) confirmTotalPrice.textContent = formatVND(total);
     }
-
-    // Lấy ngày từ URL params
+// Lấy ngày từ URL params
     function getInitialDates() {
         const checkin = urlParams.get('checkin');
         const checkout = urlParams.get('checkout');

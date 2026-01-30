@@ -31,15 +31,8 @@
                 <small>Giá bạn muốn thu cho 1 đêm lưu trú.</small>
             </div>
 
-            <div class="field">
-                <label for="cleanFee">Phí dịch vụ (tùy chọn)</label>
-                <div class="input-wrap"><span class="prefix">₫</span><input type="number" id="cleanFee" name="cleaning_fee" value="0" min="0" step="50000"></div>
-                <small>Khoản phí một lần để dọn dẹp giữa các lượt đặt.</small>
-            </div>
-
             <div class="summary">
                 <div class="summary-line"><span>Tạm tính mỗi đêm</span><span id="sumNight">₫800,000</span></div>
-                <div class="summary-line"><span>Phí dọn dẹp</span><span id="sumClean">₫0</span></div>
                 <div class="summary-line total"><span>Tổng ước tính</span><span id="sumTotal">₫800,000</span></div>
             </div>
         </div>
@@ -56,23 +49,18 @@
     document.addEventListener('DOMContentLoaded', () => {
         const fmt = (n) => new Intl.NumberFormat('vi-VN').format(Math.max(0, Math.round(n)));
         const baseInput = document.getElementById('basePrice');
-        const cleanInput = document.getElementById('cleanFee');
         const sumNight = document.getElementById('sumNight');
-        const sumClean = document.getElementById('sumClean');
         const sumTotal = document.getElementById('sumTotal');
 
         function updateSummary() {
             const base = Number(baseInput.value) || 0;
-            const clean = Number(cleanInput.value) || 0;
             const baseAfter = base; // no discount input on this page
             sumNight.textContent = `₫${fmt(baseAfter)}`;
-            sumClean.textContent = `₫${fmt(clean)}`;
-            sumTotal.textContent = `₫${fmt(baseAfter + clean)}`;
+            sumTotal.textContent = `₫${fmt(baseAfter)}`;
         }
 
         ['input', 'change'].forEach(evt => {
             baseInput.addEventListener(evt, updateSummary);
-            cleanInput.addEventListener(evt, updateSummary);
         });
         updateSummary();
 

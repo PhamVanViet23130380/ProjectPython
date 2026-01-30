@@ -64,7 +64,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'homenest_db',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': '123456',
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {
@@ -164,10 +164,17 @@ EMAIL_HOST_PASSWORD = 'xhpjpqybfkuujdpg'
 DEFAULT_FROM_EMAIL = 'Home Nest <nguyenvananhhan555@gmail.com>'
 
 # Fixed service fee (VND) used in price breakdown when present. If not set, percentage fee applies.
-# Set as string to preserve Decimal parsing.
-SERVICE_FEE_FIXED = '350000'
+SERVICE_FEE_FIXED = 350000
 # Percentage fee (e.g. '0.10' for 10%) kept for fallback but not used when SERVICE_FEE_FIXED is set.
 SERVICE_FEE_PCT = '0.10'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# VNPay sandbox settings (demo)
+VNPAY_TMN_CODE = os.getenv('VNPAY_TMN_CODE', 'I60TOR98')
+VNPAY_HASH_SECRET = os.getenv('VNPAY_HASH_SECRET', '9N5CQAEOQZNR90COBLAXDRLSFA191QGR')
+VNPAY_URL = os.getenv('VNPAY_URL', 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html')
+VNPAY_RETURN_URL = os.getenv('VNPAY_RETURN_URL', 'http://127.0.0.1:8000/payment/vnpay/return/')
+VNPAY_IPN_URL = os.getenv('VNPAY_IPN_URL', 'http://127.0.0.1:8000/payment/vnpay/ipn/')
+VNPAY_VERSION = os.getenv('VNPAY_VERSION', '2.1.0')

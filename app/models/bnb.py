@@ -42,7 +42,6 @@ class Listing(models.Model):
     property_type = models.CharField(max_length=50, choices=PROPERTY_TYPE_CHOICES, default='Nhà riêng', verbose_name='Loại chỗ ở')
     usage_type = models.CharField(max_length=50, choices=USAGE_TYPE_CHOICES, default='Toàn bộ nhà', verbose_name='Loại sử dụng')
     price_per_night = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Giá / đêm')
-    cleaning_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='Phí vệ sinh')
     available_from = models.DateField(null=True, blank=True, verbose_name='Ngày bắt đầu cho thuê')
     available_to = models.DateField(null=True, blank=True, verbose_name='Ngày kết thúc cho thuê')
     max_adults = models.IntegerField(verbose_name='Số người lớn')

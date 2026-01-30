@@ -425,7 +425,7 @@ main.container {
 /* ========== Content Row ========== */
 .content-row {
     display: flex;
-    align-items: flex-start;
+    align-items: stretch;
 }
 
 /* ========== Map Section ========== */

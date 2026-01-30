@@ -61,6 +61,18 @@ def check_availability(request):
         print(f"[CHECK AVAILABILITY] Invalid date range: checkout {checkout_date} <= checkin {checkin_date}")
         return JsonResponse({'available': False, 'error': 'Ngày trả phải lớn hơn ngày nhận.'})
 
+
+    # Validate against listing available window (if set)
+    if listing.available_from and listing.available_to and listing.available_from > listing.available_to:
+        print("[CHECK AVAILABILITY] Invalid listing availability window")
+        return JsonResponse({'available': False, 'error': 'Khoang thoi gian cho thue khong hop le.'}, status=400)
+
+    if listing.available_from and checkin_date < listing.available_from:
+        return JsonResponse({'available': False, 'error': 'Ngay nhan phong phai tu ngay bat dau cho thue.'})
+
+    if listing.available_to and checkout_date > listing.available_to:
+        return JsonResponse({'available': False, 'error': 'Ngay tra phong khong duoc sau ngay ket thuc cho thue.'})
+
     # Check for overlapping bookings
     # Get all non-cancelled bookings for this listing
     existing_bookings = Booking.objects.filter(
