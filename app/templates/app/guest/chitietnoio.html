@@ -227,7 +227,7 @@
                     <div class="review-form-section bg-light p-4 rounded-4 mb-4">
                         <h5 class="fw-bold mb-3"><i class="fa-solid fa-pen me-2"></i>Viết đánh giá của bạn</h5>
 
-                        <form method="POST" action="">{% csrf_token %}
+                        <form method="POST" enctype="multipart/form-data">{% csrf_token %}
 
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Điểm đánh giá</label>
@@ -242,6 +242,13 @@
                                 <label class="form-label fw-semibold">Nhận xét của bạn</label>
                                 <textarea name="comment" class="form-control" rows="4" placeholder="Chia sẻ trải nghiệm của bạn về chỗ ở này..." required></textarea>
                             </div>
+                            <label>Ảnh / Video (tuỳ chọn)</label>
+                            <input 
+                                type="file"
+                                name="media"
+                                multiple
+                                accept="image/*,video/*"
+                            >
                             <button type="submit" class="btn btn-danger">
                                 <i class="fa-solid fa-paper-plane me-2"></i>Gửi đánh giá
                             </button>
@@ -272,7 +279,13 @@
                             {% endfor %}
                         </div>
                         <p class="mb-2">{{ r.comment }}</p>
-                        
+                        {% for m in r.media.all %}
+                            {% if m.media_type == "image" %}
+                                <img src="{{ m.media.url }}" style="max-width:120px; border-radius:8px; margin-right:6px;">
+                            {% elif m.media_type == "video" %}
+                                <video src="{{ m.media.url }}" controls style="max-width:200px; border-radius:8px;"></video>
+                            {% endif %}
+                        {% endfor %}
                         {% if r.analysis %}
                         <div class="ai-analysis">
                             {% if r.analysis.sentiment == 'pos' %}
