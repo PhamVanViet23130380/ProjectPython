@@ -1,0 +1,168 @@
+.complaint-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 170px 20px 60px;
+}
+
+.complaint-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.complaint-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #222;
+}
+
+.complaint-subtitle {
+    color: #717171;
+    font-size: 14px;
+}
+
+.complaint-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+
+.complaint-info {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+    color: #555;
+    font-size: 14px;
+}
+
+.complaint-info span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.complaint-info i {
+    color: #6b4a34;
+}
+
+.complaint-form textarea {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 14px;
+    min-height: 140px;
+    resize: vertical;
+    font-size: 14px;
+}
+
+.complaint-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.btn-primary {
+    background: #ff385c;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background: #e31c5f;
+    color: #fff;
+}
+
+.btn-secondary {
+    background: #fff;
+    color: #222;
+    border: 1px solid #ddd;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.btn-secondary:hover {
+    background: #f7f7f7;
+    color: #222;
+}
+
+.complaint-list {
+    display: grid;
+    gap: 16px;
+}
+
+.complaint-item {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.complaint-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.complaint-item-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #222;
+}
+
+.complaint-status {
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-open {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.status-resolved {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.complaint-meta {
+    margin-top: 8px;
+    color: #717171;
+    font-size: 13px;
+}
+
+.complaint-reason {
+    margin-top: 12px;
+    color: #444;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.empty-complaint {
+    background: #fff;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.empty-complaint p {
+    color: #717171;
+    margin-top: 8px;
+}

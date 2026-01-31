@@ -124,6 +124,9 @@ urlpatterns = [
     path('booking/success/<int:booking_id>/', views.booking_success, name='booking_success'),
     path('booking/cancel/<int:booking_id>/', views.cancel_booking, name='cancel_booking'),
     path('booking/history/', views.user_booking_history, name='user_booking_history'),
+    # Complaints (UI)
+    path('complaints/', views.complaint_list, name='complaint_list'),
+    path('complaints/create/<int:booking_id>/', views.complaint_create, name='complaint_create'),
 
 
 

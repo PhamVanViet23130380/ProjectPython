@@ -89,6 +89,11 @@
                     <a href="{% url 'booking_success' booking.booking_id %}" class="btn-view">
                         <i class="fa-solid fa-eye"></i> Xem chi tiết
                     </a>
+                    {% if booking.booking_status == 'completed' %}
+                    <a href="{% url 'complaint_create' booking.booking_id %}" class="btn-complaint">
+                        <i class="fa-solid fa-flag"></i> Gửi khiếu nại
+                    </a>
+                    {% endif %}
                 </div>
                 {% endif %}
             </div>

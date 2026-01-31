@@ -209,6 +209,28 @@
     border-color: #222;
 }
 
+.btn-complaint {
+    padding: 8px 16px;
+    background: #fff;
+    border: 1px solid #f2c94c;
+    color: #9c6b00;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1;
+}
+
+.btn-complaint:hover {
+    background: #fff8e1;
+    border-color: #f2c94c;
+    color: #8a5c00;
+}
+
 /* Modal xác nhận */
 .modal-overlay {
     display: none;
