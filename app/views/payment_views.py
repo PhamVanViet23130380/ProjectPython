@@ -118,10 +118,14 @@ def _vnpay_build_payment_url(request, booking):
 def payment_start(request, booking_id):
     booking = get_object_or_404(Booking, booking_id=booking_id, user=request.user)
 
+    if booking.listing.host_id == request.user.id:
+        messages.error(request, 'B\u1ea1n kh\u00f4ng th\u1ec3 \u0111\u1eb7t ph\u00f2ng c\u1ee7a ch\u00ednh m\u00ecnh')
+        return redirect('chitietnoio', listing_id=booking.listing.listing_id)
+
     if request.user.is_staff or request.user.is_superuser:
         if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
-            return JsonResponse({'error': 'B\u1ea1n \u0111ang l\u00e0m Admin v\u00e0 kh\u00f4ng \u0111\u01b0\u1ee3c ph\u00e9p \u0111\u1eb7t ph\u00f2ng'}, status=403)
-        messages.error(request, 'B\u1ea1n \u0111ang l\u00e0m Admin v\u00e0 kh\u00f4ng \u0111\u01b0\u1ee3c ph\u00e9p \u0111\u1eb7t ph\u00f2ng')
+            return JsonResponse({'error': 'B\u1ea1n \u0111ang l\u00e0 Admin v\u00e0 kh\u00f4ng th\u1ec3 \u0111\u1eb7t \u0111\u01b0\u1ee3c ph\u00f2ng.'}, status=403)
+        messages.error(request, 'B\u1ea1n \u0111ang l\u00e0 Admin v\u00e0 kh\u00f4ng th\u1ec3 \u0111\u1eb7t \u0111\u01b0\u1ee3c ph\u00f2ng.')
         return redirect('home')
     if booking.booking_status != 'pending':
         messages.error(request, 'Booking không ở trạng thái chờ thanh toán.')
@@ -218,10 +222,16 @@ def create_booking_and_pay(request, listing_id):
     """
     listing = get_object_or_404(Listing, pk=listing_id)
 
+    if listing.host_id == request.user.id:
+        if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'B\u1ea1n kh\u00f4ng th\u1ec3 \u0111\u1eb7t ph\u00f2ng c\u1ee7a ch\u00ednh m\u00ecnh'}, status=403)
+        messages.error(request, 'B\u1ea1n kh\u00f4ng th\u1ec3 \u0111\u1eb7t ph\u00f2ng c\u1ee7a ch\u00ednh m\u00ecnh')
+        return redirect('chitietnoio', listing_id=listing.listing_id)
+
     if request.user.is_staff or request.user.is_superuser:
         if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
-            return JsonResponse({'error': 'B\u1ea1n \u0111ang l\u00e0m Admin v\u00e0 kh\u00f4ng \u0111\u01b0\u1ee3c ph\u00e9p \u0111\u1eb7t ph\u00f2ng'}, status=403)
-        messages.error(request, 'B\u1ea1n \u0111ang l\u00e0m Admin v\u00e0 kh\u00f4ng \u0111\u01b0\u1ee3c ph\u00e9p \u0111\u1eb7t ph\u00f2ng')
+            return JsonResponse({'error': 'B\u1ea1n \u0111ang l\u00e0 Admin v\u00e0 kh\u00f4ng th\u1ec3 \u0111\u1eb7t \u0111\u01b0\u1ee3c ph\u00f2ng.'}, status=403)
+        messages.error(request, 'B\u1ea1n \u0111ang l\u00e0 Admin v\u00e0 kh\u00f4ng th\u1ec3 \u0111\u1eb7t \u0111\u01b0\u1ee3c ph\u00f2ng.')
         return redirect('chitietnoio', listing_id=listing.listing_id)
     if request.method != 'POST':
         messages.error(request, 'Phương thức không hợp lệ.')
@@ -384,10 +394,14 @@ def vnpay_create(request, booking_id):
     """Create VNPay sandbox payment URL for a pending booking."""
     booking = get_object_or_404(Booking, booking_id=booking_id, user=request.user)
 
+    if booking.listing.host_id == request.user.id:
+        messages.error(request, 'B\u1ea1n kh\u00f4ng th\u1ec3 \u0111\u1eb7t ph\u00f2ng c\u1ee7a ch\u00ednh m\u00ecnh')
+        return redirect('chitietnoio', listing_id=booking.listing.listing_id)
+
     if request.user.is_staff or request.user.is_superuser:
         if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
-            return JsonResponse({'error': 'B\u1ea1n \u0111ang l\u00e0m Admin v\u00e0 kh\u00f4ng \u0111\u01b0\u1ee3c ph\u00e9p \u0111\u1eb7t ph\u00f2ng'}, status=403)
-        messages.error(request, 'B\u1ea1n \u0111ang l\u00e0m Admin v\u00e0 kh\u00f4ng \u0111\u01b0\u1ee3c ph\u00e9p \u0111\u1eb7t ph\u00f2ng')
+            return JsonResponse({'error': 'B\u1ea1n \u0111ang l\u00e0 Admin v\u00e0 kh\u00f4ng th\u1ec3 \u0111\u1eb7t \u0111\u01b0\u1ee3c ph\u00f2ng.'}, status=403)
+        messages.error(request, 'B\u1ea1n \u0111ang l\u00e0 Admin v\u00e0 kh\u00f4ng th\u1ec3 \u0111\u1eb7t \u0111\u01b0\u1ee3c ph\u00f2ng.')
         return redirect('home')
     if booking.booking_status != 'pending':
         msg = 'Booking is not pending.'
