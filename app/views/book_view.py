@@ -232,6 +232,21 @@ def cancel_booking(request, booking_id):
         if booking.booking_status == 'cancelled':
             messages.warning(request, 'Đơn đặt phòng này đã được hủy trước đó')
             return redirect('user_booking_history')
+
+        # Không cho hủy khi đang ở hoặc đã hoàn thành
+        if booking.booking_status in ['in_progress', 'completed']:
+            messages.error(request, 'Không thể hủy khi đang ở hoặc đã hoàn thành.')
+            return redirect('user_booking_history')
+
+        # Không cho hủy khi đã đến ngày nhận phòng
+        try:
+            from django.utils import timezone
+            today = timezone.localdate()
+            if booking.check_in and booking.check_in <= today:
+                messages.error(request, 'Không thể hủy khi đã đến ngày nhận phòng.')
+                return redirect('user_booking_history')
+        except Exception:
+            pass
         
         # Hủy booking và xử lý hoàn tiền
         try:

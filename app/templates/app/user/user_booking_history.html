@@ -72,14 +72,14 @@
                 </div>
                 
                 <!-- Nút hành động -->
-                {% if booking.booking_status != 'cancelled' %}
+                {% if booking.booking_status == 'pending' or booking.booking_status == 'confirmed' %}
                 <div class="booking-actions">
                     <a href="{% url 'booking_success' booking.booking_id %}" class="btn-view">
                         <i class="fa-solid fa-eye"></i> Xem chi tiết
                     </a>
                     <form method="post" action="{% url 'cancel_booking' booking.booking_id %}" style="display: inline-block;">
                         {% csrf_token %}
-                        <button type="submit" class="btn-cancel" onclick="return confirmCancel('{{ booking.listing.title|escapejs }}')">
+                        <button type="button" class="btn-cancel cancel-booking-btn" data-booking-id="{{ booking.booking_id }}" data-listing-title="{{ booking.listing.title|escapejs }}">
                             <i class="fa-solid fa-xmark"></i> Hủy đặt phòng
                         </button>
                     </form>
@@ -121,12 +121,8 @@
     {% endif %}
 </div>
 
-<script>
-function confirmCancel(listingTitle) {
-    return confirm('Bạn có chắc chắn muốn hủy đặt phòng "' + listingTitle + '" không?\n\nHành động này không thể hoàn tác.');
-}
-</script>
-{% endblock %}
+<!-- Custom Cancel Modal -->
+<div class="modal-overlay" id="cancelModal">
     <div class="modal-content">
         <div class="modal-icon">
             <i class="fa-solid fa-circle-exclamation"></i>
@@ -153,37 +149,26 @@ function confirmCancel(listingTitle) {
 <script>
 // Attach event listeners to all cancel buttons
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, attaching cancel button listeners');
-    
     const cancelButtons = document.querySelectorAll('.cancel-booking-btn');
-    console.log('Found ' + cancelButtons.length + ' cancel buttons');
-    
-    cancelButtons.forEach(function(button, index) {
-        console.log('Attaching listener to button ' + index);
+    cancelButtons.forEach(function(button) {
         button.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            
             const bookingId = this.getAttribute('data-booking-id');
             const listingTitle = this.getAttribute('data-listing-title');
-            
-            console.log('Cancel button clicked - ID: ' + bookingId + ', Title: ' + listingTitle);
             showCancelModal(bookingId, listingTitle);
         });
     });
-    
-    // Setup modal close listeners
+
     const modal = document.getElementById('cancelModal');
     if (modal) {
-        // Close modal when clicking outside
         modal.addEventListener('click', function(e) {
             if (e.target === this) {
                 closeCancelModal();
             }
         });
     }
-    
-    // Close modal with ESC key
+
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeCancelModal();
@@ -192,28 +177,19 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function showCancelModal(bookingId, listingTitle) {
-    console.log('showCancelModal called with ID: ' + bookingId);
-    
     const modal = document.getElementById('cancelModal');
     const form = document.getElementById('cancelForm');
     const titleElement = document.getElementById('listingTitle');
-    
+
     if (!modal || !form || !titleElement) {
-        console.error('Modal elements not found!');
         return;
     }
-    
-    // Set form action
+
     form.action = '/booking/cancel/' + bookingId + '/';
-    
-    // Set listing title
     titleElement.textContent = listingTitle;
-    
-    // Show modal
+
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
-    
-    console.log('Modal shown');
 }
 
 function closeCancelModal() {
@@ -224,4 +200,4 @@ function closeCancelModal() {
     }
 }
 </script>
-
+{% endblock %}
