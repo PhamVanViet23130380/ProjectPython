@@ -127,9 +127,9 @@ class ListingAdmin(admin.ModelAdmin):
     def review_sentiment_chart(self, obj):
         qs = Review.objects.filter(listing=obj).select_related('analysis')
 
-        pos = qs.filter(analysis__sentiment='positive').count()
-        neu = qs.filter(analysis__sentiment='neutral').count()
-        neg = qs.filter(analysis__sentiment='negative').count()
+        pos = qs.filter(analysis__sentiment='pos').count()
+        neu = qs.filter(analysis__sentiment='neu').count()
+        neg = qs.filter(analysis__sentiment='neg').count()
 
         total = pos + neu + neg
         if total == 0:
