@@ -1,0 +1,229 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý lượt thuê</title>
+
+    <link rel="stylesheet" href="{% static 'app/css/profile_host_bookings.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ========== HEADER ========== -->
+    <header class="header">
+        <a href="{% url 'home' %}" class="logo">
+            <i class="fas fa-home"></i>
+        </a>
+
+        <div class="user-nav">
+            {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" class="nav-avatar">
+            {% else %}
+                <img src="https://i.pinimg.com/736x/ed/57/43/ed574383727c119220c3934c79a191fb.jpg"
+                     class="nav-avatar">
+            {% endif %}
+
+            <span>{{ user.full_name|default:user.username }}</span>
+            <i class="fas fa-chevron-down" onclick="toggleDropdown()"></i>
+
+            <div id="userDropdown">
+                <a href="{% url 'logout' %}">
+                    <i class="fas fa-right-from-bracket"></i> Đăng xuất
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========== TABS ========== -->
+    <nav class="tabs">
+        <a href="{% url 'profile' %}" class="tab-item">
+            Thông tin tài khoản
+        </a>
+
+        <a href="{% url 'profile_trips' %}" class="tab-item ">
+            Chuyến đi
+        </a>
+
+        <a href="{% url 'profile_host' %}" class="tab-item ">
+            Cho thuê
+        </a>
+        <a href="{% url 'profile_host_bookings' %}" class="tab-item active">Quản lý thuê</a>
+        
+    </nav>
+
+    <!-- ========== CONTENT ========== -->
+    <main class="profile-content host-page">
+
+    <!-- ===== FILTER ===== -->
+    <div class="host-layout">
+        <h2 class="host-title">Quản lý lượt thuê</h2>
+
+        <!-- FILTER LEFT -->
+        <aside class="booking-filter-vertical">
+            <div class="booking-filter-horizontal">
+                <button class="filter-pill active" data-filter="all">Tất cả</button>
+                <button class="filter-pill" data-filter="pending">Chờ xác nhận</button>
+                <button class="filter-pill" data-filter="confirmed">Đã xác nhận</button>
+                <button class="filter-pill" data-filter="completed">Hoàn thành</button>
+                <button class="filter-pill" data-filter="cancelled">Đã huỷ</button>
+
+            </div>
+
+        </aside>
+
+
+
+        <div class="booking-notifications">
+            <h4>🔔 Thông báo</h4>
+
+            <div class="noti-item warning">
+                Hôm nay <strong>{{ b.user.full_name }}</strong> check-in
+                (<span>{{ b.listing.title }}</span>)
+            </div>
+
+            <div class="noti-item info">
+                Có <strong>2</strong> lượt thuê đang chờ xác nhận
+            </div>
+        </div>
+
+
+
+
+        <!-- ===== BOOKINGS LIST ===== -->
+        <section class="booking-list">
+
+            {% for b in bookings %}
+            <div class="booking-card" data-status="{{b.booking_status}}">
+
+                <!-- Phòng -->
+                <div class="booking-room">
+                    <img src="{{ b.listing.images.first.image_url }}" alt="">
+                    <div>
+                        <h4>{{ b.listing.title }}</h4>
+                        <p>{{ b.listing.price_per_night|intcomma }}đ / đêm</p>
+                    </div>
+                </div>
+
+                <!-- Khách -->
+                <div class="booking-user">
+                    <strong>{{ b.user.full_name|default:b.user.username }}</strong>
+                    <span>{{ b.user.email }}</span>
+                </div>
+
+                <!-- Thời gian -->
+                <div class="booking-date">
+                    <p>{{ b.check_in }} → {{ b.check_out }}</p>
+                    <small>{{ b.nights }} đêm</small>
+                </div>
+
+                <!-- Tổng tiền -->
+                <div class="booking-price">
+                    <strong>{{ b.total_price|intcomma }}đ</strong>
+                </div>
+
+                <!-- Trạng thái -->
+                <div class="booking-status {{ b.booking_status }}">
+                    {{ b.get_booking_status_display }}
+                </div>
+
+
+                <!-- Hành động -->
+                <div class="booking-actions">
+                <button class="btn chat" onclick="openChat()">Chat</button>
+
+                {% if b.booking_status == 'pending' %}
+                    <button class="btn confirm">Xác nhận</button>
+                    <button class="btn cancel">Huỷ</button>
+
+                {% elif b.booking_status == 'confirmed' %}
+                    <button class="btn complete">Hoàn thành</button>
+
+                {% else %}
+                    <span class="no-action">—</span>
+                {% endif %}
+            </div>
+
+            {% empty %}
+            <div class="empty-state">
+                <div class="empty-box">
+                    <i class="fa-regular fa-calendar-xmark"></i>
+                    <h3>Chưa có lượt thuê nào</h3>
+                    <p>Khi có khách đặt phòng, thông tin sẽ hiển thị ở đây.</p>
+                </div>
+            </div>
+            {% endfor %}
+
+
+        </section>
+
+    </div>
+
+</main>
+    
+<div class="chat-box" id="chatBox">
+    <div class="chat-header">
+        Chat với <strong>Lê Huy Hoàng</strong>
+        <span class="close-chat" onclick="closeChat()">✕</span>
+    </div>
+
+    <div class="chat-messages">
+        <div class="msg from-user">Anh check-in lúc mấy giờ vậy?</div>
+        <div class="msg from-host">Sau 14h nha em</div>
+    </div>
+
+    <div class="chat-input">
+        <input type="text" placeholder="Nhập tin nhắn...">
+        <button>Gửi</button>
+    </div>
+</div>
+
+<script>
+function toggleDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+    dropdown.style.display =
+        dropdown.style.display === 'block' ? 'none' : 'block';
+}
+</script>
+
+
+<script>
+function openChat() {
+    document.getElementById('chatBox').style.display = 'flex';
+}
+function closeChat() {
+    document.getElementById('chatBox').style.display = 'none';
+}
+</script>
+
+<!-- Lọc theo trạng thái đặt phòng -->
+<script>
+document.querySelectorAll('.filter-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+        // active button
+        document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filter = btn.dataset.filter;
+        const cards = document.querySelectorAll('.booking-card');
+
+        cards.forEach(card => {
+            const status = card.dataset.status;
+
+            if (filter === 'all' || status === filter) {
+                card.style.display = 'grid';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+
+
+</body>
+</html>
