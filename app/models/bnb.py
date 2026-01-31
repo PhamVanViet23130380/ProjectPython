@@ -208,6 +208,7 @@ class ReviewClassification(models.Model):
     id = models.BigAutoField(primary_key=True)
     spam_status = models.BooleanField(default=False)
     review = models.OneToOneField(Review, on_delete=models.CASCADE)
+    reason = models.JSONField(null=True, blank=True)
 
     def __str__(self):
         return f"Phân loại review {self.review.review_id} - spam={self.spam_status}"

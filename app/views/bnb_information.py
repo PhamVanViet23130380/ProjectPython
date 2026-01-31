@@ -3,7 +3,8 @@ from django.db.models import Avg
 from django.http import HttpResponseForbidden
 from django.utils import timezone
 from app.models import Listing, Booking, Review, ReviewAnalysis, ReviewMedia, ReviewClassification
-
+from django.db.models import Q
+import re
 # Giả định bạn đã có hàm này trong sentiment.py
 from app.sentiment import analyze_sentiment 
 
@@ -33,9 +34,9 @@ def listing_detail(request, listing_id):
     address = getattr(listing, 'listingaddress', None)  # Lấy từ OneToOneField (có thể None)
 
     # 3. Lấy đánh giá và tích hợp AI Sentiment
-    reviews = listing.reviews.select_related("user", "analysis").all().order_by("-created_at")
+    # reviews = listing.reviews.select_related("user", "analysis").all().order_by("-created_at")
     
-
+    reviews = listing.reviews.filter(Q(reviewclassification__spam_status=False) |Q(reviewclassification__isnull=True)).select_related("user", "analysis").prefetch_related("media").order_by("-created_at")
     avg_rating = reviews.aggregate(avg=Avg("rating"))["avg"] or 0
 
     # 4. Logic kiểm tra quyền đánh giá (Chỉ khách đã ở xong mới được đánh giá)
@@ -106,27 +107,24 @@ def listing_detail(request, listing_id):
             try:
                 sentiment_raw, raw_confidence = analyze_sentiment(comment)
 
-                # ===== CHỐNG SPAM =====
-                spam = False
+                #CHỐNG SPAM
+                spam_reasons = []
 
-                if len(comment) < 10:
-                    spam = True
+                # 1. Lặp từ
+                words = comment.lower().split()
+                if len(words) >= 6:
+                    unique_ratio = len(set(words)) / len(words)
+                    if unique_ratio < 0.3:
+                        spam_reasons.append("tu_lap_lai")
+                        spam_reasons.append("noi_dung_vo_nghia")
 
-                if comment.count("!") >= 5:
-                    spam = True
+                # 5. Chứa link
+                url_pattern = r"(https?://|www\.)\S+"
+                if re.search(url_pattern, comment.lower()):
+                    spam_reasons.append("gan_link")
 
-                if raw_confidence < 0.6:
-                    spam = True
-
-                recent_reviews = Review.objects.filter(
-                    user=request.user,
-                    created_at__gte=timezone.now() - timezone.timedelta(minutes=5)
-                ).count()
-
-                if recent_reviews >= 3:
-                    spam = True
-
-
+                spam = ("gan_link" in spam_reasons or len(spam_reasons) >= 2)
+                # Chuẩn hóa nhãn sentiment
                 sentiment_raw = sentiment_raw.lower()
 
                 if sentiment_raw in ["positive", "pos"]:
@@ -146,10 +144,11 @@ def listing_detail(request, listing_id):
                     sentiment=sentiment,
                     confidence_score=confidence
                 )
+                
 
                 ReviewClassification.objects.update_or_create(
                     review=new_review,
-                    defaults={"spam_status": spam}
+                    defaults={"spam_status": spam, "reason": spam_reasons}
                 )
 
 
