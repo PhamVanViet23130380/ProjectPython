@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load formatting %}
 
 {% block title %}Lịch sử thuê nhà - Home Nest{% endblock %}
 
@@ -39,15 +40,15 @@
                 
                 <span class="booking-status {% if booking.booking_status == 'confirmed' %}status-confirmed{% elif booking.booking_status == 'pending' %}status-pending{% elif booking.booking_status == 'in_progress' %}status-confirmed{% elif booking.booking_status == 'completed' %}status-confirmed{% else %}status-cancelled{% endif %}">
                     {% if booking.booking_status == 'confirmed' %}
-                        Da xac nhan
+                        Đã xác nhận
                     {% elif booking.booking_status == 'pending' %}
-                        Cho xac nhan
+                        Chờ xác nhận
                     {% elif booking.booking_status == 'in_progress' %}
-                        Dang o
+                        Đang ở
                     {% elif booking.booking_status == 'completed' %}
-                        Hoan thanh
+                        Hoàn thành
                     {% else %}
-                        Da huy
+                        Đã hủy
                     {% endif %}
                 </span>
                 
@@ -93,7 +94,7 @@
             </div>
             
             <div class="booking-price">
-                <div class="price-amount">₫{{ booking.total_price|floatformat:0 }}</div>
+                <div class="price-amount">đ{{ booking.total_price|floatformat:0|intdot }}</div>
                 <small style="color: #717171;">Tổng tiền</small>
             </div>
         </div>
