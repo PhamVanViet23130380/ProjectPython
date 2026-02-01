@@ -104,13 +104,6 @@ class Booking(models.Model):
         verbose_name = "Đơn đặt phòng"
         verbose_name_plural = "Đơn đặt phòng"
 
-
-        constraints = [
-            models.CheckConstraint(
-                check=models.Q(check_out__gt=models.F('check_in')),
-                name='booking_check_out_gt_check_in',
-            ),
-        ]
 class Payment(models.Model):
     payment_id = models.BigAutoField(primary_key=True)
     booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name='payment')

@@ -2,13 +2,6 @@ from django.db import models
 from django.conf import settings
 
 class Conversation(models.Model):
-    booking = models.OneToOneField(
-        "app.Booking",
-        on_delete=models.CASCADE,
-        null=True,          
-        blank=True,
-        related_name="conversation"
-    )
     host = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -20,6 +13,10 @@ class Conversation(models.Model):
         related_name="guest_conversations"
     )
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # Đảm bảo mỗi cặp host-guest chỉ có 1 conversation
+        unique_together = ('host', 'guest')
 
 
 class Message(models.Model):

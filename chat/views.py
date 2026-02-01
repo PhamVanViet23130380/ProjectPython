@@ -91,14 +91,11 @@ def open_chat_for_booking(request, booking_id):
     if request.user not in [booking.user, booking.listing.host]:
         return JsonResponse({'error': 'Forbidden'}, status=403)
 
-    # Tạo conversation an toàn (chống tạo trùng)
+    # Tạo conversation an toàn theo host + guest (không theo booking)
     with transaction.atomic():
         conversation, created = Conversation.objects.get_or_create(
-            booking=booking,
-            defaults={
-                'host': booking.listing.host,
-                'guest': booking.user
-            }
+            host=booking.listing.host,
+            guest=booking.user,
         )
 
     # Xác định người bên kia để frontend hiển thị
@@ -136,7 +133,7 @@ def get_conversations(request):
     # Lấy tất cả conversations mà user tham gia
     conversations = Conversation.objects.filter(
         Q(host=user) | Q(guest=user)
-    ).select_related('host', 'guest', 'booking', 'booking__listing').annotate(
+    ).select_related('host', 'guest').annotate(
         unread_count=Count(
             'messages',
             filter=Q(messages__is_read=False) & ~Q(messages__sender=user)
@@ -152,9 +149,15 @@ def get_conversations(request):
         # Lấy tin nhắn cuối cùng
         last_msg = conv.messages.order_by('-created_at').first()
         
-        # Xác định listing title
-        if conv.booking:
-            listing_title = conv.booking.listing.title
+        # Lấy listing title từ booking gần nhất của host với guest này (nếu có)
+        from app.models import Booking
+        latest_booking = Booking.objects.filter(
+            listing__host=conv.host,
+            user=conv.guest
+        ).order_by('-created_at').first()
+        
+        if latest_booking:
+            listing_title = latest_booking.listing.title
         else:
             listing_title = 'Hỏi đáp'
         
@@ -181,19 +184,11 @@ def open_chat_for_listing(request, listing_id):
         return JsonResponse({'error': 'Bạn không thể nhắn tin cho chính mình'}, status=400)
     
     with transaction.atomic():
-        # Tìm conversation bất kỳ giữa guest và host này (ưu tiên conversation có tin nhắn gần nhất)
-        conversation = Conversation.objects.filter(
+        # Tìm hoặc tạo conversation theo host + guest
+        conversation, created = Conversation.objects.get_or_create(
             host=listing.host,
-            guest=request.user
-        ).order_by('-created_at').first()
-        
-        # Nếu chưa có conversation nào, tạo mới
-        if not conversation:
-            conversation = Conversation.objects.create(
-                host=listing.host,
-                guest=request.user,
-                booking=None
-            )
+            guest=request.user,
+        )
     
     return JsonResponse({
         'conversation_id': conversation.id,

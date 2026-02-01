@@ -8,11 +8,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddConstraint(
-            model_name='booking',
-            constraint=models.CheckConstraint(
-                check=models.Q(check_out__gt=models.F('check_in')),
-                name='booking_check_out_gt_check_in',
-            ),
-        ),
+        # Constraint đã được xóa do không tương thích với phiên bản Django hiện tại
     ]

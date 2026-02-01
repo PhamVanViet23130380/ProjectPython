@@ -8,16 +8,14 @@ from chat.models import Conversation, Message
 def create_conversation_when_booking(sender, instance, created, **kwargs):
     """
     Tự động tạo Conversation khi Booking được tạo.
+    Tìm conversation theo host_id + guest_id (không theo booking).
     Tự động gửi tin nhắn từ note khi booking_status chuyển sang 'confirmed'.
     """
     
-    # Lấy hoặc tạo conversation cho booking này
+    # Lấy hoặc tạo conversation theo host + guest (không theo booking)
     conversation, conv_created = Conversation.objects.get_or_create(
-        booking=instance,
-        defaults={
-            'host': instance.listing.host,
-            'guest': instance.user,
-        }
+        host=instance.listing.host,
+        guest=instance.user,
     )
     
     # Nếu booking vừa được confirmed và có note

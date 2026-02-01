@@ -3,6 +3,8 @@ from django.utils.html import format_html
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.utils import timezone
+from django.urls import path, reverse
+from django.shortcuts import redirect
 import json
 import uuid
 from django import forms
@@ -15,6 +17,41 @@ from .models import (
 )
 
 User = get_user_model()
+
+
+# --- Custom AdminSite để thêm link thống kê ---
+class CustomAdminSite(admin.AdminSite):
+    site_header = "HOMNEST ADMINISTRATION"
+    site_title = "Homnest Admin Portal"
+    index_title = "Bảng Điều Khiển Quản Trị Hệ Thống"
+    
+    def get_app_list(self, request, app_label=None):
+        app_list = super().get_app_list(request, app_label)
+        
+        # Thêm mục Thống kê doanh thu vào đầu danh sách
+        revenue_stats = {
+            'name': 'Thống kê & Báo cáo',
+            'app_label': 'statistics',
+            'app_url': reverse('admin_revenue_statistics'),
+            'has_module_perms': True,
+            'models': [
+                {
+                    'name': '📊 Thống kê doanh thu',
+                    'object_name': 'RevenueStatistics',
+                    'admin_url': reverse('admin_revenue_statistics'),
+                    'view_only': True,
+                }
+            ]
+        }
+        
+        # Chèn vào đầu danh sách
+        app_list.insert(0, revenue_stats)
+        
+        return app_list
+
+
+# Override default admin site
+admin.site.__class__ = CustomAdminSite
 
 # --- CẤU HÌNH CHUNG CHO TOÀN TRANG ---
 admin.site.site_header = "HOMNEST ADMINISTRATION"

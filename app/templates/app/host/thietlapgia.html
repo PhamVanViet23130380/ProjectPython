@@ -27,14 +27,18 @@
 
             <div class="field">
                 <label for="basePrice">Giá mỗi đêm (VND)</label>
-                <div class="input-wrap"><span class="prefix">₫</span><input type="number" id="basePrice" name="price_per_night" value="800000" min="100000" step="50000" required></div>
+                <div class="input-wrap"><span class="prefix">₫</span><input type="number" id="basePrice" name="price_per_night" value="0" min="0" step="50000" required></div>
                 <small>Giá bạn muốn thu cho 1 đêm lưu trú.</small>
             </div>
 
             <div class="summary">
-                <div class="summary-line"><span>Tạm tính mỗi đêm</span><span id="sumNight">₫800,000</span></div>
-                <div class="summary-line total"><span>Tổng ước tính</span><span id="sumTotal">₫800,000</span></div>
+                <div class="summary-line"><span>Tạm tính mỗi đêm</span><span id="sumNight">₫0</span></div>
+                <div class="summary-line total"><span>Tổng ước tính</span><span id="sumTotal">₫0</span></div>
             </div>
+
+            <p class="note" style="margin-top: 16px; color: #666; font-size: 14px;">
+                <strong>Phí dịch vụ:</strong> Admin sẽ nhận 20% tổng tiền bạn nhận được.
+            </p>
         </div>
     </div>
 
@@ -47,7 +51,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const fmt = (n) => new Intl.NumberFormat('vi-VN').format(Math.max(0, Math.round(n)));
+        const fmt = (n) => `${new Intl.NumberFormat('vi-VN').format(Math.max(0, Math.round(n)))}đ`;
         const baseInput = document.getElementById('basePrice');
         const sumNight = document.getElementById('sumNight');
         const sumTotal = document.getElementById('sumTotal');
@@ -55,17 +59,14 @@
         function updateSummary() {
             const base = Number(baseInput.value) || 0;
             const baseAfter = base; // no discount input on this page
-            sumNight.textContent = `₫${fmt(baseAfter)}`;
-            sumTotal.textContent = `₫${fmt(baseAfter)}`;
+            sumNight.textContent = fmt(baseAfter);
+            sumTotal.textContent = fmt(baseAfter);
         }
 
         ['input', 'change'].forEach(evt => {
             baseInput.addEventListener(evt, updateSummary);
         });
         updateSummary();
-
-        // Publish handled via final step; here we just submit pricing
-        // Submit handled by form
     });
 </script>
 </body>
