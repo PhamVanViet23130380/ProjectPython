@@ -49,10 +49,12 @@
             Chuyến đi
         </a>
 
+        {% if is_host %}
         <a href="{% url 'profile_host' %}" class="tab-item">
             Cho thuê
         </a>
         <a href="{% url 'profile_host_bookings' %}" class="tab-item">Quản lý thuê</a>
+        {% endif %}
     </nav>
 
     <!-- ========== CONTENT ========== -->
