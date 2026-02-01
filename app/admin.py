@@ -11,7 +11,7 @@ from decimal import Decimal
 from .models import (
     Listing, ListingAddress, ListingImage, Amenity, ListingAmenity,
     Booking, Payment, Review, ReviewMedia, ReviewAnalysis,
-    Message, Complaint, HostPolicy, ReviewClassification
+    Complaint, HostPolicy, ReviewClassification
 )
 
 User = get_user_model()
@@ -347,7 +347,6 @@ class PaymentAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 admin.site.register(Payment, PaymentAdmin)
-admin.site.register(Message)
 admin.site.unregister(Group)
 admin.site.register(Group)
 @admin.register(ReviewClassification)

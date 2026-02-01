@@ -376,32 +376,7 @@ class ReviewAnalysis(models.Model):
         verbose_name_plural = "Phân tích đánh giá AI"
 
 
-# --- 12. MESSAGES ---
-class Message(models.Model):
-    # message_id (PK): BIGINT (BigAutoField)
-    message_id = models.BigAutoField(primary_key=True)
-
-    # sender_id (FK) & receiver_id (FK)
-    # Quan hệ: 1 USERS -> N MESSAGES
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_messages')
-    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_messages')
-
-    # content: TEXT (TextField)
-    content = models.TextField()
-
-    # created_at: DATETIME (DateTimeField)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Tin nhắn từ {self.sender.email} đến {self.receiver.email}"
-
-    class Meta:
-        db_table = 'messages'
-        verbose_name = "Tin nhắn"
-        verbose_name_plural = "Tin nhắn"
-
-
-# --- 13. COMPLAINTS ---
+# --- 12. COMPLAINTS ---
 class Complaint(models.Model):
     # complaint_id (PK): BIGINT (BigAutoField)
     complaint_id = models.BigAutoField(primary_key=True)
