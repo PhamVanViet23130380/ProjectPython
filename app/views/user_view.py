@@ -9,10 +9,8 @@ from django.db.models.functions import ExtractMonth, ExtractYear, Coalesce
 from django.http import JsonResponse
 from decimal import Decimal
 import json
-from app.models import Booking, Review, Listing, User
-
-
-
+from django.db.models import Sum, Avg
+from app.models import Booking, Review, Listing, User, BankAccount
 from django.shortcuts import render
 
 @login_required
@@ -86,10 +84,16 @@ def user_profile(request, username=None):
 
     stats = build_profile_stats(user)
 
+    # Lấy thông tin tài khoản ngân hàng
+    bank_account = getattr(user, 'bank_account', None)
 
-    return render(request, 'app/user/profile.html', {'profile_user': user, 'public': public_info, 
-            'is_owner': is_owner,
-            **stats,})
+    return render(request, 'app/user/profile.html', {
+        'profile_user': user, 
+        'public': public_info, 
+        'is_owner': is_owner,
+        'bank_account': bank_account,
+        **stats,
+    })
 
 
 @login_required
@@ -107,6 +111,7 @@ def edit_profile(request):
         return redirect('profile')
 
     stats = build_profile_stats(user)
+    bank_account = getattr(user, 'bank_account', None)
 
     return render(
         request,
@@ -114,9 +119,43 @@ def edit_profile(request):
         {
             'edit_mode': True,
             'profile_user': user,
+            'bank_account': bank_account,
             **stats
         }
     )
+
+
+@login_required
+def update_bank_account(request):
+    """Cập nhật thông tin tài khoản ngân hàng"""
+    if request.method == 'POST':
+        bank_name = request.POST.get('bank_name', '').strip()
+        account_number = request.POST.get('account_number', '').strip()
+        account_holder = request.POST.get('account_holder', '').strip()
+        
+        if not all([bank_name, account_number, account_holder]):
+            messages.error(request, 'Vui lòng điền đầy đủ thông tin ngân hàng')
+            return redirect('profile')
+        
+        # Tạo hoặc cập nhật BankAccount
+        bank_account, created = BankAccount.objects.update_or_create(
+            user=request.user,
+            defaults={
+                'bank_name': bank_name,
+                'account_number': account_number,
+                'account_holder': account_holder,
+            }
+        )
+        
+        messages.success(request, 'Cập nhật thông tin ngân hàng thành công!')
+        return redirect('profile')
+    
+    return redirect('profile')
+
+
+def has_bank_account(user):
+    """Kiểm tra user đã có thông tin ngân hàng chưa"""
+    return hasattr(user, 'bank_account') and user.bank_account is not None
 
 
 def user_listings(request, username=None):

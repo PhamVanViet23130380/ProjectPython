@@ -1,11 +1,15 @@
-window.addEventListener('load', () => {
+document.addEventListener('DOMContentLoaded', () => {
     const menuBtn      = document.querySelector('.ab-icon[aria-label="Menu"]');
     const menuDropdown = document.getElementById('menuDropdown');
 
-    if (!menuBtn || !menuDropdown) return;
+    if (!menuBtn || !menuDropdown) {
+        console.log('Menu elements not found!', menuBtn, menuDropdown);
+        return;
+    }
 
     // Bấm icon = bật/tắt menu
     menuBtn.addEventListener('click', (e) => {
+        e.preventDefault();
         e.stopPropagation();
         menuDropdown.classList.toggle('active');
     });
