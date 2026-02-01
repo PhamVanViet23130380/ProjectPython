@@ -81,6 +81,11 @@
                         <span class="status {{ booking.booking_status }}">
                             {{ booking.get_booking_status_display }}
                         </span>
+
+                        <button class="chat-btn"
+                            onclick="openChatForBooking({{ booking.id }})">
+                            <i class="fa-solid fa-comments"></i>
+                        </button>
                     </div>
 
                     <i class="fas fa-calendar-check icon-right"></i>
@@ -164,4 +169,108 @@ function toggleDropdown() {
 </script>
 
 </body>
+<script>
+function openChatForBooking(bookingId) {
+    fetch(`/chat/open/${bookingId}/`)
+        .then(res => res.json())
+        .then(data => {
+            openChat(data.conversation_id, data.other_user_name);
+        });
+}
+</script>
+
+
+<div id="chatBox" class="chat-box" style="display:none">
+    <div class="chat-header">
+        Chat với <strong id="chatWithName"></strong>
+        <span class="close-chat" onclick="closeChat()">✕</span>
+    </div>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="chat-input">
+        <input type="text" id="chatInput" placeholder="Nhập tin nhắn...">
+        <button onclick="sendMessage()">Gửi</button>
+    </div>
+</div>
+
+
+<script>
+let currentConversationId = null;
+
+function openChat(conversationId, otherUserName) {
+    currentConversationId = conversationId;
+
+    document.getElementById('chatWithName').innerText = otherUserName;
+    document.getElementById('chatBox').style.display = 'block';
+
+    loadMessages();
+}
+
+function closeChat() {
+    document.getElementById('chatBox').style.display = 'none';
+    currentConversationId = null;
+}
+
+function loadMessages() {
+    fetch(`/chat/conversation/${currentConversationId}/`)
+        .then(res => res.json())
+        .then(data => {
+            const box = document.getElementById('chatMessages');
+            box.innerHTML = '';
+
+            data.messages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = 'msg ' + (msg.is_me ? 'from-user' : 'from-host');
+                div.innerText = msg.content;
+                box.appendChild(div);
+            });
+
+            box.scrollTop = box.scrollHeight;
+        });
+}
+
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const content = input.value.trim();
+    if (!content) return;
+
+    fetch('/chat/send/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            conversation_id: currentConversationId,
+            content: content
+        })
+    })
+    .then(res => res.json())
+    .then(() => {
+        input.value = '';
+        loadMessages();
+    });
+}
+
+// CSRF helper
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+
+
+
 </html>

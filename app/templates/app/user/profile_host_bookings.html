@@ -98,68 +98,69 @@
         <section class="booking-list">
 
             {% for b in bookings %}
-            <div class="booking-card" data-status="{{b.booking_status}}">
+                <div class="booking-card" data-status="{{ b.booking_status|lower }}">
 
-                <!-- Phòng -->
-                <div class="booking-room">
-                    <img src="{{ b.listing.images.first.image_url }}" alt="">
-                    <div>
-                        <h4>{{ b.listing.title }}</h4>
-                        <p>{{ b.listing.price_per_night|intcomma }}đ / đêm</p>
+                    <!-- Phòng -->
+                    <div class="booking-room">
+                        <img src="{{ b.listing.images.first.image_url }}" alt="">
+                        <div>
+                            <h4>{{ b.listing.title }}</h4>
+                            <p>{{ b.listing.price_per_night|intcomma }}đ / đêm</p>
+                        </div>
+                    </div>
+
+                    <!-- Khách -->
+                    <div class="booking-user">
+                        <strong>{{ b.user.full_name|default:b.user.username }}</strong>
+                        <span>{{ b.user.email }}</span>
+                    </div>
+
+                    <!-- Thời gian -->
+                    <div class="booking-date">
+                        <p>{{ b.check_in }} → {{ b.check_out }}</p>
+                        <small>{{ b.nights }} đêm</small>
+                    </div>
+
+                    <!-- Tổng tiền -->
+                    <div class="booking-price">
+                        <strong>{{ b.total_price|intcomma }}đ</strong>
+                    </div>
+
+                    <!-- Trạng thái -->
+                    <div class="booking-status {{ b.booking_status|lower }}">
+                        {{ b.get_booking_status_display|lower }}
+                    </div>
+
+                    <!-- Hành động -->
+                    <div class="booking-actions">
+                        {% if b.conversation %}
+                            <button class="btn chat"
+                                onclick="openChat({{ b.conversation.id }}, '{{ b.user.full_name }}')">
+                                Chat
+                            </button>
+                        {% endif %}
+
+                        {% if b.booking_status == 'pending' %}
+                            <button class="btn confirm">Xác nhận</button>
+                            <button class="btn cancel">Huỷ</button>
+                        {% else %}
+                            <span class="no-action">—</span>
+                        {% endif %}
+                    </div>
+
+                </div> <!-- ✅ ĐÂY: đóng booking-card -->
+            {% empty %}
+                <div class="empty-state">
+                    <div class="empty-box">
+                        <i class="fa-regular fa-calendar-xmark"></i>
+                        <h3>Chưa có lượt thuê nào</h3>
+                        <p>Khi có khách đặt phòng, thông tin sẽ hiển thị ở đây.</p>
                     </div>
                 </div>
-
-                <!-- Khách -->
-                <div class="booking-user">
-                    <strong>{{ b.user.full_name|default:b.user.username }}</strong>
-                    <span>{{ b.user.email }}</span>
-                </div>
-
-                <!-- Thời gian -->
-                <div class="booking-date">
-                    <p>{{ b.check_in }} → {{ b.check_out }}</p>
-                    <small>{{ b.nights }} đêm</small>
-                </div>
-
-                <!-- Tổng tiền -->
-                <div class="booking-price">
-                    <strong>{{ b.total_price|intcomma }}đ</strong>
-                </div>
-
-                <!-- Trạng thái -->
-                <div class="booking-status {{ b.booking_status }}">
-                    {{ b.get_booking_status_display }}
-                </div>
-
-
-                <!-- Hành động -->
-                <div class="booking-actions">
-                <button class="btn chat" onclick="openChat()">Chat</button>
-
-                {% if b.booking_status == 'pending' %}
-                    <button class="btn confirm">Xác nhận</button>
-                    <button class="btn cancel">Huỷ</button>
-
-                {% elif b.booking_status == 'confirmed' %}
-                    <button class="btn complete">Hoàn thành</button>
-
-                {% else %}
-                    <span class="no-action">—</span>
-                {% endif %}
-            </div>
-
-            {% empty %}
-            <div class="empty-state">
-                <div class="empty-box">
-                    <i class="fa-regular fa-calendar-xmark"></i>
-                    <h3>Chưa có lượt thuê nào</h3>
-                    <p>Khi có khách đặt phòng, thông tin sẽ hiển thị ở đây.</p>
-                </div>
-            </div>
             {% endfor %}
 
-
         </section>
+
 
     </div>
 
@@ -167,20 +168,26 @@
     
 <div class="chat-box" id="chatBox">
     <div class="chat-header">
-        Chat với <strong>Lê Huy Hoàng</strong>
+        Chat với <strong>{{ chat_with.get_full_name }}</strong>
         <span class="close-chat" onclick="closeChat()">✕</span>
     </div>
 
-    <div class="chat-messages">
-        <div class="msg from-user">Anh check-in lúc mấy giờ vậy?</div>
-        <div class="msg from-host">Sau 14h nha em</div>
+    <div class="chat-messages" id="chatMessages">
+        {% for msg in messages %}
+            <div class="msg {% if msg.sender == request.user %}from-user{% else %}from-host{% endif %}">
+                {{ msg.content }}
+            </div>
+        {% empty %}
+            <div class="chat-empty">Chưa có tin nhắn nào</div>
+        {% endfor %}
     </div>
 
     <div class="chat-input">
-        <input type="text" placeholder="Nhập tin nhắn...">
-        <button>Gửi</button>
+        <input type="text" id="chatInput" placeholder="Nhập tin nhắn...">
+        <button onclick="sendMessage()">Gửi</button>
     </div>
 </div>
+
 
 <script>
 function toggleDropdown() {
@@ -191,37 +198,109 @@ function toggleDropdown() {
 </script>
 
 
+<!-- Mở hộp chat -->
 <script>
-function openChat() {
+let CURRENT_CONVERSATION_ID = null;
+
+function openChat(conversationId, guestName) {
+    CURRENT_CONVERSATION_ID = conversationId;
+
+    document.querySelector('.chat-header strong').innerText = guestName;
     document.getElementById('chatBox').style.display = 'flex';
-}
-function closeChat() {
-    document.getElementById('chatBox').style.display = 'none';
+
+    loadMessages();
 }
 </script>
 
+<!-- Đóng hộp chat -->
+<script>
+function closeChat() {
+    document.getElementById('chatBox').style.display = 'none';
+    CURRENT_CONVERSATION_ID = null;
+
+
+}
+</script>
+
+<!-- Load tin nhắn từ DB -->
+<script>
+function loadMessages() {
+    fetch(`/chat/conversation/${CURRENT_CONVERSATION_ID}/`)
+        .then(res => res.json())
+        .then(data => {
+            const box = document.querySelector('.chat-messages');
+            box.innerHTML = '';
+
+            data.messages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = 'msg ' + (msg.is_me ? 'from-user' : 'from-host');
+                div.innerText = msg.content;
+                box.appendChild(div);
+            });
+        });
+}
+</script>
+
+<!-- Gửi tin nhắn -->
+<script>
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const content = input.value.trim();
+
+    if (!content || !CURRENT_CONVERSATION_ID) return;
+
+    fetch('/chat/send/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+            conversation_id: CURRENT_CONVERSATION_ID,
+            content: content
+        })
+    }).then(() => {
+        input.value = '';
+        loadMessages();
+    });
+}
+</script>
+
+
+
+
 <!-- Lọc theo trạng thái đặt phòng -->
 <script>
-document.querySelectorAll('.filter-pill').forEach(btn => {
-    btn.addEventListener('click', () => {
-        // active button
-        document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('.filter-pill');
+    const cards = document.querySelectorAll('.booking-card');
 
-        const filter = btn.dataset.filter;
-        const cards = document.querySelectorAll('.booking-card');
+    buttons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Xử lý class active cho nút
+            buttons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
 
-        cards.forEach(card => {
-            const status = card.dataset.status;
+            const filter = this.getAttribute('data-filter').toLowerCase().trim();
 
-            if (filter === 'all' || status === filter) {
-                card.style.display = 'grid';
-            } else {
-                card.style.display = 'none';
-            }
+            cards.forEach(card => {
+                // Lấy status từ data-status, ép về chữ thường để so sánh
+                const status = (card.getAttribute('data-status') || "").toLowerCase().trim();
+
+                if (filter === 'all' || status === filter) {
+                    card.style.display = 'grid'; // Hiển thị đúng định dạng grid của bạn
+                } else {
+                    card.style.display = 'none';
+                }
+            });
         });
     });
 });
+</script>
+
+<script>
+    const box = document.getElementById("chatMessages");
+    box.scrollTop = box.scrollHeight;
 </script>
 
 
