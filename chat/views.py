@@ -8,7 +8,7 @@ from django.views.decorators.http import require_POST
 from django.db import transaction
 from django.db.models import Count, Q, Max
 
-from app.models import Booking
+from app.models import Booking, Listing
 from .models import Conversation, Message
 
 
@@ -152,14 +152,50 @@ def get_conversations(request):
         # Lấy tin nhắn cuối cùng
         last_msg = conv.messages.order_by('-created_at').first()
         
+        # Xác định listing title
+        if conv.booking:
+            listing_title = conv.booking.listing.title
+        else:
+            listing_title = 'Hỏi đáp'
+        
         data.append({
             'id': conv.id,
             'other_user_name': other_user.full_name or other_user.username,
             'other_user_avatar': other_user.avatar.url if other_user.avatar else None,
-            'listing_title': conv.booking.listing.title if conv.booking else 'Cuộc hội thoại',
+            'listing_title': listing_title,
             'unread_count': conv.unread_count,
             'last_message': last_msg.content[:50] if last_msg else '',
             'last_message_time': last_msg.created_at.isoformat() if last_msg else None,
         })
     
     return JsonResponse({'conversations': data})
+
+
+@login_required
+def open_chat_for_listing(request, listing_id):
+    """Mở chat trực tiếp với host của một listing (không cần booking)"""
+    listing = get_object_or_404(Listing, listing_id=listing_id)
+    
+    # Không cho phép host tự chat với chính mình
+    if request.user == listing.host:
+        return JsonResponse({'error': 'Bạn không thể nhắn tin cho chính mình'}, status=400)
+    
+    with transaction.atomic():
+        # Tìm conversation bất kỳ giữa guest và host này (ưu tiên conversation có tin nhắn gần nhất)
+        conversation = Conversation.objects.filter(
+            host=listing.host,
+            guest=request.user
+        ).order_by('-created_at').first()
+        
+        # Nếu chưa có conversation nào, tạo mới
+        if not conversation:
+            conversation = Conversation.objects.create(
+                host=listing.host,
+                guest=request.user,
+                booking=None
+            )
+    
+    return JsonResponse({
+        'conversation_id': conversation.id,
+        'other_user_name': listing.host.full_name or listing.host.username
+    })

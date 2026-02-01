@@ -42,21 +42,25 @@
     position: fixed;
     right: 100px;
     bottom: 20px;
-    width: 320px;
+    width: 340px;
     background: #fff;
     border-radius: 14px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.15);
+    box-shadow: 0 10px 30px rgba(107, 83, 68, 0.2);
     display: none;
     flex-direction: column;
     z-index: 1001;
+    border: 1px solid #e8ddd4;
 }
 
 .chat-header {
-    padding: 12px;
+    padding: 14px 16px;
     font-weight: 600;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #e8ddd4;
     display: flex;
     justify-content: space-between;
+    background: linear-gradient(135deg, #8B7355, #6B5344);
+    color: #fff;
+    border-radius: 14px 14px 0 0;
 }
 
 .chat-messages {
@@ -66,52 +70,73 @@
 }
 
 .msg {
-    padding: 8px 12px;
-    border-radius: 10px;
+    padding: 10px 14px;
+    border-radius: 18px;
     margin-bottom: 8px;
-    max-width: 80%;
+    max-width: 75%;
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
 }
 
-.from-user {
-    background: #eee;
+/* Tin nhắn nhận được - bên trái */
+.from-other {
+    background: #f5f0eb;
+    color: #5c4a3d;
+    border: 1px solid #e8ddd4;
+    margin-right: auto;
+    border-radius: 18px 18px 18px 4px;
 }
 
-.from-host {
-    background: #000;
+/* Tin nhắn gửi đi - bên phải */
+.from-me {
+    background: linear-gradient(135deg, #8B7355, #6B5344);
     color: #fff;
     margin-left: auto;
+    border-radius: 18px 18px 4px 18px;
 }
 
 .chat-input {
     display: flex;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #e8ddd4;
 }
 
 .chat-input input {
     flex: 1;
     border: none;
-    padding: 10px;
+    padding: 12px 14px;
     outline: none;
+    font-size: 14px;
+    border-radius: 0 0 0 14px;
+}
+
+.chat-input input::placeholder {
+    color: #a89383;
 }
 
 .chat-input button {
     border: none;
-    background: #000;
+    background: linear-gradient(135deg, #8B7355, #6B5344);
     color: #fff;
-    padding: 0 16px;
+    padding: 0 18px;
     cursor: pointer;
+    border-radius: 0 0 14px 0;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
 .chat-input button:hover {
-    background: #333;
+    background: linear-gradient(135deg, #6B5344, #5a4538);
 }
 
 .chat-box .chat-header .close-chat {
     cursor: pointer;
+    color: rgba(255,255,255,0.8);
+    transition: color 0.2s;
 }
 
 .chat-box .chat-header .close-chat:hover {
-    color: red;
+    color: #fff;
 }
 
 .chat-empty {
@@ -156,11 +181,11 @@
     right: -5px;
     min-width: 22px;
     height: 22px;
-    background: #ff4757;
-    color: white;
+    background: #c9a87c;
+    color: #5c4a3d;
     border-radius: 50%;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -179,38 +204,39 @@
     max-height: 450px;
     background: white;
     border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 40px rgba(107, 83, 68, 0.2);
     display: none;
     flex-direction: column;
     z-index: 999;
     overflow: hidden;
+    border: 1px solid #e8ddd4;
 }
 
 .conv-header {
     padding: 16px 20px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #e8ddd4;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #fafafa;
+    background: linear-gradient(135deg, #8B7355, #6B5344);
 }
 
 .conv-header h4 {
     margin: 0;
     font-size: 16px;
     font-weight: 600;
-    color: #333;
+    color: #fff;
 }
 
 .close-conv {
     cursor: pointer;
     font-size: 18px;
-    color: #999;
+    color: rgba(255,255,255,0.8);
     transition: color 0.2s;
 }
 
 .close-conv:hover {
-    color: #ff4757;
+    color: #fff;
 }
 
 .conv-items {
@@ -230,11 +256,12 @@
 }
 
 .conv-item:hover {
-    background: #f8f8f8;
+    background: #f9f5f2;
 }
 
 .conv-item.has-unread {
-    background: #fff8f0;
+    background: #faf6f2;
+    border-left: 3px solid #8B7355;
 }
 
 .conv-avatar {
@@ -253,13 +280,13 @@
 .conv-name {
     font-weight: 600;
     font-size: 14px;
-    color: #333;
+    color: #5c4a3d;
     margin-bottom: 2px;
 }
 
 .conv-listing {
     font-size: 12px;
-    color: #888;
+    color: #a89383;
     margin-bottom: 4px;
     white-space: nowrap;
     overflow: hidden;
@@ -268,7 +295,7 @@
 
 .conv-preview {
     font-size: 13px;
-    color: #666;
+    color: #7a6a5a;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -277,7 +304,7 @@
 .conv-unread {
     min-width: 22px;
     height: 22px;
-    background: #ff4757;
+    background: linear-gradient(135deg, #8B7355, #6B5344);
     color: white;
     border-radius: 50%;
     font-size: 12px;
@@ -291,7 +318,7 @@
 .conv-empty {
     padding: 40px 20px;
     text-align: center;
-    color: #999;
+    color: #a89383;
     font-size: 14px;
 }
 </style>
@@ -328,7 +355,7 @@ function loadMessages() {
 
             data.messages.forEach(msg => {
                 const div = document.createElement('div');
-                div.className = 'msg ' + (msg.is_me ? 'from-user' : 'from-host');
+                div.className = 'msg ' + (msg.is_me ? 'from-me' : 'from-other');
                 div.innerText = msg.content;
                 box.appendChild(div);
             });
