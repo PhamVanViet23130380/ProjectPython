@@ -49,9 +49,12 @@
             Chuyến đi
         </a>
 
+        {% if is_host %}
         <a href="{% url 'profile_host' %}" class="tab-item">
             Cho thuê
         </a>
+        <a href="{% url 'profile_host_bookings' %}" class="tab-item">Quản lý thuê</a>
+        {% endif %}
     </nav>
 
     <!-- ========== CONTENT ========== -->
@@ -80,6 +83,14 @@
                         <span class="status {{ booking.booking_status }}">
                             {{ booking.get_booking_status_display }}
                         </span>
+
+                        <button class="chat-btn"
+                                data-booking-id="{{ booking.pk }}"
+                                onclick="openChatForBooking(this)">
+                            <i class="fa-solid fa-comments"></i>
+                        </button>
+
+
                     </div>
 
                     <i class="fas fa-calendar-check icon-right"></i>
@@ -154,6 +165,13 @@
     </main>
 </div>
 
+
+
+
+
+</body>
+
+
 <script>
 function toggleDropdown() {
     const dropdown = document.getElementById('userDropdown');
@@ -162,5 +180,46 @@ function toggleDropdown() {
 }
 </script>
 
-</body>
+
+<script>
+function openChatForBooking(btn) {
+    if (!btn || !btn.dataset.bookingId) {
+        console.error('❌ Không lấy được bookingId', btn);
+        return;
+    }
+
+    const bookingId = btn.dataset.bookingId;
+    console.log('✅ bookingId:', bookingId);
+
+    fetch(`/chat/open/${bookingId}/`, {
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+        .then(res => {
+            console.log('Response status:', res.status);
+            if (!res.ok) {
+                return res.text().then(text => {
+                    console.error('Error response:', text);
+                    throw new Error('Open chat failed: ' + res.status);
+                });
+            }
+            return res.json();
+        })
+        .then(data => {
+            console.log('Chat open response:', data);
+            openChat(data.conversation_id, data.other_user_name);
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Không mở được chat');
+        });
+}
+</script>
+
+{% include 'app/includes/chat_widget.html' %}
+
 </html>

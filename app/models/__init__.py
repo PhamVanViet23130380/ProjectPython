@@ -7,4 +7,3 @@ submodules below.
 
 from .accounts import *  # noqa: F401,F403
 from .bnb import *  # noqa: F401,F403
-from .verification import *  # noqa: F401,F403

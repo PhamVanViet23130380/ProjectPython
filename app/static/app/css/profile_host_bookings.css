@@ -1,0 +1,620 @@
+@import url("./profile.css");
+/* =============================
+   RESET + BASE
+============================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+    color: #222;
+}
+
+/* =============================
+   CONTAINER
+============================= */
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+/* =============================
+   HEADER
+============================= */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid #eee;
+}
+
+.logo {
+    font-size: 20px;
+    color: #000;
+}
+
+.user-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.nav-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+#userDropdown {
+    display: none;
+    position: absolute;
+    top: 48px;
+    right: 0;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.08);
+    padding: 10px 0;
+}
+
+#userDropdown a {
+    display: block;
+    padding: 8px 16px;
+    color: #333;
+    text-decoration: none;
+}
+
+#userDropdown a:hover {
+    background: #f5f5f5;
+}
+
+/* =============================
+   TABS
+============================= */
+.tabs {
+    display: flex;
+    gap: 28px;
+    padding: 14px 24px;
+    border-bottom: 1px solid #eee;
+}
+
+.tab-item {
+    text-decoration: none;
+    color: #666;
+    padding-bottom: 8px;
+}
+
+.tab-item.active {
+    color: #000;
+    font-weight: 600;
+    border-bottom: 2px solid #000;
+}
+
+/* =============================
+   MAIN CONTENT
+============================= */
+.profile-content {
+    background: #f7f3ea;
+    padding: 28px;
+}
+
+/* =============================
+   HOST LAYOUT
+============================= */
+.host-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.host-title {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+/* =============================
+   FILTER (HORIZONTAL)
+============================= */
+.booking-filter-horizontal {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.filter-pill {
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.filter-pill.active {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+}
+
+/* =============================
+   BOOKING LIST
+============================= */
+.booking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+/* =============================
+   BOOKING CARD
+============================= */
+.booking-card {
+    display: grid;
+    grid-template-columns: 260px 1.4fr 1.4fr 140px 140px auto;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    min-height: 120px;
+}
+.booking-date p {
+    white-space: nowrap;
+}
+
+/* =============================
+   ROOM
+============================= */
+.booking-room {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.booking-room img {
+    width: 80px;
+    height: 60px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.booking-room h4 {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.booking-room p {
+    font-size: 13px;
+    color: #777;
+}
+
+/* =============================
+   USER
+============================= */
+.booking-user strong {
+    display: block;
+    font-size: 14px;
+}
+
+.booking-user span {
+    font-size: 13px;
+    color: #777;
+}
+
+/* =============================
+   DATE
+============================= */
+.booking-date p {
+    font-size: 14px;
+}
+
+.booking-date small {
+    color: #777;
+}
+
+/* =============================
+   PRICE
+============================= */
+.booking-price strong {
+    font-size: 15px;
+}
+
+/* =============================
+   STATUS
+============================= */
+.booking-status {
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    width: fit-content;
+}
+
+.booking-status.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.booking-status.confirmed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.booking-status.cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.booking-status.completed {
+    background: #f1f1f1;
+    color: #333;
+    font-weight: 600;
+}
+
+
+/* =============================
+   ACTIONS
+============================= */
+.booking-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.btn.confirm {
+    background: #000;
+    color: #fff;
+}
+
+.btn.cancel {
+    background: #eee;
+}
+
+.no-action {
+    color: #aaa;
+}
+.btn.complete {
+    background: #111;
+    color: #fff;
+    border-radius: 10px;
+    padding: 6px 14px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn.complete:hover {
+    background: #000;
+}
+
+
+/* =============================
+   EMPTY
+============================= */
+.empty-text {
+    text-align: center;
+    color: #777;
+    padding: 40px 0;
+}
+
+
+
+
+
+/* THÔNG BÁO   */
+.booking-notifications {
+    background: #fff;
+    padding: 16px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+}
+
+.noti-item {
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.noti-item.warning {
+    background: #fff3cd;
+}
+
+.noti-item.info {
+    background: #e7f1ff;
+}
+
+
+
+
+/* CHAT */
+.btn.chat {
+    background: #f1f1f1;
+}
+
+
+.chat-box {
+    position: fixed;
+    right: 100px;
+    bottom: 20px;
+    width: 320px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.15);
+    display: none;
+    flex-direction: column;
+}
+
+.chat-header {
+    padding: 12px;
+    font-weight: 600;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+}
+
+.chat-messages {
+    padding: 12px;
+    height: 260px;
+    overflow-y: auto;
+}
+
+.msg {
+    padding: 8px 12px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    max-width: 80%;
+}
+
+.from-user {
+    background: #eee;
+}
+
+.from-host {
+    background: #000;
+    color: #fff;
+    margin-left: auto;
+}
+
+.chat-input {
+    display: flex;
+    border-top: 1px solid #eee;
+}
+
+.chat-input input {
+    flex: 1;
+    border: none;
+    padding: 10px;
+}
+
+.chat-input button {
+    border: none;
+    background: #000;
+    color: #fff;
+    padding: 0 16px;
+}
+.chat-box .chat-header .close-chat:hover {
+    cursor: pointer;
+    color: red;
+}
+
+.empty-state {
+    min-height: 350px; /* kéo dài layout */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-box {
+    text-align: center;
+    color: #999;
+}
+
+.empty-box i {
+    font-size: 42px;
+    margin-bottom: 12px;
+    color: #ccc;
+}
+
+.empty-box h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.empty-box p {
+    margin-top: 6px;
+    font-size: 14px;
+}
+
+/* ============================= */
+/* CHAT BUBBLE */
+/* ============================= */
+
+.chat-bubble {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #8B7355, #6B5344);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1000;
+}
+
+.chat-bubble:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.35);
+}
+
+.chat-bubble i {
+    font-size: 24px;
+    color: white;
+}
+
+.unread-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 22px;
+    height: 22px;
+    background: #ff4757;
+    color: white;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+    border: 2px solid white;
+}
+
+/* ============================= */
+/* CONVERSATION LIST */
+/* ============================= */
+
+.conversation-list {
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    width: 340px;
+    max-height: 450px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    z-index: 999;
+    overflow: hidden;
+}
+
+.conv-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fafafa;
+}
+
+.conv-header h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.close-conv {
+    cursor: pointer;
+    font-size: 18px;
+    color: #999;
+    transition: color 0.2s;
+}
+
+.close-conv:hover {
+    color: #ff4757;
+}
+
+.conv-items {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 380px;
+}
+
+.conv-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-bottom: 1px solid #f5f5f5;
+    gap: 12px;
+}
+
+.conv-item:hover {
+    background: #f8f8f8;
+}
+
+.conv-item.has-unread {
+    background: #fff8f0;
+}
+
+.conv-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.conv-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.conv-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 2px;
+}
+
+.conv-listing {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.conv-preview {
+    font-size: 13px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.conv-unread {
+    min-width: 22px;
+    height: 22px;
+    background: #ff4757;
+    color: white;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.conv-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+}
+

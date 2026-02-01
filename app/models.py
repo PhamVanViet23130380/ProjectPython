@@ -2,6 +2,8 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+from chat.models import Conversation
+
 # Khai báo các lựa chọn (Choices) cho các trường ENUM
 # Trong Django, chúng ta định nghĩa các ENUM bằng cách sử dụng Tuple of Tuples
 ROLE_CHOICES = [
@@ -13,8 +15,8 @@ ROLE_CHOICES = [
 BOOKING_STATUS_CHOICES = [
     ('pending', 'Chờ xác nhận'),
     ('confirmed', 'Đã xác nhận'),
+    ('completed', 'Hoàn thành'),
     ('cancelled', 'Đã hủy'), 
-    ()
 ]
 
 PAYMENT_STATUS_CHOICES = [
@@ -225,6 +227,17 @@ class Booking(models.Model):
     # listing_id (FK): Phòng
     listing = models.ForeignKey(Listing, on_delete=models.RESTRICT, related_name='bookings', verbose_name='Phòng')
 
+
+    conversation = models.OneToOneField(
+        Conversation,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='booking',
+        verbose_name='Cuộc trò chuyện'
+    )
+
+
     # check_in: DATE (DateField)
     check_in = models.DateField(verbose_name='Ngày nhận')
 
@@ -376,32 +389,7 @@ class ReviewAnalysis(models.Model):
         verbose_name_plural = "Phân tích đánh giá AI"
 
 
-# --- 12. MESSAGES ---
-class Message(models.Model):
-    # message_id (PK): BIGINT (BigAutoField)
-    message_id = models.BigAutoField(primary_key=True)
-
-    # sender_id (FK) & receiver_id (FK)
-    # Quan hệ: 1 USERS -> N MESSAGES
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_messages')
-    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_messages')
-
-    # content: TEXT (TextField)
-    content = models.TextField()
-
-    # created_at: DATETIME (DateTimeField)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Tin nhắn từ {self.sender.email} đến {self.receiver.email}"
-
-    class Meta:
-        db_table = 'messages'
-        verbose_name = "Tin nhắn"
-        verbose_name_plural = "Tin nhắn"
-
-
-# --- 13. COMPLAINTS ---
+# --- 12. COMPLAINTS ---
 class Complaint(models.Model):
     # complaint_id (PK): BIGINT (BigAutoField)
     complaint_id = models.BigAutoField(primary_key=True)
