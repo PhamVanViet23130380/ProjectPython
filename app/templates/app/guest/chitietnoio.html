@@ -1,4 +1,4 @@
-{% load static %}
+{% load static formatting %}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -133,16 +133,6 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Phí vệ sinh -->
-                        <div class="col-md-6 mb-3">
-                            <div class="d-flex align-items-center">
-                                <i class="fa-solid fa-broom text-primary me-3 fs-4"></i>
-                                <div>
-                                    <small class="text-muted">Phí vệ sinh</small>
-                                    <p class="mb-0 fw-semibold">₫{{ listing.cleaning_fee|floatformat:0 }}</p>
-                                </div>
-                            </div>
-                        </div>
                         {% if listing.available_from and listing.available_to %}
                         <!-- Thời gian cho thuê -->
                         <div class="col-md-6 mb-3">
@@ -236,8 +226,9 @@
                     {% if can_review %}
                     <div class="review-form-section bg-light p-4 rounded-4 mb-4">
                         <h5 class="fw-bold mb-3"><i class="fa-solid fa-pen me-2"></i>Viết đánh giá của bạn</h5>
-                        <form method="POST" action="">
-                            {% csrf_token %}
+
+                        <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Điểm đánh giá</label>
                                 <div class="rating-input">
@@ -251,6 +242,13 @@
                                 <label class="form-label fw-semibold">Nhận xét của bạn</label>
                                 <textarea name="comment" class="form-control" rows="4" placeholder="Chia sẻ trải nghiệm của bạn về chỗ ở này..." required></textarea>
                             </div>
+                            <label>Ảnh / Video (tuỳ chọn)</label>
+                            <input 
+                                type="file"
+                                name="media"
+                                multiple
+                                accept="image/*,video/*"
+                            >
                             <button type="submit" class="btn btn-danger">
                                 <i class="fa-solid fa-paper-plane me-2"></i>Gửi đánh giá
                             </button>
@@ -279,27 +277,21 @@
                             {% endfor %}
                         </div>
                         <p class="mb-2">{{ r.comment }}</p>
-                        
+                        {% for m in r.media.all %}
+                            {% if m.media_type == "image" %}
+                                <img src="{{ m.media.url }}" style="max-width:120px; border-radius:8px; margin-right:6px;">
+                            {% elif m.media_type == "video" %}
+                                <video src="{{ m.media.url }}" controls style="max-width:200px; border-radius:8px;"></video>
+                            {% endif %}
+                        {% endfor %}
                         {% if r.analysis %}
                         <div class="ai-analysis">
-                            {% if r.analysis.sentiment == 'positive' %}
-                                <span class="badge rounded-pill bg-success text-white">
-                                    Tích Cực
-                                </span>
-                            {% elif r.analysis.sentiment == 'neutral' %}
-                                <span class="badge rounded-pill bg-warning text-dark">
-                                    Trung Tính
-                                </span>
-                            {% else %}
-                                <span class="badge rounded-pill bg-danger text-white">
-                                    Tiêu Cực
-                                </span>
-                            {% endif %}
-
-                            {% if r.ai_confidence_percent %}
-                                <span class="confidence text-muted ms-2">
-                                    (AI tin cậy {{ r.ai_confidence_percent }}%)
-                                </span>
+                            {% if r.analysis.sentiment == 'pos' %}
+                                <span class="badge rounded-pill bg-success text-white">Tích cực</span>
+                            {% elif r.analysis.sentiment == 'neu' %}
+                                <span class="badge rounded-pill bg-warning text-dark">Trung tính</span>
+                            {% elif r.analysis.sentiment == 'neg' %}
+                                <span class="badge rounded-pill bg-danger text-white">Tiêu cực</span>
                             {% endif %}
                         </div>
                         {% endif %}
@@ -316,7 +308,7 @@
             <div class="col-lg-4">
                 <div class="card shadow-lg p-4 booking-card" style="border-radius: 16px;">
                     <div class="price-header mb-3">
-                        <span class="fs-3 fw-bold">₫{{ listing.price_per_night|floatformat:0 }}</span> <span class="text-muted">/ đêm</span>
+                        <span class="fs-3 fw-bold">₫{{ listing.price_per_night|floatformat:0|intdot }}</span> <span class="text-muted">/ đêm</span>
                     </div>
 
                     {% if listing.available_from and listing.available_to %}
@@ -326,8 +318,16 @@
                     </div>
                     {% endif %}
 
-                    <form action="{% url 'create_and_pay' listing.listing_id %}" method="POST">
-                        {% csrf_token %}
+                    {% if messages %}
+                    <div class="alert alert-warning py-2 px-3 mb-3" style="font-size: 13px; border-radius: 8px;">
+                        {% for message in messages %}
+                        <div>{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form action="{% url 'datphong' %}" method="GET">
+                        <input type="hidden" name="room" value="{{ listing.listing_id }}">
                         <div class="booking-inputs border rounded-3 mb-3">
                             <div class="row g-0">
                                 <div class="col-6 border-end p-2">
@@ -347,19 +347,20 @@
 
                     <div id="price-calculation" class="mt-3 d-none">
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="text-decoration-underline">₫{{ listing.price_per_night|floatformat:0 }} x <span id="nights-count">0</span> đêm</span>
-                            <span id="base-price">₫0</span>
+                            <span class="text-decoration-underline">&#8363;{{ listing.price_per_night|floatformat:0|intdot }} x <span id="nights-count">0</span> &#273;&#234;m</span>
+                            <span id="base-price">&#8363;0</span>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="text-decoration-underline">Phí dọn dẹp</span>
-                            <span>₫{{ listing.cleaning_fee|floatformat:0 }}</span>
+                            <span>Ph&#237; d&#7883;ch v&#7909;</span>
+                            <span id="service-fee">&#8363;0</span>
                         </div>
                         <hr>
                         <div class="d-flex justify-content-between fw-bold fs-5">
-                            <span>Tổng cộng</span>
-                            <span id="total-price">₫0</span>
+                            <span>T&#7893;ng c&#7897;ng</span>
+                            <span id="total-price">&#8363;0</span>
                         </div>
                     </div>
+</div>
                 </div>
             </div>
         </div>
@@ -370,7 +371,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const price = {{ listing.price_per_night|default:0 }};
-            const cleaningFee = {{ listing.cleaning_fee|default:0 }};
+            const listingId = {{ listing.listing_id|default:0 }};
             const checkin = document.getElementById('id_checkin');
             const checkout = document.getElementById('id_checkout');
             const calcDiv = document.getElementById('price-calculation');
@@ -405,16 +406,37 @@
                     const end = new Date(checkout.value);
                     const diff = (end - start) / (1000 * 60 * 60 * 24);
 
-                    if (diff > 0) {
-                        const base = diff * price;
-                        const total = base + cleaningFee;
-                        document.getElementById('nights-count').innerText = diff;
-                        document.getElementById('base-price').innerText = '₫' + base.toLocaleString('vi-VN');
-                        document.getElementById('total-price').innerText = '₫' + Math.round(total).toLocaleString('vi-VN');
-                        calcDiv.classList.remove('d-none');
-                    } else {
+                    if (diff <= 0) {
                         calcDiv.classList.add('d-none');
+                        return;
                     }
+
+                    const url = `/api/price/?listing=${listingId}&checkin=${checkin.value}&checkout=${checkout.value}&guests=1`;
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.error) {
+                                throw new Error(data.error);
+                            }
+                            const nights = Number(data.nights || diff);
+                            const base = Number(data.base || 0);
+                            const serviceFee = Number(data.service_fee || 0);
+                            const total = Number(data.total || 0);
+
+                            document.getElementById('nights-count').innerText = nights;
+                            document.getElementById('base-price').innerText = '\u20ab' + base.toLocaleString('vi-VN');
+                            document.getElementById('service-fee').innerText = '\u20ab' + serviceFee.toLocaleString('vi-VN');
+                            document.getElementById('total-price').innerText = '\u20ab' + Math.round(total).toLocaleString('vi-VN');
+                            calcDiv.classList.remove('d-none');
+                        })
+                        .catch(() => {
+                            const base = diff * price;
+                            document.getElementById('nights-count').innerText = diff;
+                            document.getElementById('base-price').innerText = '\u20ab' + base.toLocaleString('vi-VN');
+                            document.getElementById('service-fee').innerText = '\u20ab0';
+                            document.getElementById('total-price').innerText = '\u20ab' + Math.round(base).toLocaleString('vi-VN');
+                            calcDiv.classList.remove('d-none');
+                        });
                 }
             }
             

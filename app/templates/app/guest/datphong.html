@@ -180,7 +180,7 @@
                         </div>
                     </div>
 
-                    <!-- Payment Method -->
+                                                                                                    <!-- Payment Method -->
                     <section class="booking-section collapsible-section">
                         <div class="section-header" data-toggle="collapse">
                             <h2 class="section-title">1. Thêm phương thức thanh toán</h2>
@@ -199,6 +199,15 @@
                                         <span>Thẻ tín dụng hoặc thẻ ghi nợ</span>
                                     </div>
                                 </label>
+                                <label class="payment-option">
+                                    <input type="radio" name="payment_type" value="vnpay">
+                                    <div class="payment-content">
+                                        <div class="payment-icons">
+                                            <span class="fw-bold">VNPay</span>
+                                        </div>
+                                        <span>Thanh toán qua VNPay (sandbox)</span>
+                                    </div>
+                                </label>
                             </div>
 
                             <form class="payment-form" id="paymentForm">
@@ -211,7 +220,7 @@
 
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label for="expiryDate">Ngày hết hạn</label>
+                                    <label for="expiryDate">Ngày hết hạn</label>
                                         <input type="text" id="expiryDate" class="form-control" 
                                                placeholder="MM/YY" maxlength="5" required>
                                     </div>
@@ -242,7 +251,7 @@
                         </div>
                     </section>
 
-                    <!-- Message to Host -->
+<!-- Message to Host -->
                     <section class="booking-section collapsible-section">
                         <div class="section-header" data-toggle="collapse">
                             <h2 class="section-title">2. Nhắn tin cho host</h2>
@@ -369,22 +378,10 @@
                             </div>
 
                             <!-- Phí vệ sinh (nếu có) -->
-                            <div class="price-row" id="cleaningFeeRow" style="display: none;">
-                                <span class="price-label">Phí vệ sinh</span>
-                                <span class="price-value" id="cleaningFee">₫0</span>
-                            </div>
 
                             <!-- Phí khách thêm (nếu có) -->
-                            <div class="price-row" id="extraGuestFeeRow" style="display: none;">
-                                <span class="price-label">Phí khách thêm</span>
-                                <span class="price-value" id="extraGuestFee">₫0</span>
-                            </div>
 
                             <!-- Phí cuối tuần (nếu có) -->
-                            <div class="price-row" id="weekendFeeRow" style="display: none;">
-                                <span class="price-label">Phí cuối tuần</span>
-                                <span class="price-value" id="weekendFee">₫0</span>
-                            </div>
 
                             <div class="price-row">
                                 <span class="price-label">Phí dịch vụ</span>
@@ -439,15 +436,15 @@
             </div>
             <div class="modal-footer">
                 <button class="btn-secondary" id="cancelPayBtn">Hủy</button>
-                <button class="btn-primary" id="confirmPayBtn">Thanh toán</button>
+                <button class="btn-primary" id="confirmPayBtn">Thanh to&#225;n</button>
             </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
-    <script src="{% static 'app/js/datphong_api.js' %}?v=11"></script>
-    <script src="{% static 'app/js/datphong.js' %}?v=11"></script>
+    <script src="{% static 'app/js/datphong_api.js' %}?v=14"></script>
+    <script src="{% static 'app/js/datphong.js' %}?v=17"></script>
 </body>
 
 </html>

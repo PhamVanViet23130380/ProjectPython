@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Xác nhận khiếu nại - Home Nest</title>
+</head>
+<body>
+    <p>Xin chào {{ user_name }},</p>
+    <p>Chúng tôi đã nhận được khiếu nại của bạn về chỗ ở: <strong>{{ listing_title }}</strong>.</p>
+    <p>Thông tin booking:</p>
+    <ul>
+        <li>Mã booking: <strong>#{{ booking_id }}</strong></li>
+        <li>Nhận phòng: {{ check_in|date:"d/m/Y" }}</li>
+        <li>Trả phòng: {{ check_out|date:"d/m/Y" }}</li>
+        <li>Tổng tiền: {{ total_price|floatformat:0 }}</li>
+    </ul>
+    <p>Nội dung bạn gửi:</p>
+    <blockquote style="margin: 12px 0; padding: 12px; background: #f7f7f7; border-left: 4px solid #ff385c;">
+        {{ reason }}
+    </blockquote>
+    <p>Chúng tôi sẽ xem xét và phản hồi sớm nhất có thể.</p>
+    <p>Cảm ơn bạn đã liên hệ Home Nest.</p>
+    <p>-- Home Nest Team</p>
+</body>
+</html>

@@ -1,359 +1,11 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load formatting %}
 
 {% block title %}Lịch sử thuê nhà - Home Nest{% endblock %}
 
 {% block extra_css %}
-<style>
-    .booking-history-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 180px 20px 60px 20px;
-    }
-
-    .profile-tabs {
-        display: flex;
-        gap: 32px;
-        border-bottom: 2px solid #ddd;
-        margin-bottom: 32px;
-    }
-
-    .profile-tab {
-        padding: 16px 0;
-        font-size: 16px;
-        font-weight: 500;
-        color: #717171;
-        text-decoration: none;
-        border-bottom: 2px solid transparent;
-        margin-bottom: -2px;
-        transition: all 0.2s;
-    }
-
-    .profile-tab:hover {
-        color: #222;
-    }
-
-    .profile-tab.active {
-        color: #222;
-        border-bottom-color: #222;
-    }
-    
-    .page-title {
-        font-size: 32px;
-        font-weight: 600;
-        color: #222;
-        margin-bottom: 30px;
-    }
-    
-    .booking-card {
-        background: white;
-        border-radius: 12px;
-        padding: 24px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        display: flex;
-        gap: 24px;
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    
-    .booking-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    
-    .booking-image {
-        width: 200px;
-        height: 150px;
-        border-radius: 8px;
-        object-fit: cover;
-        flex-shrink: 0;
-    }
-    
-    .booking-details {
-        flex: 1;
-    }
-    
-    .listing-title {
-        font-size: 20px;
-        font-weight: 600;
-        color: #222;
-        margin-bottom: 8px;
-    }
-    
-    .booking-info {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        margin-top: 16px;
-    }
-    
-    .info-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #717171;
-        font-size: 14px;
-    }
-    
-    .info-item i {
-        color: #6b4a34;
-        width: 20px;
-    }
-    
-    .booking-status {
-        display: inline-block;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 13px;
-        font-weight: 500;
-    }
-    
-    .status-confirmed {
-        background: #e8f5e9;
-        color: #2e7d32;
-    }
-    
-    .status-pending {
-        background: #fff3e0;
-        color: #f57c00;
-    }
-    
-    .status-cancelled {
-        background: #ffebee;
-        color: #c62828;
-    }
-    
-    .booking-price {
-        text-align: right;
-    }
-    
-    .price-amount {
-        font-size: 24px;
-        font-weight: 600;
-        color: #222;
-    }
-    
-    .empty-state {
-        text-align: center;
-        padding: 60px 20px;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .empty-icon {
-        font-size: 64px;
-        color: #ddd;
-        margin-bottom: 16px;
-    }
-    
-    .empty-title {
-        font-size: 20px;
-        font-weight: 600;
-        color: #222;
-        margin-bottom: 8px;
-    }
-    
-    .empty-text {
-        color: #717171;
-        margin-bottom: 24px;
-    }
-    
-    .btn-explore {
-        display: inline-block;
-        padding: 12px 24px;
-        background: #FF385C;
-        color: white;
-        text-decoration: none;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: background 0.2s;
-    }
-    
-    .btn-explore:hover {
-        background: #E31C5F;
-        color: white;
-    }
-    
-    .booking-actions {
-        margin-top: 16px;
-        display: flex;
-        gap: 12px;
-    }
-    
-    .btn-cancel {
-        padding: 8px 16px;
-        background: #fff;
-        border: 1px solid #ddd;
-        color: #c62828;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    
-    .btn-cancel:hover {
-        background: #ffebee;
-        border-color: #c62828;
-    }
-    
-    .btn-view {
-        padding: 8px 16px;
-        background: #fff;
-        border: 1px solid #ddd;
-        color: #222;
-        text-decoration: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        transition: all 0.2s;
-        display: inline-block;
-    }
-    
-    .btn-view:hover {
-        background: #f7f7f7;
-        border-color: #222;
-    }
-    
-    /* Modal xác nhận */
-    .modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 99999;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    .modal-overlay.active {
-        display: flex;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-    
-    .modal-content {
-        background: white;
-        border-radius: 16px;
-        padding: 32px;
-        max-width: 480px;
-        width: 90%;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        position: relative;
-        z-index: 100000;
-    }
-    
-    .modal-icon {
-        width: 64px;
-        height: 64px;
-        background: #ffebee;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 20px;
-    }
-    
-    .modal-icon i {
-        font-size: 32px;
-        color: #c62828;
-    }
-    
-    .modal-title {
-        font-size: 24px;
-        font-weight: 600;
-        color: #222;
-        text-align: center;
-        margin-bottom: 12px;
-    }
-    
-    .modal-text {
-        font-size: 16px;
-        color: #717171;
-        text-align: center;
-        margin-bottom: 32px;
-        line-height: 1.5;
-    }
-    
-    .modal-actions {
-        display: flex;
-        gap: 12px;
-    }
-    
-    .modal-btn {
-        flex: 1;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    
-    .modal-btn-cancel-action {
-        background: #c62828;
-        color: white;
-    }
-    
-    .modal-btn-cancel-action:hover {
-        background: #b71c1c;
-    }
-    
-    .modal-btn-back {
-        background: #f7f7f7;
-        color: #222;
-    }
-    
-    .modal-btn-back:hover {
-        background: #e0e0e0;
-    }
-    
-    .filter-toggle {
-        display: flex;
-        justify-content: flex-end;
-        margin-bottom: 20px;
-        gap: 12px;
-        align-items: center;
-    }
-    
-    .toggle-btn {
-        padding: 10px 20px;
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        color: #222;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    .toggle-btn:hover {
-        background: #f7f7f7;
-        border-color: #FF385C;
-        color: #FF385C;
-    }
-    
-    .toggle-btn.active {
-        background: #FF385C;
-        color: white;
-        border-color: #FF385C;
-    }
-
-
-</style>
+<link rel="stylesheet" href="{% static 'app/css/user_booking_history.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -386,13 +38,17 @@
             <div class="booking-details">
                 <h3 class="listing-title">{{ booking.listing.title }}</h3>
                 
-                <span class="booking-status {% if booking.booking_status == 'confirmed' %}status-confirmed{% elif booking.booking_status == 'pending' %}status-pending{% else %}status-cancelled{% endif %}">
+                <span class="booking-status {% if booking.booking_status == 'confirmed' %}status-confirmed{% elif booking.booking_status == 'pending' %}status-pending{% elif booking.booking_status == 'in_progress' %}status-confirmed{% elif booking.booking_status == 'completed' %}status-confirmed{% else %}status-cancelled{% endif %}">
                     {% if booking.booking_status == 'confirmed' %}
                         Đã xác nhận
                     {% elif booking.booking_status == 'pending' %}
                         Chờ xác nhận
+                    {% elif booking.booking_status == 'in_progress' %}
+                        Đang ở
+                    {% elif booking.booking_status == 'completed' %}
+                        Hoàn thành
                     {% else %}
-                        Đã hủy ({{ booking.booking_status }})
+                        Đã hủy
                     {% endif %}
                 </span>
                 
@@ -416,14 +72,14 @@
                 </div>
                 
                 <!-- Nút hành động -->
-                {% if booking.booking_status != 'cancelled' %}
+                {% if booking.booking_status == 'pending' or booking.booking_status == 'confirmed' %}
                 <div class="booking-actions">
                     <a href="{% url 'booking_success' booking.booking_id %}" class="btn-view">
                         <i class="fa-solid fa-eye"></i> Xem chi tiết
                     </a>
                     <form method="post" action="{% url 'cancel_booking' booking.booking_id %}" style="display: inline-block;">
                         {% csrf_token %}
-                        <button type="submit" class="btn-cancel" onclick="return confirmCancel('{{ booking.listing.title|escapejs }}')">
+                        <button type="button" class="btn-cancel cancel-booking-btn" data-booking-id="{{ booking.booking_id }}" data-listing-title="{{ booking.listing.title|escapejs }}">
                             <i class="fa-solid fa-xmark"></i> Hủy đặt phòng
                         </button>
                     </form>
@@ -433,12 +89,17 @@
                     <a href="{% url 'booking_success' booking.booking_id %}" class="btn-view">
                         <i class="fa-solid fa-eye"></i> Xem chi tiết
                     </a>
+                    {% if booking.booking_status == 'completed' %}
+                    <a href="{% url 'complaint_create' booking.booking_id %}" class="btn-complaint">
+                        <i class="fa-solid fa-flag"></i> Gửi khiếu nại
+                    </a>
+                    {% endif %}
                 </div>
                 {% endif %}
             </div>
             
             <div class="booking-price">
-                <div class="price-amount">₫{{ booking.total_price|floatformat:0 }}</div>
+                <div class="price-amount">đ{{ booking.total_price|floatformat:0|intdot }}</div>
                 <small style="color: #717171;">Tổng tiền</small>
             </div>
         </div>
@@ -465,12 +126,8 @@
     {% endif %}
 </div>
 
-<script>
-function confirmCancel(listingTitle) {
-    return confirm('Bạn có chắc chắn muốn hủy đặt phòng "' + listingTitle + '" không?\n\nHành động này không thể hoàn tác.');
-}
-</script>
-{% endblock %}
+<!-- Custom Cancel Modal -->
+<div class="modal-overlay" id="cancelModal">
     <div class="modal-content">
         <div class="modal-icon">
             <i class="fa-solid fa-circle-exclamation"></i>
@@ -497,37 +154,26 @@ function confirmCancel(listingTitle) {
 <script>
 // Attach event listeners to all cancel buttons
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, attaching cancel button listeners');
-    
     const cancelButtons = document.querySelectorAll('.cancel-booking-btn');
-    console.log('Found ' + cancelButtons.length + ' cancel buttons');
-    
-    cancelButtons.forEach(function(button, index) {
-        console.log('Attaching listener to button ' + index);
+    cancelButtons.forEach(function(button) {
         button.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            
             const bookingId = this.getAttribute('data-booking-id');
             const listingTitle = this.getAttribute('data-listing-title');
-            
-            console.log('Cancel button clicked - ID: ' + bookingId + ', Title: ' + listingTitle);
             showCancelModal(bookingId, listingTitle);
         });
     });
-    
-    // Setup modal close listeners
+
     const modal = document.getElementById('cancelModal');
     if (modal) {
-        // Close modal when clicking outside
         modal.addEventListener('click', function(e) {
             if (e.target === this) {
                 closeCancelModal();
             }
         });
     }
-    
-    // Close modal with ESC key
+
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeCancelModal();
@@ -536,28 +182,19 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function showCancelModal(bookingId, listingTitle) {
-    console.log('showCancelModal called with ID: ' + bookingId);
-    
     const modal = document.getElementById('cancelModal');
     const form = document.getElementById('cancelForm');
     const titleElement = document.getElementById('listingTitle');
-    
+
     if (!modal || !form || !titleElement) {
-        console.error('Modal elements not found!');
         return;
     }
-    
-    // Set form action
+
     form.action = '/booking/cancel/' + bookingId + '/';
-    
-    // Set listing title
     titleElement.textContent = listingTitle;
-    
-    // Show modal
+
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
-    
-    console.log('Modal shown');
 }
 
 function closeCancelModal() {
@@ -568,4 +205,4 @@ function closeCancelModal() {
     }
 }
 </script>
-
+{% endblock %}

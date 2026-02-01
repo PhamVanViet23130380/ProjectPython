@@ -1,9 +1,19 @@
 from app.models import Listing
 from django.shortcuts import render
+from django.db.models import Avg, Count
 
 def home_view(request):
     # Lấy toàn bộ dữ liệu kèm quan hệ địa chỉ và ảnh
-    listings = Listing.objects.filter(is_active=True, status='approved').select_related('listingaddress').prefetch_related('images')
+    listings = (
+        Listing.objects
+        .filter(is_active=True, status='approved')
+        .annotate(
+            avg_rating=Avg('reviews__rating'),
+            review_count=Count('reviews')
+        )
+        .select_related('listingaddress')
+        .prefetch_related('images')
+    )
     
     context = {
         'hcm_listings': listings.filter(listingaddress__city__icontains="Hồ Chí Minh"),

@@ -2,10 +2,19 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Avg
 from django.http import HttpResponseForbidden
 from django.utils import timezone
-from app.models import Listing, Booking, Review, ReviewAnalysis
-
+from app.models import Listing, Booking, Review, ReviewAnalysis, ReviewMedia, ReviewClassification
+from django.db.models import Q
+import re
 # Giả định bạn đã có hàm này trong sentiment.py
 from app.sentiment import analyze_sentiment 
+
+import os
+from django.core.files.storage import default_storage
+
+def handle_uploaded_file(f):
+    path = default_storage.save(f"reviews/{f.name}", f)
+    return default_storage.url(path)
+
 
 def listing_detail(request, listing_id):
     # 1. Lấy thông tin Listing chính và các liên kết (Address, Host)
@@ -25,7 +34,9 @@ def listing_detail(request, listing_id):
     address = getattr(listing, 'listingaddress', None)  # Lấy từ OneToOneField (có thể None)
 
     # 3. Lấy đánh giá và tích hợp AI Sentiment
-    reviews = listing.reviews.select_related("user", "analysis").all().order_by("-created_at")
+    # reviews = listing.reviews.select_related("user", "analysis").all().order_by("-created_at")
+    
+    reviews = listing.reviews.filter(Q(reviewclassification__spam_status=False) |Q(reviewclassification__isnull=True)).select_related("user", "analysis").prefetch_related("media").order_by("-created_at")
     avg_rating = reviews.aggregate(avg=Avg("rating"))["avg"] or 0
 
     # 4. Logic kiểm tra quyền đánh giá (Chỉ khách đã ở xong mới được đánh giá)
@@ -71,33 +82,75 @@ def listing_detail(request, listing_id):
                 rating=rating,
                 comment=comment
             )
-            
+            reviews = listing.reviews.filter(
+            reviewclassification__spam_status=False
+                ).select_related(
+                    "user", "analysis"
+                ).prefetch_related(
+                    "media"
+                )
+
+            # sau khi tạo new_review
+            # ===== LƯU ẢNH / VIDEO REVIEW =====
+            files = request.FILES.getlist("media")
+
+            for f in files:
+                ReviewMedia.objects.create(
+                    review=new_review,
+                    media=f,
+                    media_type="image" if f.content_type.startswith("image") else "video"
+                )
+
+
+
             # Chạy AI ViSoBERT phân tích cảm xúc
             try:
-                sentiment, raw_confidence = analyze_sentiment(comment)
-                word_count = len(comment.split())
+                sentiment_raw, raw_confidence = analyze_sentiment(comment)
 
-                confidence = raw_confidence
+                #CHỐNG SPAM
+                spam_reasons = []
 
-                # 1. Câu quá ngắn → giảm độ tin cậy
-                if word_count <= 3:
-                    confidence *= 0.7
-                elif word_count <= 6:
-                    confidence *= 0.85
+                # 1. Lặp từ
+                words = comment.lower().split()
+                if len(words) >= 6:
+                    unique_ratio = len(set(words)) / len(words)
+                    if unique_ratio < 0.3:
+                        spam_reasons.append("tu_lap_lai")
+                        spam_reasons.append("noi_dung_vo_nghia")
 
-                # 2. Trung tính thì không nên quá cao
-                if sentiment == "neutral":
-                    confidence *= 0.8
+                # 5. Chứa link
+                url_pattern = r"(https?://|www\.)\S+"
+                if re.search(url_pattern, comment.lower()):
+                    spam_reasons.append("gan_link")
 
-                # 3. Chặn biên hợp lý
-                confidence = max(0.4, min(confidence, 0.98))
-                confidence = round(confidence, 2)
+                spam = ("gan_link" in spam_reasons or len(spam_reasons) >= 2)
+                # Chuẩn hóa nhãn sentiment
+                sentiment_raw = sentiment_raw.lower()
+
+                if sentiment_raw in ["positive", "pos"]:
+                    sentiment = "pos"
+                elif sentiment_raw in ["neutral", "neu"]:
+                    sentiment = "neu"
+                elif sentiment_raw in ["negative", "neg"]:
+                    sentiment = "neg"
+                else:
+                    sentiment = "neu"
+
+
+                confidence = round(raw_confidence, 2)
 
                 ReviewAnalysis.objects.create(
                     review=new_review,
                     sentiment=sentiment,
                     confidence_score=confidence
                 )
+                
+
+                ReviewClassification.objects.update_or_create(
+                    review=new_review,
+                    defaults={"spam_status": spam, "reason": spam_reasons}
+                )
+
 
             except Exception as e:
                 print(f"Lỗi AI: {e}")

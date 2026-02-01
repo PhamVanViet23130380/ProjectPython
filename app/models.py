@@ -14,6 +14,7 @@ BOOKING_STATUS_CHOICES = [
     ('pending', 'Chờ xác nhận'),
     ('confirmed', 'Đã xác nhận'),
     ('cancelled', 'Đã hủy'), 
+    ()
 ]
 
 PAYMENT_STATUS_CHOICES = [

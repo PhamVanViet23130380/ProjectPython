@@ -110,6 +110,9 @@ urlpatterns = [
     path('payment/success/<int:booking_id>/', payment_views.payment_success, name='payment_success'),
     path('payment/cancel/<int:booking_id>/', payment_views.payment_cancel, name='payment_cancel'),
     path('payment/create-and-pay/<int:listing_id>/', payment_views.create_booking_and_pay, name='create_and_pay'),
+    path('payment/vnpay/create/<int:booking_id>/', payment_views.vnpay_create, name='vnpay_create'),
+    path('payment/vnpay/return/', payment_views.vnpay_return, name='vnpay_return'),
+    path('payment/vnpay/ipn/', payment_views.vnpay_ipn, name='vnpay_ipn'),
 
     # Admin AJAX: get booking total price
     path('admin-api/booking/<int:booking_id>/total/', booking_total_price, name='admin_booking_total'),
@@ -121,6 +124,9 @@ urlpatterns = [
     path('booking/success/<int:booking_id>/', views.booking_success, name='booking_success'),
     path('booking/cancel/<int:booking_id>/', views.cancel_booking, name='cancel_booking'),
     path('booking/history/', views.user_booking_history, name='user_booking_history'),
+    # Complaints (UI)
+    path('complaints/', views.complaint_list, name='complaint_list'),
+    path('complaints/create/<int:booking_id>/', views.complaint_create, name='complaint_create'),
 
 
 

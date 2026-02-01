@@ -1,0 +1,67 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Thanh toán chưa hoàn tất - Home Nest{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'app/css/payment_failed.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="payment-failed-wrap">
+  <div class="payment-failed-card">
+    <div class="status-row">
+      <div class="status-icon">
+        <i class="fa-solid fa-xmark"></i>
+      </div>
+      <div>
+        <div class="status-pill">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          Thanh toán chưa hoàn tất
+        </div>
+        <h1 class="status-title">Thanh toán đã bị hủy hoặc không thành công</h1>
+        <p class="status-message">
+          Chúng tôi không nhận được thanh toán thành công. Đặt phòng của bạn chưa được xác nhận.
+          Bạn có thể thử lại hoặc quay về trang chủ.
+        </p>
+      </div>
+    </div>
+
+    {% if booking %}
+    <div class="booking-panel">
+      <div class="booking-grid">
+        <div class="booking-item">
+          <h4>Booking ID</h4>
+          <p>#{{ booking.booking_id }}</p>
+        </div>
+        <div class="booking-item">
+          <h4>Listing</h4>
+          <p>{{ booking.listing.title }}</p>
+        </div>
+        <div class="booking-item">
+          <h4>Dates</h4>
+          <p>{{ booking.check_in|date:"d/m/Y" }} - {{ booking.check_out|date:"d/m/Y" }}</p>
+        </div>
+      </div>
+      <div class="booking-note">
+        <i class="fa-regular fa-circle-question"></i>
+        <span>Nếu bạn đã bị trừ tiền, giao dịch sẽ được nhà cung cấp hoàn lại.</span>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="action-row">
+      <a href="{% url 'home' %}" class="action-btn action-secondary">
+        <i class="fa-solid fa-house"></i>
+        Quay về trang chủ
+      </a>
+      {% if booking %}
+      <a href="{% url 'datphong' %}?room={{ booking.listing_id }}&checkin={{ booking.check_in|date:'Y-m-d' }}&checkout={{ booking.check_out|date:'Y-m-d' }}" class="action-btn action-primary">
+        <i class="fa-solid fa-rotate-right"></i>
+        Thử lại
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
