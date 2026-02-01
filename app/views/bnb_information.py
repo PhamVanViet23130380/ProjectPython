@@ -39,6 +39,20 @@ def listing_detail(request, listing_id):
     reviews = listing.reviews.filter(Q(reviewclassification__spam_status=False) |Q(reviewclassification__isnull=True)).select_related("user", "analysis").prefetch_related("media").order_by("-created_at")
     avg_rating = reviews.aggregate(avg=Avg("rating"))["avg"] or 0
 
+    # Đếm số đánh giá tích cực và tiêu cực
+    positive_count = 0
+    negative_count = 0
+    for r in reviews:
+        try:
+            if r.analysis:
+                sentiment = r.analysis.sentiment
+                if sentiment in ['pos', 'positive']:
+                    positive_count += 1
+                elif sentiment in ['neg', 'negative']:
+                    negative_count += 1
+        except Exception:
+            pass
+
     # 4. Logic kiểm tra quyền đánh giá (Chỉ khách đã ở xong mới được đánh giá)
     booking_to_review = None
     can_review = False
@@ -167,6 +181,8 @@ def listing_detail(request, listing_id):
         "host": listing.host,
         "reviews": reviews,
         "avg_rating": avg_rating,
+        "positive_count": positive_count,
+        "negative_count": negative_count,
         "can_review": can_review,
         "review_status": review_status,
         "review_count": reviews.count(),

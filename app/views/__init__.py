@@ -133,10 +133,23 @@ def chitietnoio(request):
                 listing._prefetched_objects_cache.pop('reviews__analysis', None)
     # ===============================================================
 
-    reviews = listing.reviews.all()
-    avg_rating = reviews.aggregate(avg=Avg('rating'))['avg']
+    reviews = list(listing.reviews.select_related('analysis').all())
+    avg_rating = listing.reviews.aggregate(avg=Avg('rating'))['avg']
 
-    
+    # Đếm số đánh giá tích cực và tiêu cực
+    positive_count = 0
+    negative_count = 0
+    for r in reviews:
+        try:
+            analysis = getattr(r, 'analysis', None)
+            if analysis:
+                sentiment = analysis.sentiment
+                if sentiment in ['pos', 'positive']:
+                    positive_count += 1
+                elif sentiment in ['neg', 'negative']:
+                    negative_count += 1
+        except Exception:
+            pass
 
     # ================== ĐIỀU KIỆN ĐƯỢC ĐÁNH GIÁ ==================
     can_review = False
@@ -160,6 +173,8 @@ def chitietnoio(request):
         'listing': listing,
         'reviews': reviews,
         'avg_rating': avg_rating,
+        'positive_count': positive_count,
+        'negative_count': negative_count,
         'address': getattr(listing, 'listingaddress', None),
         'images': listing.images.all(),
         'amenities': listing.amenities.all(),

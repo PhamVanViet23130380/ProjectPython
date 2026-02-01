@@ -226,6 +226,16 @@
                 <div class="reviews-section">
                     <h4 class="fw-bold mb-4"><i class="fa-solid fa-star text-danger me-2"></i>{{ avg_rating|floatformat:1 }} · {{ review_count }} đánh giá</h4>
                     
+                    <!-- Thống kê đánh giá tích cực / tiêu cực -->
+                    <div class="d-flex gap-3 mb-4">
+                        <span class="badge rounded-pill bg-success px-3 py-2">
+                            <i class="fa-solid fa-face-smile me-1"></i> {{ positive_count|default:0 }} tích cực
+                        </span>
+                        <span class="badge rounded-pill bg-danger px-3 py-2">
+                            <i class="fa-solid fa-face-frown me-1"></i> {{ negative_count|default:0 }} tiêu cực
+                        </span>
+                    </div>
+                    
                     <!-- Form đánh giá cho khách đã ở -->
                     {% if can_review %}
                     <div class="review-form-section bg-light p-4 rounded-4 mb-4">
@@ -452,6 +462,28 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="{% static 'app/js/header.js' %}"></script>
+    
+    <!-- Menu dropdown fix for chitietnoio -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuBtn = document.querySelector('.ab-icon[aria-label="Menu"]');
+            const menuDropdown = document.getElementById('menuDropdown');
+            
+            if (menuBtn && menuDropdown) {
+                menuBtn.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    menuDropdown.classList.toggle('active');
+                };
+                
+                document.addEventListener('click', function(e) {
+                    if (!menuDropdown.contains(e.target) && !menuBtn.contains(e.target)) {
+                        menuDropdown.classList.remove('active');
+                    }
+                });
+            }
+        });
+    </script>
     
     <!-- Map initialization -->
     {% if address %}
