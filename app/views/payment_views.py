@@ -23,7 +23,7 @@ def quantize(v: Decimal) -> Decimal:
 
 
 def calculate_total_price(listing, check_in, check_out, guests,
-                          service_fee_pct=Decimal('0.10'), tax_pct=Decimal('0.10')):
+                          service_fee_pct=Decimal('0.20'), tax_pct=Decimal('0.10')):
     """Return a dict with price breakdown (Decimal values).
 
     - listing: Listing instance (must have `price_per_night`).
@@ -38,21 +38,11 @@ def calculate_total_price(listing, check_in, check_out, guests,
     base = price_per_night * nights
 
     subtotal = base
+    service_fee = quantize(subtotal * Decimal(service_fee_pct or Decimal('0.20')))
 
-    # If a fixed service fee is configured in settings, use it as a flat amount (assumed VND)
-    if getattr(settings, 'SERVICE_FEE_FIXED', None):
-        try:
-            fixed = Decimal(str(settings.SERVICE_FEE_FIXED))
-            service_fee = quantize(fixed)
-        except Exception:
-            # fallback to percentage if parsing fails
-            service_fee = quantize(subtotal * Decimal(service_fee_pct or Decimal('0.10')))
-    else:
-        service_fee = quantize(subtotal * Decimal(service_fee_pct or Decimal('0.10')))
-
-    # No taxes per product decision — total is subtotal + service_fee
+    # User only pays base price; service fee is recorded separately
     taxes = Decimal('0.00')
-    total = quantize(subtotal + service_fee)
+    total = quantize(subtotal)
 
     return {
         'nights': nights,
@@ -83,7 +73,7 @@ def _vnpay_build_payment_url(request, booking):
     if not vnp_return:
         vnp_return = request.build_absolute_uri(reverse('vnpay_return'))
 
-    amount = int(Decimal(str(booking.total_price)) * Decimal('100'))
+    amount = int(Decimal(str(booking.base_price or '0.00')) * Decimal('100'))
     txn_ref = str(booking.booking_id)
     create_date = timezone.now().strftime('%Y%m%d%H%M%S')
 
@@ -136,7 +126,7 @@ def payment_start(request, booking_id):
         payment = Payment.objects.create(
             booking=booking,
             method='card',
-            amount=booking.total_price,
+            amount=booking.base_price,
             status='paid',
             paid_at=timezone.now(),
             transaction_id=f"TXN-{booking.booking_id}-{int(timezone.now().timestamp())}",
@@ -153,7 +143,7 @@ def payment_start(request, booking_id):
             price_data = {
                 'base': booking.base_price,
                 'service_fee': booking.service_fee,
-                'total': booking.total_price,
+                'total': booking.base_price,
             }
             
             send_booking_confirmation_email(
@@ -319,12 +309,11 @@ def create_booking_and_pay(request, listing_id):
             booking.check_in = checkin
             booking.check_out = checkout
             booking.guests = guests
-            booking.total_price = price_data['total']
             booking.base_price = price_data['base']
             booking.service_fee = price_data['service_fee']
             booking.note = note
             booking.save(update_fields=[
-                'check_in', 'check_out', 'guests', 'total_price',
+                'check_in', 'check_out', 'guests',
                 'base_price', 'service_fee', 'note'
             ])
         else:
@@ -334,7 +323,6 @@ def create_booking_and_pay(request, listing_id):
                 check_in=checkin,
                 check_out=checkout,
                 guests=guests,
-                total_price=price_data['total'],
                 base_price=price_data['base'],
                 service_fee=price_data['service_fee'],
                 booking_status='pending',
@@ -346,7 +334,7 @@ def create_booking_and_pay(request, listing_id):
         if payment:
             if payment.status != 'paid':
                 payment.method = 'card'
-                payment.amount = booking.total_price
+                payment.amount = booking.base_price
                 payment.status = 'paid'
                 payment.paid_at = timezone.now()
                 payment.transaction_id = payment.transaction_id or txn_id
@@ -355,7 +343,7 @@ def create_booking_and_pay(request, listing_id):
             payment = Payment.objects.create(
                 booking=booking,
                 method='card',
-                amount=booking.total_price,
+                amount=booking.base_price,
                 status='paid',
                 paid_at=timezone.now(),
                 transaction_id=txn_id,
@@ -458,7 +446,7 @@ def vnpay_return(request):
     txn_no = params.get('vnp_TransactionNo', '')
 
     booking = get_object_or_404(Booking, booking_id=txn_ref)
-    expected_amount = int(Decimal(str(booking.total_price)) * Decimal('100'))
+    expected_amount = int(Decimal(str(booking.base_price or '0.00')) * Decimal('100'))
     if str(expected_amount) != str(amount):
         messages.error(request, 'Invalid VNPay amount.')
         return redirect('home')
@@ -479,14 +467,14 @@ def vnpay_return(request):
         payment = Payment.objects.create(
             booking=booking,
             method='vnpay',
-            amount=booking.total_price,
+            amount=booking.base_price,
             status='paid',
             paid_at=timezone.now(),
             transaction_id=txn_no or None,
         )
     else:
         payment.method = 'vnpay'
-        payment.amount = booking.total_price
+        payment.amount = booking.base_price
         payment.status = 'paid'
         payment.paid_at = timezone.now()
         payment.transaction_id = txn_no or payment.transaction_id
@@ -517,7 +505,7 @@ def vnpay_ipn(request):
     if not booking:
         return JsonResponse({'RspCode': '01', 'Message': 'Order not found'})
 
-    expected_amount = int(Decimal(str(booking.total_price)) * Decimal('100'))
+    expected_amount = int(Decimal(str(booking.base_price or '0.00')) * Decimal('100'))
     if str(expected_amount) != str(amount):
         return JsonResponse({'RspCode': '04', 'Message': 'Invalid amount'})
 
@@ -527,14 +515,14 @@ def vnpay_ipn(request):
             payment = Payment.objects.create(
                 booking=booking,
                 method='vnpay',
-                amount=booking.total_price,
+                amount=booking.base_price,
                 status='paid',
                 paid_at=timezone.now(),
                 transaction_id=txn_no or None,
             )
         else:
             payment.method = 'vnpay'
-            payment.amount = booking.total_price
+            payment.amount = booking.base_price
             payment.status = 'paid'
             payment.paid_at = timezone.now()
             payment.transaction_id = txn_no or payment.transaction_id

@@ -194,7 +194,7 @@ class ListingAdmin(admin.ModelAdmin):
 # --- QUẢN LÝ ĐẶT PHÒNG (BOOKINGS) ---
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
-    list_display = ('booking_id', 'user_link', 'listing', 'check_in', 'check_out', 'colored_status', 'total_price', 'payment_status')
+    list_display = ('booking_id', 'user_link', 'listing', 'check_in', 'check_out', 'colored_status', 'base_price', 'payment_status')
     list_filter = ('booking_status', 'check_in')
     raw_id_fields = ('user', 'listing')
     inlines = [PaymentInline]
@@ -232,18 +232,18 @@ class BookingAdmin(admin.ModelAdmin):
                     payment = Payment.objects.create(
                         booking=booking,
                         method='admin',
-                        amount=booking.total_price,
+                        amount=booking.base_price,
                         status='paid',
                         paid_at=timezone.now(),
                         transaction_id=f"admin-{booking.booking_id}-{uuid.uuid4().hex[:8]}",
-                        details=json.dumps({'admin_action': True, 'amount': str(booking.total_price)}),
+                        details=json.dumps({'admin_action': True, 'amount': str(booking.base_price)}),
                     )
                     created += 1
                 else:
                     payment.status = 'paid'
                     payment.paid_at = timezone.now()
                     payment.transaction_id = payment.transaction_id or f"admin-{booking.booking_id}-{uuid.uuid4().hex[:8]}"
-                    payment.details = json.dumps({'admin_action': True, 'amount': str(booking.total_price)})
+                    payment.details = json.dumps({'admin_action': True, 'amount': str(booking.base_price)})
                     payment.save()
                     updated += 1
 
@@ -312,11 +312,11 @@ class PaymentAdmin(admin.ModelAdmin):
             amount = cleaned.get('amount')
             if booking and amount is not None:
                 try:
-                    booking_total = Decimal(booking.total_price)
+                    booking_total = Decimal(booking.base_price)
                 except Exception:
                     booking_total = None
                 if booking_total is not None and Decimal(amount) != booking_total:
-                    raise ValidationError({'amount': f'Amount must equal booking total_price ({booking_total}).'})
+                    raise ValidationError({'amount': f'Amount must equal booking base_price ({booking_total}).'})
             return cleaned
 
     form = PaymentForm
@@ -343,7 +343,7 @@ class PaymentAdmin(admin.ModelAdmin):
                     if bk:
                         b = booking_model.objects.filter(pk=bk).first()
                         if b and 'amount' in self.fields:
-                            self.fields['amount'].initial = b.total_price
+                            self.fields['amount'].initial = b.base_price
                 except Exception:
                     pass
 

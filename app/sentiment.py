@@ -80,6 +80,7 @@ _device = torch.device("cpu")
 def load_model():
     global _tokenizer, _model
     if _tokenizer is None or _model is None:
+        from transformers import AutoTokenizer, AutoModelForSequenceClassification
         _tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
         _model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH)
         _model.to(_device)

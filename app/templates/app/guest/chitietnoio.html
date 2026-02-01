@@ -286,11 +286,11 @@
                         {% endfor %}
                         {% if r.analysis %}
                         <div class="ai-analysis">
-                            {% if r.analysis.sentiment == 'pos' %}
+                            {% if r.analysis.sentiment == 'pos' or r.analysis.sentiment == 'positive' %}
                                 <span class="badge rounded-pill bg-success text-white">Tích cực</span>
-                            {% elif r.analysis.sentiment == 'neu' %}
+                            {% elif r.analysis.sentiment == 'neu' or r.analysis.sentiment == 'neutral' %}
                                 <span class="badge rounded-pill bg-warning text-dark">Trung tính</span>
-                            {% elif r.analysis.sentiment == 'neg' %}
+                            {% elif r.analysis.sentiment == 'neg' or r.analysis.sentiment == 'negative' %}
                                 <span class="badge rounded-pill bg-danger text-white">Tiêu cực</span>
                             {% endif %}
                         </div>
@@ -349,10 +349,6 @@
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-decoration-underline">&#8363;{{ listing.price_per_night|floatformat:0|intdot }} x <span id="nights-count">0</span> &#273;&#234;m</span>
                             <span id="base-price">&#8363;0</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Ph&#237; d&#7883;ch v&#7909;</span>
-                            <span id="service-fee">&#8363;0</span>
                         </div>
                         <hr>
                         <div class="d-flex justify-content-between fw-bold fs-5">
@@ -420,12 +416,10 @@
                             }
                             const nights = Number(data.nights || diff);
                             const base = Number(data.base || 0);
-                            const serviceFee = Number(data.service_fee || 0);
-                            const total = Number(data.total || 0);
+                            const total = Number(data.total || data.base || 0);
 
                             document.getElementById('nights-count').innerText = nights;
                             document.getElementById('base-price').innerText = '\u20ab' + base.toLocaleString('vi-VN');
-                            document.getElementById('service-fee').innerText = '\u20ab' + serviceFee.toLocaleString('vi-VN');
                             document.getElementById('total-price').innerText = '\u20ab' + Math.round(total).toLocaleString('vi-VN');
                             calcDiv.classList.remove('d-none');
                         })
@@ -433,7 +427,6 @@
                             const base = diff * price;
                             document.getElementById('nights-count').innerText = diff;
                             document.getElementById('base-price').innerText = '\u20ab' + base.toLocaleString('vi-VN');
-                            document.getElementById('service-fee').innerText = '\u20ab0';
                             document.getElementById('total-price').innerText = '\u20ab' + Math.round(base).toLocaleString('vi-VN');
                             calcDiv.classList.remove('d-none');
                         });

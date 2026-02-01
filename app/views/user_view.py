@@ -26,7 +26,7 @@ def build_profile_stats(user):
 
         'total_spent': bookings.filter(
             booking_status='completed'
-        ).aggregate(total=Sum('total_price'))['total'] or 0,
+        ).aggregate(total=Sum('base_price'))['total'] or 0,
 
         'avg_rating': (
             Review.objects.filter(listing__host=user)
@@ -187,7 +187,7 @@ def profile_host(request):
 
     total_revenue = bookings.filter(
         booking_status='completed'
-    ).aggregate(total=Sum('total_price'))['total'] or 0
+    ).aggregate(total=Sum('base_price'))['total'] or 0
 
     avg_rating = Review.objects.filter(
         listing__host=user

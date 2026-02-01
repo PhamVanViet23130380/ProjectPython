@@ -7,9 +7,9 @@ from .payment_views import calculate_total_price
 
 
 def booking_total_price(request, booking_id):
-    """Return booking total (admin use previously required staff)."""
+    """Return booking base amount (admin use previously required staff)."""
     booking = get_object_or_404(Booking, pk=booking_id)
-    return JsonResponse({'total_price': str(booking.total_price)})
+    return JsonResponse({'base_price': str(booking.base_price)})
 
 
 def listing_price(request):

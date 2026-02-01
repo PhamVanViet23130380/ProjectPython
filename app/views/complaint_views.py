@@ -75,7 +75,7 @@ def send_complaint_confirmation_email(user, booking, reason):
         'booking_id': booking.booking_id,
         'check_in': booking.check_in,
         'check_out': booking.check_out,
-        'total_price': booking.total_price,
+        'total_price': booking.base_price,
         'reason': reason,
     }
     html_message = render_to_string('app/emails/complaint_confirmation.html', context)
