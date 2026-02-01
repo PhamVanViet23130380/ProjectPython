@@ -11,7 +11,7 @@ from decimal import Decimal
 from .models import (
     Listing, ListingAddress, ListingImage, Amenity, ListingAmenity,
     Booking, Payment, Review, ReviewMedia, ReviewAnalysis,
-    Message, Complaint, HostPolicy, ReviewClassification
+    Complaint, HostPolicy, ReviewClassification
 )
 
 User = get_user_model()
@@ -133,16 +133,14 @@ class ListingAdmin(admin.ModelAdmin):
 
 
         pos = qs.filter(analysis__sentiment='pos').count()
-        neu = qs.filter(analysis__sentiment='neu').count()
         neg = qs.filter(analysis__sentiment='neg').count()
 
-        total = pos + neu + neg
+        total = pos + neg
         if total == 0:
             return format_html('<span style="color:#999;">Chưa có đánh giá</span>')
 
         pos_pct = round(pos * 100 / total)
-        neu_pct = round(neu * 100 / total)
-        neg_pct = 100 - pos_pct - neu_pct
+        neg_pct = 100 - pos_pct
 
         return format_html(
             '''
@@ -156,8 +154,7 @@ class ListingAdmin(admin.ModelAdmin):
                     background:
                         conic-gradient(
                             #2e7d32 0% {pos_pct}%,
-                            #f9a825 {pos_pct}% {pos_pct_neu}%,
-                            #c62828 {pos_pct_neu}% 100%
+                            #c62828 {pos_pct}% 100%
                         );
                     display:flex;
                     align-items:center;
@@ -173,17 +170,13 @@ class ListingAdmin(admin.ModelAdmin):
                 <!-- LEGEND -->
                 <div style="font-size:11px; line-height:1.4;">
                     <div style="color:#2e7d32;">● 👍 {pos_pct}% ({pos})</div>
-                    <div style="color:#f9a825;">● 😐 {neu_pct}% ({neu})</div>
                     <div style="color:#c62828;">● 👎 {neg_pct}% ({neg})</div>
                 </div>
             </div>
             ''',
             pos_pct=pos_pct,
-            neu_pct=neu_pct,
             neg_pct=neg_pct,
-            pos_pct_neu=pos_pct + neu_pct,
             pos=pos,
-            neu=neu,
             neg=neg
         )
 
@@ -194,7 +187,7 @@ class ListingAdmin(admin.ModelAdmin):
 # --- QUẢN LÝ ĐẶT PHÒNG (BOOKINGS) ---
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
-    list_display = ('booking_id', 'user_link', 'listing', 'check_in', 'check_out', 'colored_status', 'total_price', 'payment_status')
+    list_display = ('booking_id', 'user_link', 'listing', 'check_in', 'check_out', 'colored_status', 'base_price', 'payment_status')
     list_filter = ('booking_status', 'check_in')
     raw_id_fields = ('user', 'listing')
     inlines = [PaymentInline]
@@ -354,7 +347,6 @@ class PaymentAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 admin.site.register(Payment, PaymentAdmin)
-admin.site.register(Message)
 admin.site.unregister(Group)
 admin.site.register(Group)
 @admin.register(ReviewClassification)

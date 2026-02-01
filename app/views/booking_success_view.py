@@ -24,7 +24,7 @@ def booking_success(request, booking_id):
                 price_data = {
                     'base': booking.base_price,
                     'service_fee': booking.service_fee,
-                    'total': booking.total_price,
+                    'total': booking.base_price,
                 }
                 send_booking_confirmation_email(
                     request,

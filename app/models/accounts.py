@@ -62,7 +62,6 @@ class Booking(models.Model):
     guests = models.IntegerField(default=1, verbose_name='Số khách')
     base_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Giá cơ bản')
     service_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Phí dịch vụ')
-    total_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Tổng tiền')
     booking_status = models.CharField(max_length=20, choices=BOOKING_STATUS_CHOICES, default='pending', verbose_name='Trạng thái đặt phòng')
     created_at = models.DateTimeField(auto_now_add=True)
     note = models.TextField(blank=True, null=True, default='', verbose_name='Ghi chú')
@@ -130,23 +129,7 @@ class Payment(models.Model):
         verbose_name_plural = "Thanh toán"
 
 
-# --- MESSAGES & COMPLAINTS ---
-class Message(models.Model):
-    message_id = models.BigAutoField(primary_key=True)
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_messages')
-    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_messages')
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Tin nhắn từ {self.sender.email} đến {self.receiver.email}"
-
-    class Meta:
-        db_table = 'messages'
-        verbose_name = "Tin nhắn"
-        verbose_name_plural = "Tin nhắn"
-
-
+# --- COMPLAINTS ---
 COMPLAINT_STATUS_CHOICES = [
     ('open', 'Chưa giải quyết'),
     ('resolved', 'Đã giải quyết'),

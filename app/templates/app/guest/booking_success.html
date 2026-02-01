@@ -370,17 +370,11 @@
                 </div>
                 {% endif %}
                 
-                {% if booking.service_fee %}
-                <div class="price-row">
-                    <span>Phí dịch vụ</span>
-                    <span>₫{{ booking.service_fee|floatformat:0|intcomma }}</span>
-                </div>
-                {% endif %}
                 
                 
                 <div class="price-row price-total">
                     <span>Tổng cộng (VND)</span>
-                    <span style="color: #FF385C;">₫{{ booking.total_price|floatformat:0|intcomma }}</span>
+                    <span style="color: #FF385C;">₫{{ booking.base_price|floatformat:0|intcomma }}</span>
                 </div>
                 
                 {% if payment %}

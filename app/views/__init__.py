@@ -12,7 +12,7 @@ from .bnb_information import listing_detail
 from .result_view import search_results
 
 
-from .user_view import user_profile, edit_profile, user_listings, user_bookings, profile_trips , profile_host
+from .user_view import user_profile, edit_profile, user_listings, user_bookings, profile_trips , profile_host, profile_host_bookings
 
 
 from .book_view import create_booking, booking_detail, cancel_booking, host_bookings

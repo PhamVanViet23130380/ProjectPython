@@ -1,66 +1,3 @@
-# from transformers import AutoTokenizer, AutoModelForSequenceClassification
-# import torch
-# import os
-
-# MODEL_PATH = os.path.join("app", "models", "visobert")
-
-# _tokenizer = None
-# _model = None
-# MODEL_AVAILABLE = False
-
-
-# def load_model():
-#     global _tokenizer, _model, MODEL_AVAILABLE
-#     if _tokenizer is None or _model is None:
-#         try:
-#             print("Loading local ViSoBERT model...")
-#             _tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-#             _model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH)
-#             _model.eval()
-#             MODEL_AVAILABLE = True
-
-#             # DEBUG: in ra mapping nhãn (rất quan trọng)
-#             print("Model labels:", _model.config.id2label)
-
-#         except Exception as e:
-#             print("Failed to load ViSoBERT model:", e)
-#             _tokenizer = None
-#             _model = None
-#             MODEL_AVAILABLE = False
-
-
-# def analyze_sentiment(text: str):
-#     if not text or not text.strip():
-#         return "neutral", 0.0
-
-#     load_model()
-
-#     if not MODEL_AVAILABLE:
-#         return "neutral", 0.0
-
-#     try:
-#         inputs = _tokenizer(
-#             text,
-#             return_tensors="pt",
-#             truncation=True,
-#             padding=True,
-#             max_length=256
-#         )
-
-#         with torch.no_grad():
-#             outputs = _model(**inputs)
-
-#         probs = torch.nn.functional.softmax(outputs.logits, dim=1)[0]
-#         confidence, label_id = torch.max(probs, dim=0)
-
-#         # ✅ LẤY LABEL ĐÚNG TỪ MODEL
-#         sentiment = _model.config.id2label[label_id.item()].lower()
-
-#         return sentiment, round(confidence.item(), 4)
-
-#     except Exception as e:
-#         print("Sentiment analysis error:", e)
-#         return "neutral", 0.0
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch, os, random, numpy as np
 
@@ -106,14 +43,35 @@ def analyze_sentiment(text: str):
 
     probs = torch.softmax(outputs.logits, dim=1)[0]
     confidence, label_id = torch.max(probs, dim=0)
+    conf_value = confidence.item()
 
     sentiment = _model.config.id2label[label_id.item()].lower()
 
-    if sentiment.startswith("pos"):
-        sentiment = "pos"
+    # Lấy xác suất của từng nhãn (NEG=0, POS=1, NEU=2)
+    neg_prob = probs[0].item()
+    pos_prob = probs[1].item()
+    
+
+    # Nếu xác suất cao nhất là NEU hoặc confidence thấp -> neutral
+    # Hoặc nếu khoảng cách giữa pos và neg quá nhỏ -> neutral
+    CONFIDENCE_THRESHOLD = 0.6
+    DIFF_THRESHOLD = 0.2
+
+    if sentiment.startswith("neu"):
+        sentiment = "neu"
+    elif sentiment.startswith("pos"):
+        # Nếu confidence thấp hoặc pos không vượt trội hơn neg nhiều -> neutral
+        if conf_value < CONFIDENCE_THRESHOLD or (pos_prob - neg_prob) < DIFF_THRESHOLD:
+            sentiment = "neu"
+        else:
+            sentiment = "pos"
     elif sentiment.startswith("neg"):
-        sentiment = "neg"
+        # Nếu confidence thấp hoặc neg không vượt trội hơn pos nhiều -> neutral
+        if conf_value < CONFIDENCE_THRESHOLD or (neg_prob - pos_prob) < DIFF_THRESHOLD:
+            sentiment = "neu"
+        else:
+            sentiment = "neg"
     else:
         sentiment = "neu"
 
-    return sentiment, round(confidence.item(), 4)
+    return sentiment, round(conf_value, 4)

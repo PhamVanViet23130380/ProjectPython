@@ -216,7 +216,11 @@
                     <p class="mb-2"><strong>Thông tin liên hệ:</strong></p>
                     <p class="mb-1"><i class="fa-solid fa-phone me-2"></i> {{ host.phone_number|default:"Chưa cập nhật" }}</p>
                     <p><i class="fa-solid fa-envelope me-2"></i> {{ host.email }}</p>
-                    <button class="btn btn-outline-dark btn-sm">Nhắn tin cho chủ nhà</button>
+                    {% if user.is_authenticated and user != host %}
+                    <button class="btn btn-outline-dark btn-sm" onclick="openChatWithHost({{ listing.listing_id }})">Nhắn tin cho chủ nhà</button>
+                    {% elif not user.is_authenticated %}
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-dark btn-sm">Nhắn tin cho chủ nhà</a>
+                    {% endif %}
                 </div>
 
                 <div class="reviews-section">
@@ -288,11 +292,9 @@
                         {% endfor %}
                         {% if r.analysis %}
                         <div class="ai-analysis">
-                            {% if r.analysis.sentiment == 'pos' %}
+                            {% if r.analysis.sentiment == 'pos' or r.analysis.sentiment == 'positive' %}
                                 <span class="badge rounded-pill bg-success text-white">Tích cực</span>
-                            {% elif r.analysis.sentiment == 'neu' %}
-                                <span class="badge rounded-pill bg-warning text-dark">Trung tính</span>
-                            {% elif r.analysis.sentiment == 'neg' %}
+                            {% elif r.analysis.sentiment == 'neg' or r.analysis.sentiment == 'negative' %}
                                 <span class="badge rounded-pill bg-danger text-white">Tiêu cực</span>
                             {% endif %}
                         </div>
@@ -351,10 +353,6 @@
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-decoration-underline">&#8363;{{ listing.price_per_night|floatformat:0|intdot }} x <span id="nights-count">0</span> &#273;&#234;m</span>
                             <span id="base-price">&#8363;0</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Ph&#237; d&#7883;ch v&#7909;</span>
-                            <span id="service-fee">&#8363;0</span>
                         </div>
                         <hr>
                         <div class="d-flex justify-content-between fw-bold fs-5">
@@ -422,12 +420,10 @@
                             }
                             const nights = Number(data.nights || diff);
                             const base = Number(data.base || 0);
-                            const serviceFee = Number(data.service_fee || 0);
-                            const total = Number(data.total || 0);
+                            const total = Number(data.total || data.base || 0);
 
                             document.getElementById('nights-count').innerText = nights;
                             document.getElementById('base-price').innerText = '\u20ab' + base.toLocaleString('vi-VN');
-                            document.getElementById('service-fee').innerText = '\u20ab' + serviceFee.toLocaleString('vi-VN');
                             document.getElementById('total-price').innerText = '\u20ab' + Math.round(total).toLocaleString('vi-VN');
                             calcDiv.classList.remove('d-none');
                         })
@@ -435,7 +431,6 @@
                             const base = diff * price;
                             document.getElementById('nights-count').innerText = diff;
                             document.getElementById('base-price').innerText = '\u20ab' + base.toLocaleString('vi-VN');
-                            document.getElementById('service-fee').innerText = '\u20ab0';
                             document.getElementById('total-price').innerText = '\u20ab' + Math.round(base).toLocaleString('vi-VN');
                             calcDiv.classList.remove('d-none');
                         });
@@ -539,5 +534,34 @@
         });
     </script>
     {% endif %}
+    
+    {% include 'app/includes/chat_widget.html' %}
+    
+    <script>
+    function openChatWithHost(listingId) {
+        fetch(`/chat/open-listing/${listingId}/`, {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(res => {
+            if (!res.ok) {
+                return res.json().then(data => {
+                    throw new Error(data.error || 'Không thể mở chat');
+                });
+            }
+            return res.json();
+        })
+        .then(data => {
+            openChat(data.conversation_id, data.other_user_name);
+        })
+        .catch(err => {
+            console.error(err);
+            alert(err.message || 'Không mở được chat');
+        });
+    }
+    </script>
 </body>
 </html>

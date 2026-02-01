@@ -8,6 +8,20 @@ from app.models import Booking, Review, Listing, User
 
 
 
+from django.shortcuts import render
+
+@login_required
+def profile_host_bookings(request):
+    bookings = Booking.objects.filter(
+        listing__host=request.user
+    ).select_related('listing', 'user')
+
+    return render(request, 'app/user/profile_host_bookings.html', {
+        'bookings': bookings
+    })
+
+
+
 
 def build_profile_stats(user):
     bookings = Booking.objects.filter(user=user)
@@ -26,7 +40,7 @@ def build_profile_stats(user):
 
         'total_spent': bookings.filter(
             booking_status='completed'
-        ).aggregate(total=Sum('total_price'))['total'] or 0,
+        ).aggregate(total=Sum('base_price'))['total'] or 0,
 
         'avg_rating': (
             Review.objects.filter(listing__host=user)
@@ -35,6 +49,7 @@ def build_profile_stats(user):
             else None
         )
     }
+
 
 
 
@@ -187,7 +202,7 @@ def profile_host(request):
 
     total_revenue = bookings.filter(
         booking_status='completed'
-    ).aggregate(total=Sum('total_price'))['total'] or 0
+    ).aggregate(total=Sum('base_price'))['total'] or 0
 
     avg_rating = Review.objects.filter(
         listing__host=user

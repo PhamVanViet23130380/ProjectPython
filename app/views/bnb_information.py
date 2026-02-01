@@ -104,27 +104,30 @@ def listing_detail(request, listing_id):
 
 
             # Chạy AI ViSoBERT phân tích cảm xúc
+            # CHONG SPAM
+            spam_reasons = []
+
+            # 1. Lap tu
+            words = comment.lower().split()
+            if len(words) >= 6:
+                unique_ratio = len(set(words)) / len(words)
+                if unique_ratio < 0.3:
+                    spam_reasons.append("tu_lap_lai")
+                    spam_reasons.append("noi_dung_vo_nghia")
+
+            # 5. Chua link
+            url_pattern = r"(https?://|www\.)\S+"
+            if re.search(url_pattern, comment.lower()):
+                spam_reasons.append("gan_link")
+
+            spam = ("gan_link" in spam_reasons or len(spam_reasons) >= 2)
+
+            sentiment = "neu"
+            confidence = 0.0
             try:
                 sentiment_raw, raw_confidence = analyze_sentiment(comment)
 
-                #CHỐNG SPAM
-                spam_reasons = []
-
-                # 1. Lặp từ
-                words = comment.lower().split()
-                if len(words) >= 6:
-                    unique_ratio = len(set(words)) / len(words)
-                    if unique_ratio < 0.3:
-                        spam_reasons.append("tu_lap_lai")
-                        spam_reasons.append("noi_dung_vo_nghia")
-
-                # 5. Chứa link
-                url_pattern = r"(https?://|www\.)\S+"
-                if re.search(url_pattern, comment.lower()):
-                    spam_reasons.append("gan_link")
-
-                spam = ("gan_link" in spam_reasons or len(spam_reasons) >= 2)
-                # Chuẩn hóa nhãn sentiment
+                # Chuan hoa nhan sentiment
                 sentiment_raw = sentiment_raw.lower()
 
                 if sentiment_raw in ["positive", "pos"]:
@@ -136,24 +139,20 @@ def listing_detail(request, listing_id):
                 else:
                     sentiment = "neu"
 
-
                 confidence = round(raw_confidence, 2)
-
-                ReviewAnalysis.objects.create(
-                    review=new_review,
-                    sentiment=sentiment,
-                    confidence_score=confidence
-                )
-                
-
-                ReviewClassification.objects.update_or_create(
-                    review=new_review,
-                    defaults={"spam_status": spam, "reason": spam_reasons}
-                )
-
-
             except Exception as e:
-                print(f"Lỗi AI: {e}")
+                print(f"Loi AI: {e}")
+
+            ReviewAnalysis.objects.create(
+                review=new_review,
+                sentiment=sentiment,
+                confidence_score=confidence
+            )
+
+            ReviewClassification.objects.update_or_create(
+                review=new_review,
+                defaults={"spam_status": spam, "reason": spam_reasons}
+            )
 
             return redirect(request.path)
 
