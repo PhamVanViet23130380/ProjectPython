@@ -190,7 +190,7 @@ class ReviewMedia(models.Model):
 class ReviewAnalysis(models.Model):
     analysis_id = models.BigAutoField(primary_key=True)
     review = models.OneToOneField(Review, on_delete=models.CASCADE, related_name='analysis')
-    sentiment = models.CharField(max_length=10, choices=(('positive', 'Tích cực'), ('negative', 'Tiêu cực'), ('neutral', 'Trung tính')),
+    sentiment = models.CharField(max_length=10, choices=(('pos', 'Tích cực'), ('neg', 'Tiêu cực'), ('neu', 'Trung tính')),
                                  verbose_name='Cảm xúc')
     confidence_score = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='Độ tin cậy')
     analyzed_at = models.DateTimeField(auto_now_add=True)

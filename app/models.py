@@ -29,9 +29,9 @@ MEDIA_TYPE_CHOICES = [
 ]
 
 SENTIMENT_CHOICES = [
-    ('positive', 'Tích cực'),
-    ('negative', 'Tiêu cực'),
-    ('neutral', 'Trung tính'), 
+    ('pos', 'Tích cực'),
+    ('neg', 'Tiêu cực'),
+    ('neu', 'Trung tính'), 
 ]
 
 COMPLAINT_STATUS_CHOICES = [
