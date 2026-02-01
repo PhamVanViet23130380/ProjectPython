@@ -4,19 +4,22 @@
 /* HOST PAGE – FIX HOÀN CHỈNH */
 /* ============================= */
 
-/* ❌ KHÔNG KHÓA SCROLL BODY */
-body {
-    height: 100vh;
-    overflow: hidden; /* ❌ không cho scroll toàn trang */
-}
-
 /* ===== MAIN CONTENT ===== */
 .profile-content.host-page {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 140px); /* header + tabs */
     padding: 30px;
-    overflow: hidden; /* chỉ scroll bên trong */
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* Scrollbar đẹp */
+.profile-content.host-page::-webkit-scrollbar {
+    width: 6px;
+}
+.profile-content.host-page::-webkit-scrollbar-thumb {
+    background: #c7b7af;
+    border-radius: 10px;
 }
 
 /* ===== TITLE ===== */
@@ -56,21 +59,42 @@ body {
     color: #777;
 }
 
-/* ===== SCROLL CONTAINER ===== */
-.host-scroll {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 8px;
+/* Clickable stat card */
+a.stat-card.clickable,
+a.stat-card.clickable:hover,
+a.stat-card.clickable:visited,
+a.stat-card.clickable:active,
+a.stat-card.clickable:focus {
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-/* scrollbar đẹp */
-.host-scroll::-webkit-scrollbar {
-    width: 6px;
+a.stat-card.clickable h3,
+a.stat-card.clickable p,
+a.stat-card.clickable * {
+    text-decoration: none !important;
 }
 
-.host-scroll::-webkit-scrollbar-thumb {
-    background: #c7b7af;
-    border-radius: 10px;
+a.stat-card.clickable:hover {
+    border-color: #8B5A2B;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 90, 43, 0.15);
+}
+
+a.stat-card.clickable p i {
+    margin-left: 5px;
+    font-size: 12px;
+    transition: transform 0.2s;
+}
+
+a.stat-card.clickable:hover p i {
+    transform: translateX(3px);
 }
 
 /* ===== SECTION ===== */

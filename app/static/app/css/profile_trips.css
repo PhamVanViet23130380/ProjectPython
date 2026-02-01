@@ -5,39 +5,38 @@
 /* PROFILE TRIPS PAGE */
 /* ============================= */
 
-
 body {
     height: 100vh;
-    overflow: hidden; /* ❌ không cho scroll toàn trang */
+    overflow: hidden;
 }
 
 .container {
-    height: 100vh;
-    max-width: 1000px;
+    height: calc(100vh - 40px);
     display: flex;
     flex-direction: column;
-    padding-bottom: 30px;
 }
-
-.profile-content {
-    flex: 1;
-    display: flex;
-    overflow: hidden; /* quan trọng */
-}
-
-
 
 /* Dùng chung layout profile */
 .profile-content.trips-page {
     display: flex;
     padding: 30px;
     gap: 30px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* Scrollbar đẹp */
+.profile-content.trips-page::-webkit-scrollbar {
+    width: 6px;
+}
+.profile-content.trips-page::-webkit-scrollbar-thumb {
+    background: #c7b7af;
+    border-radius: 10px;
 }
 
 /* Bên phải chỉ 1 cột (không chia 2 như dashboard) */
 .trips-content {
     flex: 1;
-    overflow-y: auto;      /* ✅ scroll nội bộ */
     padding-right: 10px;
 }
 

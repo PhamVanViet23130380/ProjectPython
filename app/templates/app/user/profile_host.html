@@ -76,10 +76,10 @@
                     <p>Tổng lượt đặt</p>
                 </div>
 
-                <div class="stat-card">
+                <a href="{% url 'host_revenue_statistics' %}" class="stat-card clickable">
                     <h3>{{ total_revenue|intcomma }}đ</h3>
-                    <p>Doanh thu</p>
-                </div>
+                    <p>Doanh thu <i class="fas fa-chevron-right"></i></p>
+                </a>
 
                 <div class="stat-card">
                     <h3>{{ avg_rating|default:"Chưa có" }}</h3>

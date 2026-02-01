@@ -3,7 +3,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.timezone import now
-from django.db.models import Sum, Avg
+from django.utils import timezone
+from django.db.models import Sum, Avg, Count, F
+from django.db.models.functions import ExtractMonth, ExtractYear, Coalesce
+from django.http import JsonResponse
+from decimal import Decimal
+import json
 from app.models import Booking, Review, Listing, User
 
 
@@ -200,9 +205,13 @@ def profile_host(request):
         booking_status='cancelled'
     ).count()
 
-    total_revenue = bookings.filter(
-        booking_status='completed'
-    ).aggregate(total=Sum('base_price'))['total'] or 0
+    # Tính doanh thu: base_price - service_fee (tiền host thực nhận)
+    completed_bookings = bookings.filter(booking_status='completed')
+    total_revenue = Decimal('0')
+    for b in completed_bookings:
+        base = b.base_price or Decimal('0')
+        fee = b.service_fee or Decimal('0')
+        total_revenue += (base - fee)
 
     avg_rating = Review.objects.filter(
         listing__host=user
@@ -217,5 +226,103 @@ def profile_host(request):
             'total_bookings': total_bookings,
             'total_revenue': total_revenue,
             'avg_rating': avg_rating,
+            'is_host': True,
         }
     )
+
+
+@login_required
+def host_revenue_statistics(request):
+    """Thống kê doanh thu của host theo tháng/năm."""
+    user = request.user
+    current_year = timezone.now().year
+    current_month = timezone.now().month
+    
+    # Lấy năm từ query param hoặc dùng năm hiện tại
+    selected_year = request.GET.get('year')
+    try:
+        selected_year = int(selected_year)
+    except (TypeError, ValueError):
+        selected_year = current_year
+    
+    # Lấy danh sách các năm có booking
+    years_qs = Booking.objects.filter(
+        listing__host=user,
+        booking_status='completed'
+    ).annotate(
+        year=ExtractYear('created_at')
+    ).values('year').distinct().order_by('-year')
+    
+    available_years = [y['year'] for y in years_qs if y['year']]
+    if current_year not in available_years:
+        available_years.insert(0, current_year)
+    available_years = sorted(set(available_years), reverse=True)
+    
+    # Lấy booking đã hoàn thành trong năm được chọn
+    bookings_year = Booking.objects.filter(
+        listing__host=user,
+        booking_status='completed',
+        created_at__year=selected_year
+    )
+    
+    # Tính tổng doanh thu năm (base_price - service_fee)
+    total_revenue_year = Decimal('0')
+    for b in bookings_year:
+        base = b.base_price or Decimal('0')
+        fee = b.service_fee or Decimal('0')
+        total_revenue_year += (base - fee)
+    
+    total_bookings_year = bookings_year.count()
+    
+    # Doanh thu tháng hiện tại
+    bookings_month = Booking.objects.filter(
+        listing__host=user,
+        booking_status='completed',
+        created_at__year=current_year,
+        created_at__month=current_month
+    )
+    total_revenue_month = Decimal('0')
+    for b in bookings_month:
+        base = b.base_price or Decimal('0')
+        fee = b.service_fee or Decimal('0')
+        total_revenue_month += (base - fee)
+    total_bookings_month = bookings_month.count()
+    
+    # Thống kê theo tháng trong năm được chọn
+    monthly_data = []
+    for m in range(1, 13):
+        month_bookings = bookings_year.filter(created_at__month=m)
+        month_revenue = Decimal('0')
+        for b in month_bookings:
+            base = b.base_price or Decimal('0')
+            fee = b.service_fee or Decimal('0')
+            month_revenue += (base - fee)
+        monthly_data.append({
+            'month': m,
+            'revenue': float(month_revenue),
+            'count': month_bookings.count()
+        })
+    
+    # Tính trung bình doanh thu/tháng
+    months_with_data = len([m for m in monthly_data if m['revenue'] > 0])
+    avg_revenue_per_month = float(total_revenue_year) / months_with_data if months_with_data > 0 else 0
+    
+    # Dữ liệu cho biểu đồ
+    monthly_labels = [f"Tháng {m}" for m in range(1, 13)]
+    monthly_values = [m['revenue'] for m in monthly_data]
+    
+    context = {
+        'selected_year': selected_year,
+        'available_years': available_years,
+        'total_revenue_year': total_revenue_year,
+        'total_bookings_year': total_bookings_year,
+        'total_revenue_month': total_revenue_month,
+        'total_bookings_month': total_bookings_month,
+        'avg_revenue_per_month': avg_revenue_per_month,
+        'monthly_data': monthly_data,
+        'monthly_labels': json.dumps(monthly_labels),
+        'monthly_values': json.dumps(monthly_values),
+        'is_host': True,
+    }
+    
+    return render(request, 'app/user/host_revenue_statistics.html', context)

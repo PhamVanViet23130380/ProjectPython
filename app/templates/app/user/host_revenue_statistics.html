@@ -1,0 +1,384 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thống kê doanh thu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            margin-bottom: 20px;
+        }
+        .logo {
+            font-size: 1.5rem;
+            color: #8B5A2B;
+            text-decoration: none;
+        }
+        .user-nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .tab-item {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #666;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .tab-item:hover {
+            background: #f0f0f0;
+        }
+        .tab-item.active {
+            background: #8B5A2B;
+            color: white;
+        }
+        /* Page Header */
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .back-btn {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 10px 18px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .back-btn:hover {
+            background: #f5f5f5;
+        }
+        .page-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #333;
+        }
+        /* Year Filter */
+        .year-filter {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .year-filter label {
+            font-weight: 600;
+            color: #555;
+        }
+        .year-filter select {
+            padding: 10px 16px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            background: #fff;
+            min-width: 120px;
+            cursor: pointer;
+        }
+        /* Stats Grid - HORIZONTAL */
+        .stats-grid {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-box {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            text-align: center;
+            min-width: 0;
+        }
+        .stat-box.highlight {
+            background: linear-gradient(135deg, #A0522D 0%, #8B4513 100%);
+            color: white;
+        }
+        .stat-box h3 {
+            font-size: 1.5rem;
+            margin: 0 0 8px 0;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .stat-box p {
+            margin: 0;
+            opacity: 0.85;
+            font-size: 0.85rem;
+        }
+        /* Chart Container */
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 30px;
+        }
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .chart-title i {
+            color: #8B5A2B;
+        }
+        /* Monthly Table */
+        .monthly-table {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        .monthly-table h3 {
+            padding: 20px 25px;
+            margin: 0;
+            border-bottom: 1px solid #eee;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .monthly-table h3 i {
+            color: #8B5A2B;
+        }
+        .monthly-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .monthly-table th,
+        .monthly-table td {
+            padding: 14px 25px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .monthly-table th {
+            background: #fafafa;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9rem;
+        }
+        .monthly-table tr:last-child td {
+            border-bottom: none;
+        }
+        .monthly-table tbody tr:hover {
+            background: #fafafa;
+        }
+        .revenue-text {
+            font-weight: 600;
+            color: #00A699;
+        }
+        .no-data {
+            color: #bbb;
+        }
+        /* Responsive */
+        @media (max-width: 900px) {
+            .stats-grid {
+                flex-wrap: wrap;
+            }
+            .stat-box {
+                flex: 1 1 45%;
+            }
+        }
+        @media (max-width: 600px) {
+            .stats-grid {
+                flex-direction: column;
+            }
+            .stat-box {
+                flex: 1 1 100%;
+            }
+            .tabs {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- MAIN CONTENT -->
+    <main class="revenue-page">
+        <div class="page-header">
+            <a href="{% url 'profile_host' %}" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </a>
+            <h2>Thống kê doanh thu</h2>
+        </div>
+
+        <!-- Year Filter -->
+        <div class="year-filter">
+            <label for="yearSelect">Chọn năm:</label>
+            <select id="yearSelect" onchange="changeYear(this.value)">
+                {% for year in available_years %}
+                <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>
+                    {{ year }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Stats Overview - HORIZONTAL ROW -->
+        <div class="stats-grid">
+            <div class="stat-box highlight">
+                <h3>{{ total_revenue_year|intcomma }}đ</h3>
+                <p>Tổng doanh thu năm {{ selected_year }}</p>
+            </div>
+            <div class="stat-box">
+                <h3>{{ total_bookings_year }}</h3>
+                <p>Lượt đặt hoàn thành</p>
+            </div>
+            <div class="stat-box">
+                <h3>{{ total_revenue_month|intcomma }}đ</h3>
+                <p>Doanh thu tháng này</p>
+            </div>
+            <div class="stat-box">
+                <h3>{{ avg_revenue_per_month|floatformat:0|intcomma }}đ</h3>
+                <p>Trung bình/tháng</p>
+            </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="chart-container">
+            <div class="chart-title">
+                <i class="fas fa-chart-bar"></i> Biểu đồ doanh thu theo tháng - {{ selected_year }}
+            </div>
+            <canvas id="revenueChart" height="100"></canvas>
+        </div>
+
+        <!-- Monthly Table -->
+        <div class="monthly-table">
+            <h3><i class="fas fa-table"></i> Chi tiết doanh thu theo tháng</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tháng</th>
+                        <th>Số booking</th>
+                        <th>Doanh thu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in monthly_data %}
+                    <tr>
+                        <td>Tháng {{ data.month }}</td>
+                        <td>{{ data.count }}</td>
+                        <td>
+                            {% if data.revenue > 0 %}
+                            <span class="revenue-text">{{ data.revenue|floatformat:0|intcomma }}đ</span>
+                            {% else %}
+                            <span class="no-data">0đ</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<script>
+function changeYear(year) {
+    window.location.href = '?year=' + year;
+}
+
+// Chart.js
+const ctx = document.getElementById('revenueChart').getContext('2d');
+const monthlyLabels = {{ monthly_labels|safe }};
+const monthlyValues = {{ monthly_values|safe }};
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: monthlyLabels,
+        datasets: [{
+            label: 'Doanh thu (VND)',
+            data: monthlyValues,
+            backgroundColor: 'rgba(139, 90, 43, 0.7)',
+            borderColor: 'rgba(139, 69, 19, 1)',
+            borderWidth: 1,
+            borderRadius: 5
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let value = context.parsed.y;
+                        return new Intl.NumberFormat('vi-VN').format(value) + 'đ';
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        if (value >= 1000000) {
+                            return (value / 1000000) + 'tr';
+                        } else if (value >= 1000) {
+                            return (value / 1000) + 'k';
+                        }
+                        return value;
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+
+</body>
+</html>

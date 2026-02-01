@@ -30,6 +30,7 @@ urlpatterns = [
     path('profile/edit/', views.edit_profile , name='profile_edit'),
     path('profile/trips/', views.profile_trips, name='profile_trips'),
     path('profile/host/', views.profile_host, name='profile_host'),
+    path('profile/host/revenue/', views.host_revenue_statistics, name='host_revenue_statistics'),
     path('profile/host-bookings/', views.profile_host_bookings, name='profile_host_bookings'),
 
 
