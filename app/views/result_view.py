@@ -31,25 +31,60 @@ def search_results(request):
             review_count=Count('reviews')
         )
 
-        # Location search
+        # Location/keyword search - tìm trong địa chỉ, tiêu đề, mô tả, loại chỗ ở
         location = request.GET.get('location', '').strip()
         if location:
-            # Search in both city and district
             qs = qs.filter(
                 Q(listingaddress__city__icontains=location) |
-                Q(listingaddress__district__icontains=location)
+                Q(listingaddress__district__icontains=location) |
+                Q(listingaddress__street__icontains=location) |
+                Q(title__icontains=location) |
+                Q(description__icontains=location) |
+                Q(property_type__icontains=location) |
+                Q(usage_type__icontains=location)
             )
 
-        # Date-based availability - exclude listings with conflicting bookings
+        # Date-based availability - filter by listing availability dates
         check_in = request.GET.get('check_in', '').strip()
         check_out = request.GET.get('check_out', '').strip()
         
-        if check_in and check_out:
+        check_in_date = None
+        check_out_date = None
+        
+        # Parse dates
+        if check_in:
             try:
                 check_in_date = datetime.strptime(check_in, '%Y-%m-%d').date()
+            except (ValueError, TypeError):
+                pass
+        
+        if check_out:
+            try:
                 check_out_date = datetime.strptime(check_out, '%Y-%m-%d').date()
-                
-                # Find listings with conflicting confirmed bookings
+            except (ValueError, TypeError):
+                pass
+        
+        # Filter by listing availability dates (available_from / available_to set by host)
+        if check_in_date:
+            # Listing must be available on check_in date
+            # available_from <= check_in AND available_to >= check_in
+            qs = qs.filter(
+                Q(available_from__isnull=True) | Q(available_from__lte=check_in_date)
+            ).filter(
+                Q(available_to__isnull=True) | Q(available_to__gte=check_in_date)
+            )
+        
+        if check_out_date:
+            # Listing must be available on check_out date
+            qs = qs.filter(
+                Q(available_from__isnull=True) | Q(available_from__lte=check_out_date)
+            ).filter(
+                Q(available_to__isnull=True) | Q(available_to__gte=check_out_date)
+            )
+        
+        # Exclude listings with conflicting confirmed bookings (only if both dates provided)
+        if check_in_date and check_out_date:
+            try:
                 from app.models import Booking
                 conflicting_booking_listings = Booking.objects.filter(
                     booking_status='confirmed'
@@ -60,8 +95,8 @@ def search_results(request):
                 
                 # Exclude those listings from results
                 qs = qs.exclude(listing_id__in=list(conflicting_booking_listings))
-            except (ValueError, TypeError):
-                pass  # Invalid date format, skip filtering
+            except Exception:
+                pass
         
         # Guest capacity filters
         adults = request.GET.get('adults', '0')

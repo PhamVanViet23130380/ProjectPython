@@ -1,0 +1,296 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Kết quả tìm kiếm{% if filters.location %} - {{ filters.location }}{% endif %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'app/css/home.css' %}">
+<style>
+    .search-results-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 24px;
+    }
+    .search-header {
+        margin-bottom: 24px;
+    }
+    .search-header h1 {
+        font-size: 24px;
+        font-weight: 600;
+        color: #222;
+        margin: 0 0 8px;
+    }
+    .search-header .search-info {
+        font-size: 14px;
+        color: #666;
+    }
+    .search-header .search-info span {
+        margin-right: 16px;
+    }
+    .search-header .search-info i {
+        color: #a67c52;
+        margin-right: 4px;
+    }
+    .no-results {
+        text-align: center;
+        padding: 80px 20px;
+        background: #f9f9f9;
+        border-radius: 16px;
+        margin-top: 20px;
+    }
+    .no-results i {
+        font-size: 64px;
+        color: #ccc;
+        margin-bottom: 24px;
+    }
+    .no-results h2 {
+        font-size: 22px;
+        color: #333;
+        margin: 0 0 12px;
+    }
+    .no-results p {
+        color: #666;
+        margin: 0 0 24px;
+    }
+    .no-results a {
+        display: inline-block;
+        padding: 12px 24px;
+        background: #a67c52;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+    .no-results a:hover {
+        background: #8b6542;
+    }
+    
+    /* Pagination */
+    .pagination-wrap {
+        display: flex;
+        justify-content: center;
+        margin-top: 40px;
+        gap: 8px;
+    }
+    .pagination-wrap a, .pagination-wrap span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        height: 40px;
+        padding: 0 12px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        color: #333;
+        text-decoration: none;
+        font-size: 14px;
+    }
+    .pagination-wrap a:hover {
+        background: #f5f5f5;
+        border-color: #a67c52;
+    }
+    .pagination-wrap .current {
+        background: #a67c52;
+        color: #fff;
+        border-color: #a67c52;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="search-results-wrapper">
+    <!-- Search Header -->
+    <div class="search-header">
+        {% if filters.location %}
+            <h1>Kết quả tìm kiếm cho "{{ filters.location }}"</h1>
+        {% else %}
+            <h1>Tất cả chỗ ở</h1>
+        {% endif %}
+        
+        <div class="search-info">
+            {% if listings %}
+                <span><i class="fa-solid fa-home"></i> {{ listings.paginator.count }} chỗ ở</span>
+            {% endif %}
+            {% if filters.check_in and filters.check_out %}
+                <span><i class="fa-solid fa-calendar"></i> {{ filters.check_in }} → {{ filters.check_out }}</span>
+            {% endif %}
+            {% if filters.adults %}
+                <span><i class="fa-solid fa-users"></i> {{ filters.adults }} người lớn{% if filters.children %}, {{ filters.children }} trẻ em{% endif %}</span>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if listings %}
+    <section class="section cards-section">
+        <div class="section-header">
+            <h2>Các nơi ở phù hợp với tìm kiếm của bạn ›</h2>
+        </div>
+        <div class="cards-wrapper" style="overflow: visible;">
+            <div class="cards-row" style="flex-wrap: wrap; gap: 24px;">
+                {% for item in listings %}
+                <div class="card" data-room-id="{{ item.listing_id }}" style="flex: 0 0 calc(25% - 18px); max-width: calc(25% - 18px);">
+                    {% with item.images.all|first as first_img %}
+                        {% if first_img %}
+                            <img src="{{ first_img.image_url }}" alt="{{ item.title }}">
+                        {% else %}
+                            <img src="{% static 'app/images/placeholder.jpg' %}" alt="{{ item.title }}">
+                        {% endif %}
+                    {% endwith %}
+                    <h4>{{ item.title }}</h4>
+                    <p class="meta">
+                        ₫{{ item.price_per_night|floatformat:0|intcomma }} / đêm ·
+                        {% if item.review_count > 0 %}
+                            ★{{ item.average_rating|floatformat:1 }}
+                            <span style="color:#777;">({{ item.review_count }})</span>
+                        {% else %}
+                            <span style="color:#999;">Chưa đánh giá</span>
+                        {% endif %}
+                    </p>
+                    {% if item.listingaddress %}
+                    <p style="font-size: 13px; color: #666; margin-top: 4px;">
+                        <i class="fa-solid fa-location-dot" style="color: #a67c52;"></i>
+                        {{ item.listingaddress.district }}, {{ item.listingaddress.city }}
+                    </p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Pagination -->
+    {% if listings.has_other_pages %}
+    <div class="pagination-wrap">
+        {% if listings.has_previous %}
+            <a href="?{{ request.GET.urlencode }}&page={{ listings.previous_page_number }}">
+                <i class="fa-solid fa-chevron-left"></i>
+            </a>
+        {% endif %}
+        
+        {% for num in listings.paginator.page_range %}
+            {% if listings.number == num %}
+                <span class="current">{{ num }}</span>
+            {% elif num > listings.number|add:'-3' and num < listings.number|add:'3' %}
+                <a href="?{{ request.GET.urlencode }}&page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        
+        {% if listings.has_next %}
+            <a href="?{{ request.GET.urlencode }}&page={{ listings.next_page_number }}">
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- No Results -->
+    <div class="no-results">
+        <i class="fa-solid fa-search"></i>
+        <h2>Không tìm thấy chỗ ở phù hợp</h2>
+        <p>Hãy thử thay đổi địa điểm, thời gian hoặc số khách.</p>
+        <a href="{% url 'home' %}">Quay về trang chủ</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card) => {
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', function(e) {
+            if (e.target.closest('.card-heart')) return;
+            const roomId = this.getAttribute('data-room-id');
+            const url = "/chitietnoio/" + roomId + "/";
+            window.open(url, '_blank');
+        });
+    });
+
+    // =============================================
+    // Giữ lại giá trị tìm kiếm trên thanh search
+    // =============================================
+    
+    // Location
+    const searchLocation = '{{ filters.location|escapejs }}';
+    const locationInput = document.getElementById('locationInput');
+    const locationValue = document.querySelector('.value[data-field="location"]');
+    
+    if (searchLocation) {
+        if (locationInput) {
+            locationInput.value = searchLocation;
+        }
+        if (locationValue) {
+            locationValue.textContent = searchLocation;
+        }
+    }
+
+    // Dates
+    const checkIn = '{{ filters.check_in|escapejs }}';
+    const checkOut = '{{ filters.check_out|escapejs }}';
+    const datesValue = document.querySelector('.value[data-field="dates"]');
+    
+    if (datesValue && (checkIn || checkOut)) {
+        let dateText = '';
+        if (checkIn && checkOut) {
+            // Format dates for display
+            const formatDate = (dateStr) => {
+                const parts = dateStr.split('-');
+                if (parts.length === 3) {
+                    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+                }
+                return dateStr;
+            };
+            dateText = `${formatDate(checkIn)} - ${formatDate(checkOut)}`;
+        } else if (checkIn) {
+            const parts = checkIn.split('-');
+            if (parts.length === 3) {
+                dateText = `Từ ${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+        } else if (checkOut) {
+            const parts = checkOut.split('-');
+            if (parts.length === 3) {
+                dateText = `Đến ${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+        }
+        if (dateText) {
+            datesValue.textContent = dateText;
+        }
+    }
+
+    // Guests
+    const adults = '{{ filters.adults|escapejs }}';
+    const children = '{{ filters.children|escapejs }}';
+    const infants = '{{ filters.infants|escapejs }}';
+    const pets = '{{ filters.pets|escapejs }}';
+    const guestsValue = document.querySelector('.value[data-field="guests"]');
+    
+    if (guestsValue) {
+        let guestParts = [];
+        const adultsNum = parseInt(adults) || 0;
+        const childrenNum = parseInt(children) || 0;
+        const infantsNum = parseInt(infants) || 0;
+        const petsNum = parseInt(pets) || 0;
+        
+        const totalGuests = adultsNum + childrenNum;
+        if (totalGuests > 0) {
+            guestParts.push(`${totalGuests} khách`);
+        }
+        if (infantsNum > 0) {
+            guestParts.push(`${infantsNum} em bé`);
+        }
+        if (petsNum > 0) {
+            guestParts.push(`${petsNum} thú cưng`);
+        }
+        
+        if (guestParts.length > 0) {
+            guestsValue.textContent = guestParts.join(', ');
+        }
+    }
+});
+</script>
+{% endblock %}

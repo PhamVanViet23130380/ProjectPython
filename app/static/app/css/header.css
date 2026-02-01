@@ -564,9 +564,33 @@ main { padding-top: calc(var(--header-height) + var(--search-height) + 56px); }
     background: #fff;
 }
 
+.calendar-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.cal-nav-btn {
+    background: #f5f5f5;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    color: #666;
+    transition: background 0.2s, color 0.2s;
+}
+
+.cal-nav-btn:hover {
+    background: #e0d5c9;
+    color: #333;
+}
+
 .calendar-heading {
     font-weight: 700;
-    margin-bottom: 8px;
+    text-align: center;
 }
 
 .calendar-grid {
@@ -586,7 +610,39 @@ main { padding-top: calc(var(--header-height) + var(--search-height) + 56px); }
     color: #333;
 }
 
-.calendar-grid span.muted { color: #9a9a9a; background: transparent; }
+.calendar-grid span.day-header {
+    font-weight: 600;
+    color: #888;
+    background: transparent;
+    font-size: 12px;
+}
+
+.calendar-grid span.empty {
+    background: transparent;
+}
+
+.calendar-grid span.muted { color: #9a9a9a; background: transparent; cursor: not-allowed; }
+.calendar-grid span.past { color: #ccc; background: transparent; cursor: not-allowed; }
+
+.calendar-grid span.selectable {
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.calendar-grid span.selectable:hover {
+    background: #e8ddd1;
+    color: #333;
+}
+
+.calendar-grid span.selected {
+    background: #a67c52 !important;
+    color: #fff !important;
+}
+
+.calendar-grid span.in-range {
+    background: #e8ddd1;
+    color: #333;
+}
 
 .quick-range {
     display: flex;

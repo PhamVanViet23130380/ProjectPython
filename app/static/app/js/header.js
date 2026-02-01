@@ -129,34 +129,216 @@ window.addEventListener('load', () => {
         });
     }
 
-    // Date tabs + quick ranges
+    // ========================
+    // DYNAMIC CALENDAR
+    // ========================
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Store selected dates
+    let selectedCheckIn = null;
+    let selectedCheckOut = null;
+    let selectedCheckInDate = null;
+    let selectedCheckOutDate = null;
+
+    const monthNames = [
+        'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+        'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
+    ];
+    const dayNames = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+
+    function getDaysInMonth(month, year) {
+        return new Date(year, month + 1, 0).getDate();
+    }
+
+    function getFirstDayOfMonth(month, year) {
+        let day = new Date(year, month, 1).getDay();
+        // Convert Sunday=0 to Monday=0 format
+        return day === 0 ? 6 : day - 1;
+    }
+
+    function formatDateForDisplay(day, month, year) {
+        return `${day} ${monthNames[month]} năm ${year}`;
+    }
+
+    function formatDateForAPI(day, month, year) {
+        const m = String(month + 1).padStart(2, '0');
+        const d = String(day).padStart(2, '0');
+        return `${year}-${m}-${d}`;
+    }
+
+    function renderCalendar(month, year, containerSelector) {
+        const container = document.querySelector(containerSelector);
+        if (!container) return;
+
+        const heading = container.querySelector('.calendar-heading');
+        const grid = container.querySelector('.calendar-grid');
+
+        if (heading) {
+            heading.textContent = `${monthNames[month]} năm ${year}`;
+        }
+
+        if (!grid) return;
+        grid.innerHTML = '';
+
+        // Day headers
+        dayNames.forEach(d => {
+            const span = document.createElement('span');
+            span.className = 'day-header';
+            span.textContent = d;
+            grid.appendChild(span);
+        });
+
+        // Empty cells for first week
+        const firstDay = getFirstDayOfMonth(month, year);
+        for (let i = 0; i < firstDay; i++) {
+            const span = document.createElement('span');
+            span.className = 'empty';
+            grid.appendChild(span);
+        }
+
+        // Days of month
+        const daysInMonth = getDaysInMonth(month, year);
+        for (let day = 1; day <= daysInMonth; day++) {
+            const span = document.createElement('span');
+            span.textContent = day;
+            span.className = 'day';
+
+            const cellDate = new Date(year, month, day);
+            cellDate.setHours(0, 0, 0, 0);
+
+            // Check if past date
+            if (cellDate < today) {
+                span.classList.add('muted', 'past');
+            } else {
+                span.classList.add('selectable');
+                
+                // Check if selected
+                if (selectedCheckInDate && cellDate.getTime() === selectedCheckInDate.getTime()) {
+                    span.classList.add('selected', 'check-in');
+                }
+                if (selectedCheckOutDate && cellDate.getTime() === selectedCheckOutDate.getTime()) {
+                    span.classList.add('selected', 'check-out');
+                }
+                // Check if in range
+                if (selectedCheckInDate && selectedCheckOutDate && 
+                    cellDate > selectedCheckInDate && cellDate < selectedCheckOutDate) {
+                    span.classList.add('in-range');
+                }
+
+                // Click handler
+                span.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    handleDateClick(day, month, year);
+                });
+            }
+
+            grid.appendChild(span);
+        }
+    }
+
+    function handleDateClick(day, month, year) {
+        const clickedDate = new Date(year, month, day);
+        clickedDate.setHours(0, 0, 0, 0);
+
+        if (!selectedCheckInDate || (selectedCheckInDate && selectedCheckOutDate)) {
+            // First selection or reset
+            selectedCheckInDate = clickedDate;
+            selectedCheckOutDate = null;
+            selectedCheckIn = formatDateForAPI(day, month, year);
+            selectedCheckOut = null;
+            setValue('dates', formatDateForDisplay(day, month, year));
+        } else {
+            // Second selection
+            if (clickedDate <= selectedCheckInDate) {
+                // Clicked before check-in, reset
+                selectedCheckInDate = clickedDate;
+                selectedCheckOutDate = null;
+                selectedCheckIn = formatDateForAPI(day, month, year);
+                selectedCheckOut = null;
+                setValue('dates', formatDateForDisplay(day, month, year));
+            } else {
+                selectedCheckOutDate = clickedDate;
+                selectedCheckOut = formatDateForAPI(day, month, year);
+                const checkInDay = selectedCheckInDate.getDate();
+                const checkInMonth = selectedCheckInDate.getMonth();
+                const checkInYear = selectedCheckInDate.getFullYear();
+                setValue('dates', `${formatDateForDisplay(checkInDay, checkInMonth, checkInYear)} - ${formatDateForDisplay(day, month, year)}`);
+                
+                // Open guests panel after selecting date range
+                setTimeout(() => openPanel('guests'), 300);
+            }
+        }
+
+        // Re-render calendars to update selection
+        renderCalendars();
+    }
+
+    function renderCalendars() {
+        renderCalendar(currentMonth, currentYear, '#calendarMonth1');
+        
+        let nextMonth = currentMonth + 1;
+        let nextYear = currentYear;
+        if (nextMonth > 11) {
+            nextMonth = 0;
+            nextYear++;
+        }
+        renderCalendar(nextMonth, nextYear, '#calendarMonth2');
+    }
+
+    // Navigation buttons
+    const prevBtn = document.querySelector('.prev-month');
+    const nextBtn = document.querySelector('.next-month');
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // Don't go before current month
+            const now = new Date();
+            if (currentYear > now.getFullYear() || 
+                (currentYear === now.getFullYear() && currentMonth > now.getMonth())) {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                renderCalendars();
+            }
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendars();
+        });
+    }
+
+    // Initial render
+    renderCalendars();
+
+    // Date tabs handler
     const dateTabs = document.querySelectorAll('.date-tabs .tab');
     dateTabs.forEach((tab) => {
         tab.addEventListener('click', () => {
             dateTabs.forEach((t) => t.classList.remove('active'));
             tab.classList.add('active');
-            setValue('dates', tab.textContent.trim());
         });
     });
 
+    // Quick range buttons
     const rangeBtns = document.querySelectorAll('.range-btn');
     rangeBtns.forEach((btn) => {
         btn.addEventListener('click', () => {
             const value = btn.dataset.range ? `± ${btn.dataset.range} ngày` : 'Ngày chính xác';
             setValue('dates', value);
-            openPanel('guests');
-        });
-    });
-
-    const calendarDays = document.querySelectorAll('.calendar-grid span');
-    calendarDays.forEach((day) => {
-        if (day.classList.contains('muted')) return;
-        day.addEventListener('click', () => {
-            const monthWrap = day.closest('.calendar-month');
-            const headingEl = monthWrap ? monthWrap.querySelector('.calendar-heading') : null;
-            const monthTitle = headingEl ? headingEl.textContent.trim() : '';
-            const dayNum = day.textContent.trim();
-            if (dayNum) setValue('dates', `${dayNum} · ${monthTitle}`.trim());
             openPanel('guests');
         });
     });
@@ -208,41 +390,6 @@ window.addEventListener('load', () => {
     if (searchBtn) {
         searchBtn.addEventListener('click', performSearch);
     }
-
-    // Store selected dates
-    let selectedCheckIn = null;
-    let selectedCheckOut = null;
-
-    // Enhanced calendar day selection
-    calendarDays.forEach((day) => {
-        if (day.classList.contains('muted')) return;
-        
-        day.addEventListener('click', () => {
-            const monthWrap = day.closest('.calendar-month');
-            const headingEl = monthWrap ? monthWrap.querySelector('.calendar-heading') : null;
-            const monthTitle = headingEl ? headingEl.textContent.trim() : '';
-            const dayNum = day.textContent.trim();
-            
-            if (!selectedCheckIn || (selectedCheckIn && selectedCheckOut)) {
-                // First selection or reset
-                selectedCheckIn = `${dayNum} ${monthTitle}`;
-                selectedCheckOut = null;
-                setValue('dates', selectedCheckIn);
-                
-                // Clear previous selections
-                calendarDays.forEach(d => d.classList.remove('selected', 'in-range'));
-                day.classList.add('selected');
-            } else {
-                // Second selection
-                selectedCheckOut = `${dayNum} ${monthTitle}`;
-                setValue('dates', `${selectedCheckIn} - ${selectedCheckOut}`);
-                day.classList.add('selected');
-                
-                // Optionally open guests panel
-                setTimeout(() => openPanel('guests'), 300);
-            }
-        });
-    });
 
     function performSearch() {
         // Collect search parameters
