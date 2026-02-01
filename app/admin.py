@@ -133,16 +133,14 @@ class ListingAdmin(admin.ModelAdmin):
 
 
         pos = qs.filter(analysis__sentiment='pos').count()
-        neu = qs.filter(analysis__sentiment='neu').count()
         neg = qs.filter(analysis__sentiment='neg').count()
 
-        total = pos + neu + neg
+        total = pos + neg
         if total == 0:
             return format_html('<span style="color:#999;">Chưa có đánh giá</span>')
 
         pos_pct = round(pos * 100 / total)
-        neu_pct = round(neu * 100 / total)
-        neg_pct = 100 - pos_pct - neu_pct
+        neg_pct = 100 - pos_pct
 
         return format_html(
             '''
@@ -156,8 +154,7 @@ class ListingAdmin(admin.ModelAdmin):
                     background:
                         conic-gradient(
                             #2e7d32 0% {pos_pct}%,
-                            #f9a825 {pos_pct}% {pos_pct_neu}%,
-                            #c62828 {pos_pct_neu}% 100%
+                            #c62828 {pos_pct}% 100%
                         );
                     display:flex;
                     align-items:center;
@@ -173,17 +170,13 @@ class ListingAdmin(admin.ModelAdmin):
                 <!-- LEGEND -->
                 <div style="font-size:11px; line-height:1.4;">
                     <div style="color:#2e7d32;">● 👍 {pos_pct}% ({pos})</div>
-                    <div style="color:#f9a825;">● 😐 {neu_pct}% ({neu})</div>
                     <div style="color:#c62828;">● 👎 {neg_pct}% ({neg})</div>
                 </div>
             </div>
             ''',
             pos_pct=pos_pct,
-            neu_pct=neu_pct,
             neg_pct=neg_pct,
-            pos_pct_neu=pos_pct + neu_pct,
             pos=pos,
-            neu=neu,
             neg=neg
         )
 
@@ -232,18 +225,18 @@ class BookingAdmin(admin.ModelAdmin):
                     payment = Payment.objects.create(
                         booking=booking,
                         method='admin',
-                        amount=booking.base_price,
+                        amount=booking.total_price,
                         status='paid',
                         paid_at=timezone.now(),
                         transaction_id=f"admin-{booking.booking_id}-{uuid.uuid4().hex[:8]}",
-                        details=json.dumps({'admin_action': True, 'amount': str(booking.base_price)}),
+                        details=json.dumps({'admin_action': True, 'amount': str(booking.total_price)}),
                     )
                     created += 1
                 else:
                     payment.status = 'paid'
                     payment.paid_at = timezone.now()
                     payment.transaction_id = payment.transaction_id or f"admin-{booking.booking_id}-{uuid.uuid4().hex[:8]}"
-                    payment.details = json.dumps({'admin_action': True, 'amount': str(booking.base_price)})
+                    payment.details = json.dumps({'admin_action': True, 'amount': str(booking.total_price)})
                     payment.save()
                     updated += 1
 
@@ -312,11 +305,11 @@ class PaymentAdmin(admin.ModelAdmin):
             amount = cleaned.get('amount')
             if booking and amount is not None:
                 try:
-                    booking_total = Decimal(booking.base_price)
+                    booking_total = Decimal(booking.total_price)
                 except Exception:
                     booking_total = None
                 if booking_total is not None and Decimal(amount) != booking_total:
-                    raise ValidationError({'amount': f'Amount must equal booking base_price ({booking_total}).'})
+                    raise ValidationError({'amount': f'Amount must equal booking total_price ({booking_total}).'})
             return cleaned
 
     form = PaymentForm
@@ -343,7 +336,7 @@ class PaymentAdmin(admin.ModelAdmin):
                     if bk:
                         b = booking_model.objects.filter(pk=bk).first()
                         if b and 'amount' in self.fields:
-                            self.fields['amount'].initial = b.base_price
+                            self.fields['amount'].initial = b.total_price
                 except Exception:
                     pass
 

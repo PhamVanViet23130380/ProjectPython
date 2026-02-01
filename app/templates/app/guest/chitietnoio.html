@@ -290,8 +290,6 @@
                         <div class="ai-analysis">
                             {% if r.analysis.sentiment == 'pos' or r.analysis.sentiment == 'positive' %}
                                 <span class="badge rounded-pill bg-success text-white">Tích cực</span>
-                            {% elif r.analysis.sentiment == 'neu' or r.analysis.sentiment == 'neutral' %}
-                                <span class="badge rounded-pill bg-warning text-dark">Trung tính</span>
                             {% elif r.analysis.sentiment == 'neg' or r.analysis.sentiment == 'negative' %}
                                 <span class="badge rounded-pill bg-danger text-white">Tiêu cực</span>
                             {% endif %}
