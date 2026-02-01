@@ -31,6 +31,7 @@ urlpatterns = [
     path('profile/trips/', views.profile_trips, name='profile_trips'),
     path('profile/host/', views.profile_host, name='profile_host'),
     path('profile/host-bookings/', views.profile_host_bookings, name='profile_host_bookings'),
+    path('profile/bank-account/', views.update_bank_account, name='update_bank_account'),
 
 
 

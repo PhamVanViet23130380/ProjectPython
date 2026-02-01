@@ -307,7 +307,7 @@ main { padding-top: calc(var(--header-height) + var(--search-height) + 56px); }
 
 .menu-dropdown {
     position: fixed;
-    top: calc(var(--header-height) + 12px);
+    top: 60px;
     right: 24px;
     width: 350px;
     background: #fff;
@@ -315,7 +315,7 @@ main { padding-top: calc(var(--header-height) + var(--search-height) + 56px); }
     box-shadow: 0 8px 28px rgba(0,0,0,0.15);
     padding: 12px 0;
     display: none;
-    z-index: 2000;
+    z-index: 9999;
     overflow: visible;
 }
 

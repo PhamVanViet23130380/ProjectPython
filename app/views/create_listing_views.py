@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from app.models import Listing, ListingAddress, ListingImage, Amenity
+from app.models import Listing, ListingAddress, ListingImage, Amenity, BankAccount
 from decimal import Decimal
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
@@ -9,9 +9,27 @@ import os
 import shutil
 
 
+def check_bank_account(user):
+    """Kiểm tra user đã có thông tin ngân hàng chưa"""
+    try:
+        return user.bank_account is not None
+    except BankAccount.DoesNotExist:
+        return False
+
+
 @login_required
 def step_loaichoo(request):
     """Bước 1: Chọn loại chỗ ở"""
+    # Kiểm tra thông tin ngân hàng trước khi cho phép tạo phòng
+    if not check_bank_account(request.user):
+        messages.warning(
+            request, 
+            '⚠️ Bạn cần cập nhật thông tin tài khoản ngân hàng trước khi tạo phòng cho thuê! '
+            'Thông tin này dùng để nhận thanh toán từ khách thuê. '
+            'Vui lòng điền đầy đủ: Tên ngân hàng, Số tài khoản, Tên chủ tài khoản.'
+        )
+        return redirect('profile')
+    
     if request.method == 'POST':
         property_type = request.POST.get('property_type')
         request.session['listing_data'] = {'property_type': property_type}

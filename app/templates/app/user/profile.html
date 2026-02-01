@@ -8,8 +8,93 @@
     <title>Hồ sơ người dùng - Guest</title>
     <link rel="stylesheet" href="{% static 'app/css/profile.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Alert Messages */
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            width: 90%;
+            max-width: 600px;
+        }
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .alert-warning {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+            border-left: 4px solid #ffc107;
+            color: #856404;
+        }
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+        .alert-error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        .alert i {
+            font-size: 20px;
+        }
+        .alert-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        .alert-close:hover {
+            opacity: 1;
+        }
+    </style>
 </head>
 <body>
+
+<!-- Hiển thị thông báo -->
+{% if messages %}
+<div class="alert-container">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}" id="alert-{{ forloop.counter }}">
+        {% if message.tags == 'warning' %}
+            <i class="fas fa-exclamation-triangle"></i>
+        {% elif message.tags == 'success' %}
+            <i class="fas fa-check-circle"></i>
+        {% elif message.tags == 'error' %}
+            <i class="fas fa-times-circle"></i>
+        {% else %}
+            <i class="fas fa-info-circle"></i>
+        {% endif %}
+        <span>{{ message }}</span>
+        <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+    </div>
+    {% endfor %}
+</div>
+<script>
+    // Tự động ẩn thông báo sau 8 giây
+    setTimeout(() => {
+        document.querySelectorAll('.alert').forEach(alert => {
+            alert.style.animation = 'slideDown 0.3s ease reverse';
+            setTimeout(() => alert.remove(), 300);
+        });
+    }, 8000);
+</script>
+{% endif %}
 
 <div class="container">
     <header class="header">
@@ -159,6 +244,60 @@
                 </a>
                 {% endif %}
 
+                <!-- THÔNG TIN NGÂN HÀNG -->
+                <div class="bank-section">
+                    <h4><i class="fas fa-university"></i> Thông tin ngân hàng</h4>
+                    
+                    {% if bank_account %}
+                    <div class="bank-info">
+                        <p><strong>Ngân hàng:</strong> {{ bank_account.bank_name }}</p>
+                        <p><strong>Số TK:</strong> {{ bank_account.account_number }}</p>
+                        <p><strong>Chủ TK:</strong> {{ bank_account.account_holder }}</p>
+                    </div>
+                    {% else %}
+                    <p class="text-muted"><i class="fas fa-exclamation-circle"></i> Chưa cập nhật thông tin ngân hàng</p>
+                    {% endif %}
+                    
+                    <button class="btn-bank" onclick="toggleBankForm()">
+                        <i class="fas fa-edit"></i> {% if bank_account %}Cập nhật{% else %}Thêm{% endif %} tài khoản
+                    </button>
+                    
+                    <form id="bankForm" method="post" action="{% url 'update_bank_account' %}" style="display: none;">
+                        {% csrf_token %}
+                        <div class="bank-form">
+                            <select name="bank_name" class="input" required>
+                                <option value="">-- Chọn ngân hàng --</option>
+                                <option value="Vietcombank" {% if bank_account.bank_name == 'Vietcombank' %}selected{% endif %}>Vietcombank</option>
+                                <option value="Techcombank" {% if bank_account.bank_name == 'Techcombank' %}selected{% endif %}>Techcombank</option>
+                                <option value="BIDV" {% if bank_account.bank_name == 'BIDV' %}selected{% endif %}>BIDV</option>
+                                <option value="Agribank" {% if bank_account.bank_name == 'Agribank' %}selected{% endif %}>Agribank</option>
+                                <option value="VietinBank" {% if bank_account.bank_name == 'VietinBank' %}selected{% endif %}>VietinBank</option>
+                                <option value="MBBank" {% if bank_account.bank_name == 'MBBank' %}selected{% endif %}>MBBank</option>
+                                <option value="ACB" {% if bank_account.bank_name == 'ACB' %}selected{% endif %}>ACB</option>
+                                <option value="VPBank" {% if bank_account.bank_name == 'VPBank' %}selected{% endif %}>VPBank</option>
+                                <option value="Sacombank" {% if bank_account.bank_name == 'Sacombank' %}selected{% endif %}>Sacombank</option>
+                                <option value="TPBank" {% if bank_account.bank_name == 'TPBank' %}selected{% endif %}>TPBank</option>
+                                <option value="HDBank" {% if bank_account.bank_name == 'HDBank' %}selected{% endif %}>HDBank</option>
+                                <option value="OCB" {% if bank_account.bank_name == 'OCB' %}selected{% endif %}>OCB</option>
+                                <option value="SeABank" {% if bank_account.bank_name == 'SeABank' %}selected{% endif %}>SeABank</option>
+                                <option value="SHB" {% if bank_account.bank_name == 'SHB' %}selected{% endif %}>SHB</option>
+                                <option value="MSB" {% if bank_account.bank_name == 'MSB' %}selected{% endif %}>MSB</option>
+                                <option value="LienVietPostBank" {% if bank_account.bank_name == 'LienVietPostBank' %}selected{% endif %}>LienVietPostBank</option>
+                                <option value="VIB" {% if bank_account.bank_name == 'VIB' %}selected{% endif %}>VIB</option>
+                                <option value="Eximbank" {% if bank_account.bank_name == 'Eximbank' %}selected{% endif %}>Eximbank</option>
+                                <option value="NamABank" {% if bank_account.bank_name == 'NamABank' %}selected{% endif %}>NamABank</option>
+                                <option value="BacABank" {% if bank_account.bank_name == 'BacABank' %}selected{% endif %}>BacABank</option>
+                            </select>
+                            <input type="text" name="account_number" class="input" 
+                                   placeholder="Số tài khoản" 
+                                   value="{% if bank_account %}{{ bank_account.account_number }}{% endif %}" required>
+                            <input type="text" name="account_holder" class="input" 
+                                   placeholder="Tên chủ tài khoản (viết hoa không dấu)" 
+                                   value="{% if bank_account %}{{ bank_account.account_holder }}{% endif %}" required>
+                            <button type="submit" class="btn-save">Lưu thông tin</button>
+                        </div>
+                    </form>
+                </div>
                 
 
             </div>
@@ -237,7 +376,92 @@
             reader.readAsDataURL(file);
         });
     }
+    
+    // Toggle form ngân hàng
+    function toggleBankForm() {
+        const form = document.getElementById('bankForm');
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    }
 </script>
+
+<style>
+/* Bank Section Styles */
+.bank-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.bank-section h4 {
+    font-size: 16px;
+    color: #5D4037;
+    margin-bottom: 12px;
+}
+
+.bank-section h4 i {
+    margin-right: 8px;
+}
+
+.bank-info {
+    background: #f5f0e8;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.bank-info p {
+    margin: 4px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.btn-bank {
+    background: #8B7355;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    margin-top: 10px;
+    transition: background 0.3s;
+}
+
+.btn-bank:hover {
+    background: #6B5344;
+}
+
+.bank-form {
+    margin-top: 12px;
+}
+
+.bank-form .input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.bank-form select.input {
+    background: white;
+}
+
+.text-muted {
+    color: #888;
+    font-size: 13px;
+}
+
+.text-muted i {
+    color: #e67e22;
+    margin-right: 5px;
+}
+</style>
 
 {% include 'app/includes/chat_widget.html' %}
 

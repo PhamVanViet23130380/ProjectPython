@@ -161,3 +161,40 @@ class HostPolicy(models.Model):
         db_table = 'host_policies'
         verbose_name = "Chính sách chủ nhà"
         verbose_name_plural = "Chính sách chủ nhà"
+
+# --- BANK ACCOUNT ---
+class BankAccount(models.Model):
+    """Thông tin tài khoản ngân hàng của người dùng"""
+    
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name='bank_account',
+        verbose_name='Người dùng'
+    )
+    
+    bank_name = models.CharField(
+        max_length=100, 
+        verbose_name='Tên ngân hàng'
+    )
+    
+    account_number = models.CharField(
+        max_length=50, 
+        verbose_name='Số tài khoản'
+    )
+    
+    account_holder = models.CharField(
+        max_length=150, 
+        verbose_name='Tên chủ tài khoản'
+    )
+    
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Ngày tạo')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Cập nhật lần cuối')
+    
+    def __str__(self):
+        return f"{self.bank_name} - {self.account_number} ({self.user.email})"
+    
+    class Meta:
+        db_table = 'bank_accounts'
+        verbose_name = "Tài khoản ngân hàng"
+        verbose_name_plural = "Tài khoản ngân hàng"

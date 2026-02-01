@@ -16,7 +16,7 @@ from decimal import Decimal
 from .models import (
     Listing, ListingAddress, ListingImage, Amenity, ListingAmenity,
     Booking, Payment, Review, ReviewMedia, ReviewAnalysis,
-    Complaint, HostPolicy, ReviewClassification
+    Complaint, HostPolicy, ReviewClassification, BankAccount
 )
 
 User = get_user_model()
@@ -502,3 +502,10 @@ admin.site.register(Group)
 class ReviewClassificationAdmin(admin.ModelAdmin):
     list_display = ("review", "spam_status")
     list_filter = ("spam_status",)
+
+@admin.register(BankAccount)
+class BankAccountAdmin(admin.ModelAdmin):
+    list_display = ('user', 'bank_name', 'account_number', 'account_holder', 'updated_at')
+    search_fields = ('user__email', 'user__full_name', 'bank_name', 'account_number', 'account_holder')
+    list_filter = ('bank_name',)
+    readonly_fields = ('created_at', 'updated_at')
