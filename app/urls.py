@@ -5,7 +5,7 @@ from django.contrib.auth import views as auth_views
 from app.views.auth_views import login_view, logout_view
 
 
-from .views.admin_api import booking_total_price, listing_price, listing_detail
+from .views.admin_api import booking_total_price, listing_price, listing_detail, revenue_statistics
 from .views.availability_views import check_availability
 from django.conf import settings
 from django.conf.urls.static import static
@@ -117,6 +117,7 @@ urlpatterns = [
 
     # Admin AJAX: get booking total price
     path('admin-api/booking/<int:booking_id>/total/', booking_total_price, name='admin_booking_total'),
+    path('admin-api/revenue-statistics/', revenue_statistics, name='admin_revenue_statistics'),
         path('api/price/', listing_price, name='listing-price'),
         path('api/listing/', listing_detail, name='listing-detail'),
         path('api/check-availability/', check_availability, name='check-availability'),
