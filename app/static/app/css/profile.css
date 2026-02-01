@@ -6,14 +6,18 @@
     --text-color: #4e342e;
 }
 
-body {
+html, body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #eaddca; /* Màu nền kem nhạt */
     margin: 0;
-    padding: 20px;
+    padding: 0;
     color: var(--text-color);
-    height: 100vh;
+    height: 100%;
     overflow: hidden;
+}
+
+body {
+    padding: 20px;
 }
 
 .container {
@@ -119,18 +123,29 @@ body {
 .profile-content {
     display: flex;
     padding: 30px;
+    padding-bottom: 80px;
     gap: 30px;
     flex: 1;
     overflow-y: auto;
+    min-height: 0; /* Quan trọng để flexbox scroll hoạt động */
 }
 
-/* Scrollbar đẹp */
+/* Scrollbar đẹp cho profile-content */
 .profile-content::-webkit-scrollbar {
     width: 6px;
 }
 .profile-content::-webkit-scrollbar-thumb {
     background: #c7b7af;
     border-radius: 10px;
+}
+.profile-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Main content */
+.main-content {
+    flex: 1;
+    padding-right: 10px;
 }
 
 .sidebar {
@@ -329,6 +344,17 @@ body {
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
   align-content: flex-start;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* Scrollbar đẹp cho dashboard */
+.dashboard::-webkit-scrollbar {
+  width: 6px;
+}
+.dashboard::-webkit-scrollbar-thumb {
+  background: #c7b7af;
+  border-radius: 10px;
 }
 
 .stat-card {
