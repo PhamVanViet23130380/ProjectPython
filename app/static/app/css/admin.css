@@ -200,3 +200,27 @@ span[style*="background-color"],
     font-weight: 700 !important;
     text-decoration: none !important;
 }
+
+/* NÚT ĐĂNG XUẤT Ở GÓC PHẢI CÙNG */
+.navbar-nav.ml-auto {
+    margin-left: auto !important;
+}
+
+/* Đẩy nút Đăng xuất ra góc phải cùng */
+.main-header .navbar-nav .nav-item:last-child {
+    margin-left: auto !important;
+}
+
+/* Style cho nút đăng xuất trên navbar */
+.main-header .navbar-nav .nav-link[href*="logout"] {
+    background-color: #8d7767 !important;
+    color: #ffffff !important;
+    border-radius: 20px !important;
+    padding: 6px 15px !important;
+    margin-left: 15px !important;
+    font-weight: 600 !important;
+}
+
+.main-header .navbar-nav .nav-link[href*="logout"]:hover {
+    background-color: #5d4037 !important;
+}

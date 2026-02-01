@@ -13,7 +13,15 @@ from django.utils.html import strip_tags
 from django.conf import settings
 
 from .payment_views import calculate_total_price
-from app.models import Listing, Booking, Payment
+from app.models import Listing, Booking, Payment, BankAccount
+
+
+def check_bank_account(user):
+    """Kiểm tra user đã có thông tin ngân hàng chưa"""
+    try:
+        return user.bank_account is not None
+    except BankAccount.DoesNotExist:
+        return False
 
 
 @login_required
@@ -244,6 +252,16 @@ def cancel_booking(request, booking_id):
                 return redirect('user_booking_history')
         except Exception:
             pass
+        
+        # Kiểm tra thông tin ngân hàng để hoàn tiền
+        if not check_bank_account(request.user):
+            messages.warning(
+                request, 
+                '⚠️ Bạn cần cập nhật thông tin tài khoản ngân hàng để nhận hoàn tiền! '
+                'Vui lòng vào phần "Thông tin ngân hàng" trong trang hồ sơ và điền đầy đủ: '
+                'Tên ngân hàng, Số tài khoản, Tên chủ tài khoản. Sau đó quay lại để hủy đặt phòng.'
+            )
+            return redirect('profile')
         
         # Hủy booking và xử lý hoàn tiền
         try:
