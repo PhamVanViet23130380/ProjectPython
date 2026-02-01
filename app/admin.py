@@ -11,7 +11,7 @@ from decimal import Decimal
 from .models import (
     Listing, ListingAddress, ListingImage, Amenity, ListingAmenity,
     Booking, Payment, Review, ReviewMedia, ReviewAnalysis,
-    Message, Complaint, HostPolicy
+    Message, Complaint, HostPolicy, ReviewClassification
 )
 
 User = get_user_model()
@@ -79,7 +79,6 @@ class UserAdmin(admin.ModelAdmin):
         url = obj.avatar_url if obj.avatar_url else 'https://via.placeholder.com/40'
         return format_html('<img src="{}" style="width:35px; height:35px; border-radius:50%; border: 2px solid #5D4037;"/>', url)
     display_avatar.short_description = "AVT"
-
     def colored_role(self, obj):
         colors = {'admin': '#3e2723', 'host': '#8d7767', 'guest': '#a1887f'}
         return format_html('<span style="color: white; background: {}; padding: 2px 8px; border-radius: 4px;">{}</span>', 
@@ -125,11 +124,17 @@ class ListingAdmin(admin.ModelAdmin):
     reject_listings.short_description = 'Reject selected listings'
 
     def review_sentiment_chart(self, obj):
-        qs = Review.objects.filter(listing=obj).select_related('analysis')
+        # qs = Review.objects.filter(listing=obj).select_related('analysis')
 
-        pos = qs.filter(analysis__sentiment='positive').count()
-        neu = qs.filter(analysis__sentiment='neutral').count()
-        neg = qs.filter(analysis__sentiment='negative').count()
+        qs = Review.objects.filter(
+            listing=obj,
+            reviewclassification__spam_status=False
+        ).select_related("analysis").select_related('analysis')
+
+
+        pos = qs.filter(analysis__sentiment='pos').count()
+        neu = qs.filter(analysis__sentiment='neu').count()
+        neg = qs.filter(analysis__sentiment='neg').count()
 
         total = pos + neu + neg
         if total == 0:
@@ -137,7 +142,7 @@ class ListingAdmin(admin.ModelAdmin):
 
         pos_pct = round(pos * 100 / total)
         neu_pct = round(neu * 100 / total)
-        neg_pct = 100 - pos_pct - neu_pct  # tránh lệch %
+        neg_pct = 100 - pos_pct - neu_pct
 
         return format_html(
             '''
@@ -260,7 +265,7 @@ class ReviewMediaInline(admin.TabularInline):
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ('review_id', 'user', 'listing', 'star_rating', 'ai_sentiment', 'created_at')
     inlines = [ReviewMediaInline]
-
+    list_filter = ("reviewclassification__spam_status",)
     def star_rating(self, obj):
         return format_html('<span style="color: #8D6E63;">{} ★</span>', obj.rating)
     
@@ -352,3 +357,7 @@ admin.site.register(Payment, PaymentAdmin)
 admin.site.register(Message)
 admin.site.unregister(Group)
 admin.site.register(Group)
+@admin.register(ReviewClassification)
+class ReviewClassificationAdmin(admin.ModelAdmin):
+    list_display = ("review", "spam_status")
+    list_filter = ("spam_status",)

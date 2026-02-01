@@ -177,7 +177,7 @@ class ReviewMedia(models.Model):
     media_url = models.URLField(max_length=255, verbose_name='Link Media')
     media_type = models.CharField(max_length=10, choices=(('image', 'Ảnh'), ('video', 'Video')),
                                   verbose_name='Loại media')
-
+    media = models.FileField(upload_to="reviews/", null=True, blank=True)
     def __str__(self):
         return f"Media cho Review {self.review.review_id}"
 
@@ -208,6 +208,7 @@ class ReviewClassification(models.Model):
     id = models.BigAutoField(primary_key=True)
     spam_status = models.BooleanField(default=False)
     review = models.OneToOneField(Review, on_delete=models.CASCADE)
+    reason = models.JSONField(null=True, blank=True)
 
     def __str__(self):
         return f"Phân loại review {self.review.review_id} - spam={self.spam_status}"

@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load formatting %}
 
 {% block title %}Lịch sử thuê nhà - Home Nest{% endblock %}
 
@@ -39,15 +40,15 @@
                 
                 <span class="booking-status {% if booking.booking_status == 'confirmed' %}status-confirmed{% elif booking.booking_status == 'pending' %}status-pending{% elif booking.booking_status == 'in_progress' %}status-confirmed{% elif booking.booking_status == 'completed' %}status-confirmed{% else %}status-cancelled{% endif %}">
                     {% if booking.booking_status == 'confirmed' %}
-                        Da xac nhan
+                        Đã xác nhận
                     {% elif booking.booking_status == 'pending' %}
-                        Cho xac nhan
+                        Chờ xác nhận
                     {% elif booking.booking_status == 'in_progress' %}
-                        Dang o
+                        Đang ở
                     {% elif booking.booking_status == 'completed' %}
-                        Hoan thanh
+                        Hoàn thành
                     {% else %}
-                        Da huy
+                        Đã hủy
                     {% endif %}
                 </span>
                 
@@ -71,14 +72,14 @@
                 </div>
                 
                 <!-- Nút hành động -->
-                {% if booking.booking_status != 'cancelled' %}
+                {% if booking.booking_status == 'pending' or booking.booking_status == 'confirmed' %}
                 <div class="booking-actions">
                     <a href="{% url 'booking_success' booking.booking_id %}" class="btn-view">
                         <i class="fa-solid fa-eye"></i> Xem chi tiết
                     </a>
                     <form method="post" action="{% url 'cancel_booking' booking.booking_id %}" style="display: inline-block;">
                         {% csrf_token %}
-                        <button type="submit" class="btn-cancel" onclick="return confirmCancel('{{ booking.listing.title|escapejs }}')">
+                        <button type="button" class="btn-cancel cancel-booking-btn" data-booking-id="{{ booking.booking_id }}" data-listing-title="{{ booking.listing.title|escapejs }}">
                             <i class="fa-solid fa-xmark"></i> Hủy đặt phòng
                         </button>
                     </form>
@@ -88,12 +89,17 @@
                     <a href="{% url 'booking_success' booking.booking_id %}" class="btn-view">
                         <i class="fa-solid fa-eye"></i> Xem chi tiết
                     </a>
+                    {% if booking.booking_status == 'completed' %}
+                    <a href="{% url 'complaint_create' booking.booking_id %}" class="btn-complaint">
+                        <i class="fa-solid fa-flag"></i> Gửi khiếu nại
+                    </a>
+                    {% endif %}
                 </div>
                 {% endif %}
             </div>
             
             <div class="booking-price">
-                <div class="price-amount">₫{{ booking.total_price|floatformat:0 }}</div>
+                <div class="price-amount">đ{{ booking.total_price|floatformat:0|intdot }}</div>
                 <small style="color: #717171;">Tổng tiền</small>
             </div>
         </div>
@@ -120,12 +126,8 @@
     {% endif %}
 </div>
 
-<script>
-function confirmCancel(listingTitle) {
-    return confirm('Bạn có chắc chắn muốn hủy đặt phòng "' + listingTitle + '" không?\n\nHành động này không thể hoàn tác.');
-}
-</script>
-{% endblock %}
+<!-- Custom Cancel Modal -->
+<div class="modal-overlay" id="cancelModal">
     <div class="modal-content">
         <div class="modal-icon">
             <i class="fa-solid fa-circle-exclamation"></i>
@@ -152,37 +154,26 @@ function confirmCancel(listingTitle) {
 <script>
 // Attach event listeners to all cancel buttons
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, attaching cancel button listeners');
-    
     const cancelButtons = document.querySelectorAll('.cancel-booking-btn');
-    console.log('Found ' + cancelButtons.length + ' cancel buttons');
-    
-    cancelButtons.forEach(function(button, index) {
-        console.log('Attaching listener to button ' + index);
+    cancelButtons.forEach(function(button) {
         button.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            
             const bookingId = this.getAttribute('data-booking-id');
             const listingTitle = this.getAttribute('data-listing-title');
-            
-            console.log('Cancel button clicked - ID: ' + bookingId + ', Title: ' + listingTitle);
             showCancelModal(bookingId, listingTitle);
         });
     });
-    
-    // Setup modal close listeners
+
     const modal = document.getElementById('cancelModal');
     if (modal) {
-        // Close modal when clicking outside
         modal.addEventListener('click', function(e) {
             if (e.target === this) {
                 closeCancelModal();
             }
         });
     }
-    
-    // Close modal with ESC key
+
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeCancelModal();
@@ -191,28 +182,19 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function showCancelModal(bookingId, listingTitle) {
-    console.log('showCancelModal called with ID: ' + bookingId);
-    
     const modal = document.getElementById('cancelModal');
     const form = document.getElementById('cancelForm');
     const titleElement = document.getElementById('listingTitle');
-    
+
     if (!modal || !form || !titleElement) {
-        console.error('Modal elements not found!');
         return;
     }
-    
-    // Set form action
+
     form.action = '/booking/cancel/' + bookingId + '/';
-    
-    // Set listing title
     titleElement.textContent = listingTitle;
-    
-    // Show modal
+
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
-    
-    console.log('Modal shown');
 }
 
 function closeCancelModal() {
@@ -223,4 +205,4 @@ function closeCancelModal() {
     }
 }
 </script>
-
+{% endblock %}

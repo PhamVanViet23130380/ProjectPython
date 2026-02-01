@@ -18,6 +18,7 @@ from .user_view import user_profile, edit_profile, user_listings, user_bookings,
 from .book_view import create_booking, booking_detail, cancel_booking, host_bookings
 from .booking_success_view import booking_success
 from .user_booking_history_view import user_booking_history
+from .complaint_views import complaint_create, complaint_list
 from .create_listing_views import (
     step_loaichoo, step_dattieude, step_duocuse, step_diachi, step_thoigianthue, step_thongtincb,
     step_tiennghii, step_themanh, step_tieude, step_thietlapgia, step_chiasett
@@ -363,5 +364,6 @@ __all__ = [
     'giacuoituan', 'chiasett', 'loaichoo', 'trungtamtrogiup', 'datphong',
     'phuongthucthanhtoan', 'chinhsachdieukhoan', 'buoc2', 'duocuse', 'themanh',
     'thongtincb', 'tiennghii', 'tieude', 'diachi', 'buoc3', 'profile_view',
-    'error_404', 'error_500', 'error_403'
+    'error_404', 'error_500', 'error_403',
+    'complaint_create', 'complaint_list',
 ]

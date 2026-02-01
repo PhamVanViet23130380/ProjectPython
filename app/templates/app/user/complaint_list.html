@@ -1,0 +1,49 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Danh sách khiếu nại - Home Nest{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'app/css/complaints.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="complaint-container">
+    <div class="complaint-header">
+        <div>
+            <h1 class="complaint-title">Danh sách khiếu nại</h1>
+            <div class="complaint-subtitle">Theo dõi trạng thái xử lý.</div>
+        </div>
+        <a href="{% url 'user_booking_history' %}" class="btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại
+        </a>
+    </div>
+
+    {% if complaints %}
+    <div class="complaint-list">
+        {% for complaint in complaints %}
+        <div class="complaint-item">
+            <div class="complaint-item-header">
+                <div class="complaint-item-title">{{ complaint.listing.title }}</div>
+                <div class="complaint-status {% if complaint.status == 'resolved' %}status-resolved{% else %}status-open{% endif %}">
+                    {% if complaint.status == 'resolved' %}Đã xử lý{% else %}Đang mở{% endif %}
+                </div>
+            </div>
+            <div class="complaint-meta">
+                <i class="fa-solid fa-clock"></i> Gửi lúc: {{ complaint.created_at|date:"d/m/Y H:i" }}
+            </div>
+            <div class="complaint-reason">{{ complaint.reason }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-complaint">
+        <i class="fa-solid fa-clipboard-list fa-2xl" style="color:#ddd;"></i>
+        <p>Bạn chưa gửi khiếu nại nào.</p>
+        <a href="{% url 'user_booking_history' %}" class="btn-primary" style="margin-top:16px;">
+            <i class="fa-solid fa-calendar-days"></i> Về lịch sử đặt phòng
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

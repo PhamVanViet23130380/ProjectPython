@@ -24,9 +24,17 @@ def create_booking(request, listing_id):
 
     listing = get_object_or_404(Listing, pk=listing_id , is_active=True)
 
-    # Host không được tự book phòng của mình
+    # Host cannot book their own listing
     if listing.host_id == request.user.id:
-        messages.error(request, 'Bạn không thể đặt phòng của chính mình')
+        if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'B\u1ea1n kh\u00f4ng th\u1ec3 \u0111\u1eb7t ph\u00f2ng c\u1ee7a ch\u00ednh m\u00ecnh'}, status=403)
+        messages.error(request, 'B\u1ea1n kh\u00f4ng th\u1ec3 \u0111\u1eb7t ph\u00f2ng c\u1ee7a ch\u00ednh m\u00ecnh')
+        return redirect('chitietnoio', listing_id=listing_id)
+
+    if request.user.is_staff or request.user.is_superuser:
+        if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'B\u1ea1n \u0111ang l\u00e0 Admin v\u00e0 kh\u00f4ng th\u1ec3 \u0111\u1eb7t \u0111\u01b0\u1ee3c ph\u00f2ng.'}, status=403)
+        messages.error(request, 'B\u1ea1n \u0111ang l\u00e0 Admin v\u00e0 kh\u00f4ng th\u1ec3 \u0111\u1eb7t \u0111\u01b0\u1ee3c ph\u00f2ng.')
         return redirect('chitietnoio', listing_id=listing_id)
 
     if request.user.is_staff or request.user.is_superuser:
@@ -224,6 +232,21 @@ def cancel_booking(request, booking_id):
         if booking.booking_status == 'cancelled':
             messages.warning(request, 'Đơn đặt phòng này đã được hủy trước đó')
             return redirect('user_booking_history')
+
+        # Không cho hủy khi đang ở hoặc đã hoàn thành
+        if booking.booking_status in ['in_progress', 'completed']:
+            messages.error(request, 'Không thể hủy khi đang ở hoặc đã hoàn thành.')
+            return redirect('user_booking_history')
+
+        # Không cho hủy khi đã đến ngày nhận phòng
+        try:
+            from django.utils import timezone
+            today = timezone.localdate()
+            if booking.check_in and booking.check_in <= today:
+                messages.error(request, 'Không thể hủy khi đã đến ngày nhận phòng.')
+                return redirect('user_booking_history')
+        except Exception:
+            pass
         
         # Hủy booking và xử lý hoàn tiền
         try:

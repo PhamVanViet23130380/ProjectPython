@@ -1,0 +1,59 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load formatting %}
+
+{% block title %}Gửi khiếu nại - Home Nest{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'app/css/complaints.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="complaint-container">
+    {% if messages %}
+    <div class="complaint-card" style="margin-bottom: 16px;">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="complaint-header">
+        <div>
+            <h1 class="complaint-title">Gửi khiếu nại</h1>
+            <div class="complaint-subtitle">Chỉ hỗ trợ khi đơn đã hoàn thành.</div>
+        </div>
+        <a href="{% url 'user_booking_history' %}" class="btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại
+        </a>
+    </div>
+
+    <div class="complaint-card">
+        <h2 class="complaint-item-title">{{ listing.title|default:"Chỗ ở" }}</h2>
+        <div class="complaint-info">
+            <span><i class="fa-solid fa-calendar"></i> Nhận phòng: {{ booking.check_in|date:"d/m/Y"|default:"--" }}</span>
+            <span><i class="fa-solid fa-calendar"></i> Trả phòng: {{ booking.check_out|date:"d/m/Y"|default:"--" }}</span>
+            <span><i class="fa-solid fa-users"></i> Số khách: {{ booking.guests|default:"--" }}</span>
+            <span><i class="fa-solid fa-receipt"></i> Tổng tiền: {{ booking.total_price|floatformat:0|intdot|default:"--" }}</span>
+        </div>
+    </div>
+
+    <div class="complaint-card">
+        <form class="complaint-form" method="post" action="">
+            {% csrf_token %}
+            <label for="reason"><strong>Nội dung khiếu nại</strong></label>
+            <textarea id="reason" name="reason" placeholder="Mô tả vấn đề bạn gặp phải..." required></textarea>
+            <div class="complaint-actions">
+                <button type="submit" class="btn-primary">
+                    <i class="fa-solid fa-paper-plane"></i> Gửi khiếu nại
+                </button>
+                <a href="{% url 'complaint_list' %}" class="btn-secondary">
+                    <i class="fa-solid fa-clipboard-list"></i> Xem danh sách
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
