@@ -329,6 +329,23 @@ def phuongthucthanhtoan(request):
 def chinhsachdieukhoan(request):
     return render(request, 'app/other_templates/chinhsachdieukhoan.html')
 
+
+def huydatphong(request):
+    return render(request, 'app/other_templates/huydatphong.html')
+
+
+def thanhtoanhoanien(request):
+    return render(request, 'app/other_templates/thanhtoanhoanien.html')
+
+
+def danhgiaphanhoi(request):
+    return render(request, 'app/other_templates/danhgiaphanhoi.html')
+
+
+def huythaydoi(request):
+    return render(request, 'app/other_templates/huythaydoi.html')
+
+
 def profile_view(request):
     """Trang hồ sơ người dùng - chỉ hiển thị thông tin cá nhân."""
     if not request.user.is_authenticated:
@@ -381,4 +398,5 @@ __all__ = [
     'thongtincb', 'tiennghii', 'tieude', 'diachi', 'buoc3', 'profile_view',
     'error_404', 'error_500', 'error_403',
     'complaint_create', 'complaint_list',
+    'huydatphong', 'thanhtoanhoanien', 'danhgiaphanhoi', 'huythaydoi',
 ]

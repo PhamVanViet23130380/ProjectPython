@@ -101,7 +101,7 @@ def step_thongtincb(request):
         listing_data['beds'] = int(request.POST.get('beds', 1))
         listing_data['bathrooms'] = int(request.POST.get('bathrooms', 1))
         request.session['listing_data'] = listing_data
-        return redirect('tiennghii')
+        return redirect('buoc2')  # Chuyển đến trang giới thiệu Bước 2
     return render(request, 'app/host/thongtincb.html')
 
 
@@ -156,7 +156,7 @@ def step_tieude(request):
         # Trang tieude giờ chỉ nhận mô tả
         listing_data['description'] = request.POST.get('description')
         request.session['listing_data'] = listing_data
-        return redirect('thietlapgia')
+        return redirect('buoc3')  # Chuyển đến trang giới thiệu Bước 3
     return render(request, 'app/host/tieude.html')
 
 

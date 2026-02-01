@@ -121,16 +121,16 @@ JAZZMIN_SETTINGS = {
     "site_brand": "HOMNEST Console",
     "welcome_sign": "Chào mừng bạn đến với hệ thống quản trị Homnest",
     "copyright": "Homnest Ltd",
-    "search_model": ["app.User", "app.Listing"],
+    "search_model": [],  # Bỏ search boxes
 
     # Chèn đường dẫn file CSS
     "custom_css": "app/css/admin.css", 
 
+    # Chỉ giữ nút đăng xuất ở góc phải
     "topmenu_links": [
-        {"name": "Trang chủ", "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"model": "app.User"},
-        {"name": "Đăng xuất", "url": "admin:logout"},
+        {"name": "Đăng xuất", "url": "admin:logout", "icon": "fas fa-sign-out-alt"},
     ],
+    
     "show_sidebar": True,
     "navigation_expanded": True,
     
@@ -142,6 +142,33 @@ JAZZMIN_SETTINGS = {
     "usermenu_links": [
         {"name": "Đăng xuất", "url": "admin:logout", "icon": "fas fa-sign-out-alt"},
     ],
+    
+    # Icons cho các model trong sidebar
+    "icons": {
+        # App models
+        "app.User": "fas fa-users",
+        "app.Listing": "fas fa-home",
+        "app.Booking": "fas fa-calendar-check",
+        "app.Payment": "fas fa-credit-card",
+        "app.Review": "fas fa-star",
+        "app.ReviewAnalysis": "fas fa-brain",
+        "app.ReviewClassification": "fas fa-tags",
+        "app.Complaint": "fas fa-exclamation-triangle",
+        "app.Amenity": "fas fa-concierge-bell",
+        "app.Notification": "fas fa-bell",
+        "app.BankAccount": "fas fa-university",
+        # Chat models
+        "chat.Conversation": "fas fa-comments",
+        "chat.Message": "fas fa-envelope",
+        # Statistics (custom)
+        "statistics.RevenueStatistics": "fas fa-chart-line",
+        # Auth models
+        "auth.Group": "fas fa-users-cog",
+    },
+    
+    # Default icons
+    "default_icon_parents": "fas fa-folder",
+    "default_icon_children": "fas fa-circle",
 }
 
 JAZZMIN_UI_TWEAKS = {

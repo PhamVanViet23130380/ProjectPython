@@ -1,0 +1,236 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán và hoàn tiền - Home Nest</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'app/css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/chinhsachdieukhoan.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/footer.css' %}">
+</head>
+
+<body>
+    {% include 'app/includes/header.html' %}
+
+    <main class="policy-page">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'trungtamtrogiup' %}">Trung tâm trợ giúp</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Thanh toán và hoàn tiền</li>
+                </ol>
+            </nav>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <p class="category-label">HƯỚNG DẪN</p>
+                <h1 class="page-title">Thanh toán và hoàn tiền</h1>
+                <p class="page-subtitle">Cập nhật lần cuối: Tháng 1 năm 2026</p>
+            </div>
+
+            <!-- Main Content -->
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="content-section">
+                        <p class="intro-text">
+                            Tìm hiểu về các phương thức thanh toán được hỗ trợ, quy trình thanh toán an toàn và chính sách hoàn tiền tại Home Nest.
+                        </p>
+
+                        <div class="section-divider"></div>
+
+                        <!-- Table of Contents -->
+                        <div class="content-block">
+                            <h2 class="section-title">Mục lục</h2>
+                            <ul class="toc-list">
+                                <li><a href="#phuong-thuc"><i class="fas fa-chevron-right"></i> 1. Phương thức thanh toán</a></li>
+                                <li><a href="#quy-trinh"><i class="fas fa-chevron-right"></i> 2. Quy trình thanh toán</a></li>
+                                <li><a href="#bao-mat"><i class="fas fa-chevron-right"></i> 3. Bảo mật thanh toán</a></li>
+                                <li><a href="#hoan-tien"><i class="fas fa-chevron-right"></i> 4. Chính sách hoàn tiền</a></li>
+                                <li><a href="#phi-dich-vu"><i class="fas fa-chevron-right"></i> 5. Phí dịch vụ</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 1. Phương thức thanh toán -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="phuong-thuc">1. Phương thức thanh toán</h2>
+                            <p>
+                                Home Nest hỗ trợ nhiều phương thức thanh toán phổ biến tại Việt Nam:
+                            </p>
+
+                            <div class="security-grid">
+                                <div class="security-item">
+                                    <i class="fas fa-credit-card text-primary"></i>
+                                    <div>
+                                        <strong>Thẻ quốc tế</strong>
+                                        <p>Visa, Mastercard, JCB</p>
+                                    </div>
+                                </div>
+                                <div class="security-item">
+                                    <i class="fas fa-university text-success"></i>
+                                    <div>
+                                        <strong>Thẻ ATM nội địa</strong>
+                                        <p>Napas - 40+ ngân hàng</p>
+                                    </div>
+                                </div>
+                                <div class="security-item">
+                                    <i class="fas fa-wallet text-warning"></i>
+                                    <div>
+                                        <strong>Ví điện tử</strong>
+                                        <p>MoMo, ZaloPay, VNPay</p>
+                                    </div>
+                                </div>
+                                <div class="security-item">
+                                    <i class="fas fa-qrcode text-info"></i>
+                                    <div>
+                                        <strong>QR Code</strong>
+                                        <p>VNPay QR, Momo QR</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="info-box mt-4">
+                                <i class="fas fa-lightbulb"></i>
+                                <div>
+                                    <strong>Mẹo:</strong>
+                                    <p>Sử dụng ví điện tử để được hoàn tiền nhanh hơn khi hủy đặt phòng (1-3 ngày làm việc).</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 2. Quy trình thanh toán -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="quy-trinh">2. Quy trình thanh toán</h2>
+                            <p>
+                                Thanh toán đặt phòng tại Home Nest diễn ra như sau:
+                            </p>
+
+                            <ol class="feature-list">
+                                <li><strong>Chọn chỗ ở:</strong> Tìm và chọn chỗ ở phù hợp</li>
+                                <li><strong>Kiểm tra chi tiết:</strong> Xác nhận ngày, số khách và giá</li>
+                                <li><strong>Nhập thông tin:</strong> Điền thông tin khách và ghi chú</li>
+                                <li><strong>Chọn thanh toán:</strong> Chọn phương thức thanh toán</li>
+                                <li><strong>Xác nhận:</strong> Hoàn tất thanh toán qua cổng VNPay</li>
+                                <li><strong>Nhận xác nhận:</strong> Email xác nhận sẽ được gửi ngay</li>
+                            </ol>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 3. Bảo mật thanh toán -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="bao-mat">3. Bảo mật thanh toán</h2>
+                            
+                            <div class="info-box">
+                                <i class="fas fa-shield-halved"></i>
+                                <div>
+                                    <strong>Thanh toán an toàn</strong>
+                                    <p>Home Nest sử dụng cổng thanh toán VNPay được bảo mật bằng SSL 256-bit và tuân thủ tiêu chuẩn PCI DSS. Chúng tôi không lưu trữ thông tin thẻ của bạn.</p>
+                                </div>
+                            </div>
+
+                            <ul class="feature-list mt-3">
+                                <li>Mã hóa SSL 256-bit cho mọi giao dịch</li>
+                                <li>Xác thực 3D Secure (OTP) từ ngân hàng</li>
+                                <li>Không lưu trữ thông tin thẻ tín dụng</li>
+                                <li>Giám sát giao dịch bất thường 24/7</li>
+                            </ul>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 4. Chính sách hoàn tiền -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="hoan-tien">4. Chính sách hoàn tiền</h2>
+                            <p>
+                                Hoàn tiền được thực hiện trong các trường hợp sau:
+                            </p>
+
+                            <ul class="feature-list">
+                                <li><strong>Hủy đặt phòng:</strong> Theo chính sách hủy của chỗ ở</li>
+                                <li><strong>Chỗ ở không khả dụng:</strong> Hoàn tiền 100%</li>
+                                <li><strong>Không đúng mô tả:</strong> Xem xét hoàn tiền theo mức độ</li>
+                                <li><strong>Sự cố kỹ thuật:</strong> Hoàn tiền 100% nếu lỗi từ hệ thống</li>
+                            </ul>
+
+                            <h3 class="subsection-title mt-4">Thời gian hoàn tiền</h3>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Phương thức</th>
+                                        <th>Thời gian</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Ví điện tử (MoMo, ZaloPay)</td>
+                                        <td>1-3 ngày làm việc</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Thẻ ATM nội địa</td>
+                                        <td>3-7 ngày làm việc</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Thẻ quốc tế (Visa, MC)</td>
+                                        <td>5-10 ngày làm việc</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 5. Phí dịch vụ -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="phi-dich-vu">5. Phí dịch vụ</h2>
+                            <p>
+                                Home Nest thu phí dịch vụ để duy trì nền tảng và hỗ trợ khách hàng:
+                            </p>
+
+                            <ul class="feature-list">
+                                <li><strong>Phí dịch vụ khách:</strong> 10% giá đặt phòng</li>
+                                <li><strong>Phí được hiển thị:</strong> Trước khi xác nhận thanh toán</li>
+                                <li><strong>Hoàn phí dịch vụ:</strong> Chỉ khi hủy trong thời gian quy định</li>
+                            </ul>
+
+                            <div class="alert-box info">
+                                <i class="fas fa-info-circle"></i>
+                                <div>
+                                    <strong>Lưu ý:</strong>
+                                    <p>Phí dịch vụ giúp chúng tôi cung cấp hỗ trợ khách hàng 24/7, bảo vệ thanh toán và duy trì nền tảng an toàn.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact -->
+                        <div class="content-block mt-5">
+                            <div class="info-box">
+                                <i class="fas fa-headset"></i>
+                                <div>
+                                    <strong>Cần hỗ trợ về thanh toán?</strong>
+                                    <p>Liên hệ hotline <strong>1900-xxxx</strong> hoặc email <strong>support@homenest.vn</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {% include 'app/includes/footer.html' %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>

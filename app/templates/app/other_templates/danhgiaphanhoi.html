@@ -1,0 +1,231 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đánh giá và phản hồi - Home Nest</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'app/css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/chinhsachdieukhoan.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/footer.css' %}">
+</head>
+
+<body>
+    {% include 'app/includes/header.html' %}
+
+    <main class="policy-page">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'trungtamtrogiup' %}">Trung tâm trợ giúp</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Đánh giá và phản hồi</li>
+                </ol>
+            </nav>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <p class="category-label">HƯỚNG DẪN</p>
+                <h1 class="page-title">Đánh giá và phản hồi</h1>
+                <p class="page-subtitle">Cập nhật lần cuối: Tháng 1 năm 2026</p>
+            </div>
+
+            <!-- Main Content -->
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="content-section">
+                        <p class="intro-text">
+                            Đánh giá giúp cộng đồng Home Nest phát triển bền vững. Tìm hiểu cách viết đánh giá, quy tắc cộng đồng và cách phản hồi đánh giá một cách hiệu quả.
+                        </p>
+
+                        <div class="section-divider"></div>
+
+                        <!-- Table of Contents -->
+                        <div class="content-block">
+                            <h2 class="section-title">Mục lục</h2>
+                            <ul class="toc-list">
+                                <li><a href="#viet-danh-gia"><i class="fas fa-chevron-right"></i> 1. Cách viết đánh giá</a></li>
+                                <li><a href="#quy-tac"><i class="fas fa-chevron-right"></i> 2. Quy tắc đánh giá</a></li>
+                                <li><a href="#phan-hoi"><i class="fas fa-chevron-right"></i> 3. Phản hồi đánh giá</a></li>
+                                <li><a href="#bao-cao"><i class="fas fa-chevron-right"></i> 4. Báo cáo đánh giá vi phạm</a></li>
+                                <li><a href="#ai-phan-tich"><i class="fas fa-chevron-right"></i> 5. Phân tích AI</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 1. Cách viết đánh giá -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="viet-danh-gia">1. Cách viết đánh giá</h2>
+                            <p>
+                                Sau khi hoàn thành chuyến đi, bạn có 14 ngày để viết đánh giá:
+                            </p>
+
+                            <ol class="feature-list">
+                                <li>Vào mục "Chuyến đi" trong tài khoản</li>
+                                <li>Chọn đặt phòng đã hoàn thành</li>
+                                <li>Nhấn "Viết đánh giá"</li>
+                                <li>Chấm điểm từ 1-5 sao cho các tiêu chí</li>
+                                <li>Viết nhận xét chi tiết về trải nghiệm</li>
+                                <li>Thêm hình ảnh (tùy chọn)</li>
+                                <li>Gửi đánh giá</li>
+                            </ol>
+
+                            <div class="info-box">
+                                <i class="fas fa-star"></i>
+                                <div>
+                                    <strong>Các tiêu chí đánh giá</strong>
+                                    <ul class="mt-2">
+                                        <li>Độ sạch sẽ</li>
+                                        <li>Độ chính xác so với mô tả</li>
+                                        <li>Giao tiếp với chủ nhà</li>
+                                        <li>Vị trí</li>
+                                        <li>Nhận phòng</li>
+                                        <li>Giá trị</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 2. Quy tắc đánh giá -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="quy-tac">2. Quy tắc đánh giá</h2>
+                            <p>
+                                Để đảm bảo đánh giá hữu ích và công bằng:
+                            </p>
+
+                            <div class="security-grid">
+                                <div class="security-item">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <div>
+                                        <strong>Nên làm</strong>
+                                        <p>Viết trung thực, cụ thể, xây dựng</p>
+                                    </div>
+                                </div>
+                                <div class="security-item">
+                                    <i class="fas fa-times-circle text-danger"></i>
+                                    <div>
+                                        <strong>Không nên</strong>
+                                        <p>Ngôn từ thô tục, phân biệt, spam</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="alert-box warning mt-4">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div>
+                                    <strong>Đánh giá bị cấm:</strong>
+                                    <ul class="mt-2">
+                                        <li>Nội dung phân biệt đối xử</li>
+                                        <li>Thông tin cá nhân của người khác</li>
+                                        <li>Quảng cáo hoặc spam</li>
+                                        <li>Đánh giá giả mạo hoặc mua bán</li>
+                                        <li>Đe dọa hoặc tống tiền</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 3. Phản hồi đánh giá -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="phan-hoi">3. Phản hồi đánh giá (dành cho Host)</h2>
+                            <p>
+                                Chủ nhà có thể phản hồi đánh giá của khách:
+                            </p>
+
+                            <ul class="feature-list">
+                                <li><strong>Thời gian:</strong> 30 ngày sau khi đánh giá được đăng</li>
+                                <li><strong>Số lần:</strong> Chỉ được phản hồi 1 lần cho mỗi đánh giá</li>
+                                <li><strong>Hiển thị:</strong> Phản hồi hiện công khai dưới đánh giá</li>
+                            </ul>
+
+                            <div class="info-box">
+                                <i class="fas fa-lightbulb"></i>
+                                <div>
+                                    <strong>Mẹo phản hồi hiệu quả:</strong>
+                                    <ul class="mt-2">
+                                        <li>Cảm ơn khách đã đánh giá</li>
+                                        <li>Giải thích ngắn gọn nếu có hiểu lầm</li>
+                                        <li>Thể hiện thiện chí cải thiện</li>
+                                        <li>Giữ giọng văn chuyên nghiệp</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 4. Báo cáo đánh giá -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="bao-cao">4. Báo cáo đánh giá vi phạm</h2>
+                            <p>
+                                Nếu bạn thấy đánh giá vi phạm quy tắc cộng đồng:
+                            </p>
+
+                            <ol class="feature-list">
+                                <li>Nhấn vào biểu tượng "..." bên cạnh đánh giá</li>
+                                <li>Chọn "Báo cáo đánh giá này"</li>
+                                <li>Chọn lý do báo cáo</li>
+                                <li>Cung cấp thêm thông tin (nếu cần)</li>
+                                <li>Gửi báo cáo</li>
+                            </ol>
+
+                            <p class="mt-3">
+                                Đội ngũ Home Nest sẽ xem xét trong vòng 24-48 giờ và thông báo kết quả cho bạn.
+                            </p>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 5. Phân tích AI -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="ai-phan-tich">5. Phân tích đánh giá bằng AI</h2>
+                            
+                            <div class="info-box">
+                                <i class="fas fa-robot"></i>
+                                <div>
+                                    <strong>Công nghệ ViSoBERT</strong>
+                                    <p>Home Nest sử dụng mô hình AI tiên tiến ViSoBERT để phân tích cảm xúc đánh giá tiếng Việt, giúp phân loại tự động thành:</p>
+                                    <ul class="mt-2">
+                                        <li><span class="badge bg-success">Tích cực</span> - Trải nghiệm tốt</li>
+                                        <li><span class="badge bg-danger">Tiêu cực</span> - Có vấn đề cần cải thiện</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <p class="mt-3">
+                                Phân tích AI giúp Host nhanh chóng nắm bắt phản hồi của khách và cải thiện dịch vụ.
+                            </p>
+                        </div>
+
+                        <!-- Contact -->
+                        <div class="content-block mt-5">
+                            <div class="info-box">
+                                <i class="fas fa-headset"></i>
+                                <div>
+                                    <strong>Cần hỗ trợ về đánh giá?</strong>
+                                    <p>Liên hệ hotline <strong>1900-xxxx</strong> hoặc email <strong>support@homenest.vn</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {% include 'app/includes/footer.html' %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>

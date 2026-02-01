@@ -21,14 +21,6 @@
         <div class="container">
             <div class="hero-content">
                 <h1 class="hero-title">Chào bạn! Chúng tôi có thể giúp gì cho bạn?</h1>
-                
-                <!-- Search Box -->
-                <div class="search-container">
-                    <input type="text" class="search-input" placeholder="Tìm kiếm thông tin hướng dẫn và những...">
-                    <button class="search-btn">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </button>
-                </div>
             </div>
         </div>
     </section>
@@ -55,7 +47,7 @@
                         </div>
                         <h3>Hủy đặt phòng</h3>
                         <p>Thời hạn hoàn tiền và số tiền hoàn lại phụ thuộc vào chính sách hủy của chỗ ở. Xem chi tiết trong email xác nhận hoặc trên trang đặt phòng.</p>
-                        <a href="#" class="card-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></a>
+                        <a href="{% url 'huydatphong' %}" class="card-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
 
                     <!-- Card 2 -->
@@ -87,16 +79,16 @@
                             <i class="fa-solid fa-house"></i>
                             <span>Tìm và đặt chỗ ở</span>
                         </a>
-                        <a href="#" class="topic-link">
+                        <a href="{% url 'thanhtoanhoanien' %}" class="topic-link">
                             <i class="fa-solid fa-money-bill-wave"></i>
                             <span>Thanh toán và hoàn tiền</span>
                         </a>
 
-                        <a href="#" class="topic-link">
+                        <a href="{% url 'danhgiaphanhoi' %}" class="topic-link">
                             <i class="fa-solid fa-comments"></i>
                             <span>Đánh giá và phản hồi</span>
                         </a>
-                        <a href="#" class="topic-link">
+                        <a href="{% url 'huythaydoi' %}" class="topic-link">
                             <i class="fa-solid fa-xmark"></i>
                             <span>Hủy và thay đổi đặt phòng</span>
                         </a>

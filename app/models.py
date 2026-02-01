@@ -419,30 +419,3 @@ class Complaint(models.Model):
         verbose_name_plural = "Khiếu nại"
 
 
-# --- 14. HOST_POLICIES ---
-class HostPolicy(models.Model):
-    # policy_id (PK): BIGINT (BigAutoField)
-    policy_id = models.BigAutoField(primary_key=True)
-
-    # host_id (FK): OneToOneField
-    # Quan hệ: 1 USERS -> 1 HOST_POLICIES (chỉ áp dụng cho user có role 'host')
-    host = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=False, related_name='policy')
-
-    # warning_count: INT (IntegerField)
-    warning_count = models.IntegerField(default=0)
-
-    # is_suspended: BOOLEAN (BooleanField)
-    is_suspended = models.BooleanField(default=False)
-
-    # updated_at: DATETIME (DateTimeField)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"Chính sách cho Chủ nhà {self.host.full_name}"
-
-    class Meta:
-        db_table = 'host_policies'
-        verbose_name = "Chính sách chủ nhà"
-        verbose_name_plural = "Chính sách chủ nhà"
-
-

@@ -146,22 +146,6 @@ class Complaint(models.Model):
         verbose_name_plural = "Khiếu nại"
 
 
-# --- HOST POLICIES ---
-class HostPolicy(models.Model):
-    policy_id = models.BigAutoField(primary_key=True)
-    host = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=False, related_name='policy')
-    warning_count = models.IntegerField(default=0)
-    is_suspended = models.BooleanField(default=False)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"Chính sách cho Chủ nhà {self.host.get_full_name()}"
-
-    class Meta:
-        db_table = 'host_policies'
-        verbose_name = "Chính sách chủ nhà"
-        verbose_name_plural = "Chính sách chủ nhà"
-
 # --- BANK ACCOUNT ---
 class BankAccount(models.Model):
     """Thông tin tài khoản ngân hàng của người dùng"""

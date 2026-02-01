@@ -1,0 +1,268 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hủy và thay đổi đặt phòng - Home Nest</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'app/css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/chinhsachdieukhoan.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/footer.css' %}">
+</head>
+
+<body>
+    {% include 'app/includes/header.html' %}
+
+    <main class="policy-page">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'trungtamtrogiup' %}">Trung tâm trợ giúp</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Hủy và thay đổi đặt phòng</li>
+                </ol>
+            </nav>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <p class="category-label">HƯỚNG DẪN</p>
+                <h1 class="page-title">Hủy và thay đổi đặt phòng</h1>
+                <p class="page-subtitle">Cập nhật lần cuối: Tháng 1 năm 2026</p>
+            </div>
+
+            <!-- Main Content -->
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="content-section">
+                        <p class="intro-text">
+                            Kế hoạch thay đổi? Đừng lo! Dưới đây là hướng dẫn chi tiết về cách hủy hoặc thay đổi đặt phòng tại Home Nest.
+                        </p>
+
+                        <div class="section-divider"></div>
+
+                        <!-- Table of Contents -->
+                        <div class="content-block">
+                            <h2 class="section-title">Mục lục</h2>
+                            <ul class="toc-list">
+                                <li><a href="#thay-doi"><i class="fas fa-chevron-right"></i> 1. Thay đổi đặt phòng</a></li>
+                                <li><a href="#huy-phong"><i class="fas fa-chevron-right"></i> 2. Hủy đặt phòng</a></li>
+                                <li><a href="#chinh-sach"><i class="fas fa-chevron-right"></i> 3. Chính sách hủy</a></li>
+                                <li><a href="#host-huy"><i class="fas fa-chevron-right"></i> 4. Khi Host hủy đặt phòng</a></li>
+                                <li><a href="#truong-hop-db"><i class="fas fa-chevron-right"></i> 5. Trường hợp đặc biệt</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 1. Thay đổi đặt phòng -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="thay-doi">1. Thay đổi đặt phòng</h2>
+                            <p>
+                                Bạn có thể yêu cầu thay đổi đặt phòng trong một số trường hợp:
+                            </p>
+
+                            <div class="security-grid">
+                                <div class="security-item">
+                                    <i class="fas fa-calendar-alt text-primary"></i>
+                                    <div>
+                                        <strong>Thay đổi ngày</strong>
+                                        <p>Đổi ngày check-in/check-out</p>
+                                    </div>
+                                </div>
+                                <div class="security-item">
+                                    <i class="fas fa-users text-success"></i>
+                                    <div>
+                                        <strong>Thay đổi số khách</strong>
+                                        <p>Tăng/giảm số lượng khách</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="info-box mt-4">
+                                <i class="fas fa-list-ol"></i>
+                                <div>
+                                    <strong>Cách yêu cầu thay đổi:</strong>
+                                    <ol class="mt-2">
+                                        <li>Vào mục "Chuyến đi" trong tài khoản</li>
+                                        <li>Chọn đặt phòng cần thay đổi</li>
+                                        <li>Nhấn "Thay đổi đặt phòng"</li>
+                                        <li>Chọn thay đổi mong muốn</li>
+                                        <li>Gửi yêu cầu cho Host</li>
+                                        <li>Chờ Host xác nhận</li>
+                                    </ol>
+                                </div>
+                            </div>
+
+                            <div class="alert-box warning mt-4">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div>
+                                    <strong>Lưu ý:</strong>
+                                    <p>Thay đổi đặt phòng cần được Host chấp thuận. Nếu thay đổi ảnh hưởng đến giá, bạn sẽ cần thanh toán thêm hoặc được hoàn tiền chênh lệch.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 2. Hủy đặt phòng -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="huy-phong">2. Hủy đặt phòng</h2>
+                            <p>
+                                Để hủy đặt phòng:
+                            </p>
+
+                            <ol class="feature-list">
+                                <li>Đăng nhập vào tài khoản Home Nest</li>
+                                <li>Vào mục "Chuyến đi"</li>
+                                <li>Chọn đặt phòng muốn hủy</li>
+                                <li>Nhấn "Hủy đặt phòng"</li>
+                                <li>Xem số tiền hoàn lại (theo chính sách hủy)</li>
+                                <li>Xác nhận hủy</li>
+                            </ol>
+
+                            <p class="mt-3">
+                                Sau khi hủy, bạn sẽ nhận email xác nhận và tiền hoàn (nếu có) sẽ được xử lý theo phương thức thanh toán ban đầu.
+                            </p>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 3. Chính sách hủy -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="chinh-sach">3. Các loại chính sách hủy</h2>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Loại chính sách</th>
+                                            <th>Điều kiện hoàn tiền</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="badge bg-success">Linh hoạt</span></td>
+                                            <td>Hoàn 100% nếu hủy trước 24 giờ check-in</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge bg-warning text-dark">Trung bình</span></td>
+                                            <td>Hoàn 100% nếu hủy trước 5 ngày check-in, 50% nếu hủy trước 24 giờ</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge bg-danger">Nghiêm ngặt</span></td>
+                                            <td>Hoàn 50% nếu hủy trước 7 ngày check-in, 0% sau đó</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge bg-secondary">Không hoàn tiền</span></td>
+                                            <td>Không hoàn tiền sau khi xác nhận đặt phòng</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="info-box">
+                                <i class="fas fa-info-circle"></i>
+                                <div>
+                                    <strong>Xem chính sách hủy:</strong>
+                                    <p>Chính sách hủy được hiển thị rõ ràng trên trang chỗ ở và trong email xác nhận đặt phòng.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 4. Host hủy -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="host-huy">4. Khi Host hủy đặt phòng</h2>
+                            <p>
+                                Trong trường hợp Host hủy đặt phòng của bạn:
+                            </p>
+
+                            <ul class="feature-list">
+                                <li><strong>Hoàn tiền 100%:</strong> Bạn sẽ được hoàn toàn bộ số tiền đã thanh toán</li>
+                                <li><strong>Thông báo ngay:</strong> Bạn nhận email và thông báo ứng dụng</li>
+                                <li><strong>Hỗ trợ tìm chỗ mới:</strong> Home Nest sẽ giúp bạn tìm chỗ ở thay thế</li>
+                                <li><strong>Ưu tiên hỗ trợ:</strong> Đường dây nóng ưu tiên cho trường hợp khẩn cấp</li>
+                            </ul>
+
+                            <div class="info-box">
+                                <i class="fas fa-shield-halved"></i>
+                                <div>
+                                    <strong>Bảo vệ khách hàng:</strong>
+                                    <p>Host hủy đặt phòng sẽ bị đánh giá thấp và có thể bị phạt theo quy định của Home Nest.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 5. Trường hợp đặc biệt -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="truong-hop-db">5. Trường hợp đặc biệt</h2>
+                            <p>
+                                Home Nest có chính sách đặc biệt cho các trường hợp bất khả kháng:
+                            </p>
+
+                            <div class="security-grid">
+                                <div class="security-item">
+                                    <i class="fas fa-cloud-bolt text-primary"></i>
+                                    <div>
+                                        <strong>Thiên tai</strong>
+                                        <p>Bão, lũ, động đất</p>
+                                    </div>
+                                </div>
+                                <div class="security-item">
+                                    <i class="fas fa-hospital text-danger"></i>
+                                    <div>
+                                        <strong>Y tế khẩn cấp</strong>
+                                        <p>Bệnh nặng, tai nạn</p>
+                                    </div>
+                                </div>
+                                <div class="security-item">
+                                    <i class="fas fa-plane-slash text-warning"></i>
+                                    <div>
+                                        <strong>Hạn chế di chuyển</strong>
+                                        <p>Lệnh cấm của chính phủ</p>
+                                    </div>
+                                </div>
+                                <div class="security-item">
+                                    <i class="fas fa-house-crack text-secondary"></i>
+                                    <div>
+                                        <strong>Sự cố chỗ ở</strong>
+                                        <p>Mất điện, nước, hư hỏng</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="mt-4">
+                                Trong các trường hợp này, vui lòng liên hệ đội ngũ hỗ trợ kèm giấy tờ chứng minh để được xem xét hoàn tiền đầy đủ.
+                            </p>
+                        </div>
+
+                        <!-- Contact -->
+                        <div class="content-block mt-5">
+                            <div class="info-box">
+                                <i class="fas fa-headset"></i>
+                                <div>
+                                    <strong>Cần hỗ trợ?</strong>
+                                    <p>Liên hệ hotline <strong>1900-xxxx</strong> hoặc email <strong>support@homenest.vn</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {% include 'app/includes/footer.html' %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>

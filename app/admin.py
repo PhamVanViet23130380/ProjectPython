@@ -16,7 +16,7 @@ from decimal import Decimal
 from .models import (
     Listing, ListingAddress, ListingImage, Amenity, ListingAmenity,
     Booking, Payment, Review, ReviewMedia, ReviewAnalysis,
-    Complaint, HostPolicy, ReviewClassification, BankAccount, Notification
+    Complaint, ReviewClassification, BankAccount, Notification
 )
 from .views.notification_views import (
     notify_listing_approved, notify_listing_rejected
@@ -151,10 +151,11 @@ class CustomAdminSite(admin.AdminSite):
             'has_module_perms': True,
             'models': [
                 {
-                    'name': '📊 Thống kê doanh thu',
+                    'name': 'Thống kê doanh thu',
                     'object_name': 'RevenueStatistics',
                     'admin_url': reverse('admin:admin_revenue_statistics'),
                     'view_only': True,
+                    'icon': 'fas fa-chart-line',
                 }
             ]
         }
@@ -442,13 +443,6 @@ class ComplaintAdmin(admin.ModelAdmin):
     def colored_status(self, obj):
         color = '#5D4037' if obj.status == 'resolved' else '#8D6E63'
         return format_html('<b style="color:{};">{}</b>', color, obj.status.upper())
-
-@admin.register(HostPolicy)
-class HostPolicyAdmin(admin.ModelAdmin):
-    list_display = ('host', 'warning_count', 'is_suspended_status')
-    def is_suspended_status(self, obj):
-        icon = "✅ Bình thường" if not obj.is_suspended else "🚫 Đã khóa"
-        return icon
 
 # --- ĐĂNG KÝ CÁC BẢNG CÒN LẠI ---
 admin.site.register(Amenity)

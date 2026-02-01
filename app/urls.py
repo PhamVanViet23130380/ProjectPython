@@ -48,6 +48,10 @@ urlpatterns = [
     path('datphong/', views.datphong, name='datphong'),  # ?room=123
     path('phuongthucthanhtoan/', views.phuongthucthanhtoan, name='phuongthucthanhtoan'),
     path('chinhsachdieukhoan/', views.chinhsachdieukhoan, name='chinhsachdieukhoan'),
+    path('huydatphong/', views.huydatphong, name='huydatphong'),
+    path('thanhtoanhoanien/', views.thanhtoanhoanien, name='thanhtoanhoanien'),
+    path('danhgiaphanhoi/', views.danhgiaphanhoi, name='danhgiaphanhoi'),
+    path('huythaydoi/', views.huythaydoi, name='huythaydoi'),
 
 
     path("chitietnoio/<int:listing_id>/", listing_detail, name="chitietnoio"),

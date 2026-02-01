@@ -1,0 +1,191 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hủy đặt phòng - Home Nest</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'app/css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/chinhsachdieukhoan.css' %}">
+    <link rel="stylesheet" href="{% static 'app/css/footer.css' %}">
+</head>
+
+<body>
+    {% include 'app/includes/header.html' %}
+
+    <main class="policy-page">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'trungtamtrogiup' %}">Trung tâm trợ giúp</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Hủy đặt phòng</li>
+                </ol>
+            </nav>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <p class="category-label">HƯỚNG DẪN</p>
+                <h1 class="page-title">Hủy đặt phòng</h1>
+                <p class="page-subtitle">Cập nhật lần cuối: Tháng 1 năm 2026</p>
+            </div>
+
+            <!-- Main Content -->
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="content-section">
+                        <p class="intro-text">
+                            Thời hạn hoàn tiền và số tiền hoàn lại phụ thuộc vào chính sách hủy của chỗ ở. Dưới đây là hướng dẫn chi tiết về cách hủy đặt phòng và các chính sách hoàn tiền áp dụng tại Home Nest.
+                        </p>
+
+                        <div class="alert-box info">
+                            <i class="fas fa-info-circle"></i>
+                            <div>
+                                <strong>Lưu ý quan trọng:</strong>
+                                <p>Trước khi hủy, hãy kiểm tra chính sách hủy của chỗ ở trong email xác nhận hoặc trên trang đặt phòng của bạn.</p>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- Table of Contents -->
+                        <div class="content-block">
+                            <h2 class="section-title">Mục lục</h2>
+                            <ul class="toc-list">
+                                <li><a href="#cach-huy"><i class="fas fa-chevron-right"></i> 1. Cách hủy đặt phòng</a></li>
+                                <li><a href="#chinh-sach-huy"><i class="fas fa-chevron-right"></i> 2. Các loại chính sách hủy</a></li>
+                                <li><a href="#hoan-tien"><i class="fas fa-chevron-right"></i> 3. Thời gian hoàn tiền</a></li>
+                                <li><a href="#truong-hop-dac-biet"><i class="fas fa-chevron-right"></i> 4. Trường hợp đặc biệt</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 1. Cách hủy đặt phòng -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="cach-huy">1. Cách hủy đặt phòng</h2>
+                            <p>
+                                Để hủy đặt phòng, bạn có thể thực hiện theo các bước sau:
+                            </p>
+
+                            <div class="info-box">
+                                <i class="fas fa-list-ol"></i>
+                                <div>
+                                    <strong>Các bước hủy đặt phòng</strong>
+                                    <ol class="feature-list">
+                                        <li>Đăng nhập vào tài khoản Home Nest của bạn</li>
+                                        <li>Vào mục "Chuyến đi" trong menu cá nhân</li>
+                                        <li>Chọn đặt phòng bạn muốn hủy</li>
+                                        <li>Nhấn nút "Hủy đặt phòng"</li>
+                                        <li>Xác nhận hủy và kiểm tra số tiền hoàn lại</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 2. Chính sách hủy -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="chinh-sach-huy">2. Các loại chính sách hủy</h2>
+                            <p>
+                                Mỗi chỗ ở có thể áp dụng một trong các chính sách hủy sau:
+                            </p>
+
+                            <div class="security-grid">
+                                <div class="security-item">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <div>
+                                        <strong>Linh hoạt</strong>
+                                        <p>Hoàn tiền 100% nếu hủy trước 24 giờ check-in</p>
+                                    </div>
+                                </div>
+                                <div class="security-item">
+                                    <i class="fas fa-clock text-warning"></i>
+                                    <div>
+                                        <strong>Trung bình</strong>
+                                        <p>Hoàn tiền 100% nếu hủy trước 5 ngày check-in</p>
+                                    </div>
+                                </div>
+                                <div class="security-item">
+                                    <i class="fas fa-shield text-danger"></i>
+                                    <div>
+                                        <strong>Nghiêm ngặt</strong>
+                                        <p>Hoàn tiền 50% nếu hủy trước 7 ngày check-in</p>
+                                    </div>
+                                </div>
+                                <div class="security-item">
+                                    <i class="fas fa-ban text-secondary"></i>
+                                    <div>
+                                        <strong>Không hoàn tiền</strong>
+                                        <p>Không hoàn tiền sau khi xác nhận đặt phòng</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 3. Thời gian hoàn tiền -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="hoan-tien">3. Thời gian hoàn tiền</h2>
+                            <p>
+                                Sau khi hủy đặt phòng thành công, thời gian hoàn tiền phụ thuộc vào phương thức thanh toán:
+                            </p>
+
+                            <ul class="feature-list">
+                                <li><strong>Thẻ tín dụng/ghi nợ:</strong> 5-10 ngày làm việc</li>
+                                <li><strong>Ví điện tử (MoMo, ZaloPay, VNPay):</strong> 1-3 ngày làm việc</li>
+                                <li><strong>Chuyển khoản ngân hàng:</strong> 3-7 ngày làm việc</li>
+                            </ul>
+
+                            <div class="alert-box warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div>
+                                    <strong>Lưu ý:</strong>
+                                    <p>Tiền hoàn sẽ được trả về cùng phương thức thanh toán ban đầu. Phí dịch vụ của Home Nest sẽ không được hoàn lại trong một số trường hợp.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 4. Trường hợp đặc biệt -->
+                        <div class="content-block">
+                            <h2 class="block-title" id="truong-hop-dac-biet">4. Trường hợp đặc biệt</h2>
+                            <p>
+                                Trong một số trường hợp đặc biệt, Home Nest có thể xem xét hoàn tiền đầy đủ:
+                            </p>
+
+                            <ul class="feature-list">
+                                <li><strong>Thiên tai:</strong> Bão, lũ lụt, động đất ảnh hưởng đến chỗ ở</li>
+                                <li><strong>Y tế khẩn cấp:</strong> Bệnh nặng, tai nạn (cần cung cấp giấy tờ y tế)</li>
+                                <li><strong>Hạn chế đi lại:</strong> Lệnh cấm di chuyển của chính phủ</li>
+                                <li><strong>Chỗ ở không đúng mô tả:</strong> Khác biệt lớn so với thông tin đăng</li>
+                            </ul>
+
+                            <div class="info-box">
+                                <i class="fas fa-headset"></i>
+                                <div>
+                                    <strong>Cần hỗ trợ?</strong>
+                                    <p>Liên hệ đội ngũ hỗ trợ Home Nest qua hotline <strong>1900-xxxx</strong> hoặc email <strong>support@homenest.vn</strong> để được giải quyết nhanh chóng.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {% include 'app/includes/footer.html' %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>
