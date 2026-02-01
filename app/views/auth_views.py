@@ -29,6 +29,9 @@ def login_view(request):
             user = authenticate(request, username=email, password=password)
             if user:
                 login(request, user)
+                # Phân quyền: Admin → /admin/, Guest → home
+                if user.is_staff or user.is_superuser:
+                    return redirect('/admin/')
                 return redirect('home')
             messages.error(request, 'Email hoặc mật khẩu không chính xác')
             return redirect('login')

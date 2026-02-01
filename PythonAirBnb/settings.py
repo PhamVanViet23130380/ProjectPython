@@ -1,4 +1,4 @@
-"""
+﻿"""
 Django settings for PythonAirBnb project.
 """
 
@@ -38,6 +38,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'app.middleware.AdminRedirectMiddleware',  # Chặn admin vào trang user
 ]
 
 ROOT_URLCONF = 'PythonAirBnb.urls'
@@ -110,6 +111,7 @@ AUTH_USER_MODEL = 'app.User'
 
 # Ensure Django redirects to the project's named login page (usually '/login/')
 LOGIN_URL = '/login/'
+LOGOUT_REDIRECT_URL = '/login/'  # Sau khi logout chuyển về trang login
 
 
 # --- JAZZMIN CONFIGURATION ---
@@ -127,9 +129,19 @@ JAZZMIN_SETTINGS = {
     "topmenu_links": [
         {"name": "Trang chủ", "url": "admin:index", "permissions": ["auth.view_user"]},
         {"model": "app.User"},
+        {"name": "Đăng xuất", "url": "admin:logout"},
     ],
     "show_sidebar": True,
     "navigation_expanded": True,
+    
+    # Hiển thị nút đăng xuất
+    "show_ui_builder": False,
+    "user_avatar": None,
+    
+    # Custom links trên thanh user menu  
+    "usermenu_links": [
+        {"name": "Đăng xuất", "url": "admin:logout", "icon": "fas fa-sign-out-alt"},
+    ],
 }
 
 JAZZMIN_UI_TWEAKS = {
@@ -180,3 +192,5 @@ VNPAY_URL = os.getenv('VNPAY_URL', 'https://sandbox.vnpayment.vn/paymentv2/vpcpa
 VNPAY_RETURN_URL = os.getenv('VNPAY_RETURN_URL', 'http://127.0.0.1:8000/payment/vnpay/return/')
 VNPAY_IPN_URL = os.getenv('VNPAY_IPN_URL', 'http://127.0.0.1:8000/payment/vnpay/ipn/')
 VNPAY_VERSION = os.getenv('VNPAY_VERSION', '2.1.0')
+
+

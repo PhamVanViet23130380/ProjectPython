@@ -5,6 +5,9 @@ from django.contrib.auth.models import Group
 from django.utils import timezone
 from django.urls import path, reverse
 from django.shortcuts import redirect
+from django.template.response import TemplateResponse
+from django.db.models import Sum, Count
+from django.db.models.functions import ExtractMonth, ExtractYear
 import json
 import uuid
 from django import forms
@@ -25,6 +28,115 @@ class CustomAdminSite(admin.AdminSite):
     site_title = "Homnest Admin Portal"
     index_title = "Bảng Điều Khiển Quản Trị Hệ Thống"
     
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('revenue-statistics/', self.admin_view(self.revenue_statistics_view), name='admin_revenue_statistics'),
+        ]
+        return custom_urls + urls
+    
+    def revenue_statistics_view(self, request):
+        """Admin view: Thống kê doanh thu phí dịch vụ từ booking đã hoàn thành."""
+        current_year = timezone.now().year
+        current_month = timezone.now().month
+        
+        # Lấy năm từ query param hoặc dùng năm hiện tại
+        selected_year = request.GET.get('year')
+        try:
+            selected_year = int(selected_year)
+        except (TypeError, ValueError):
+            selected_year = current_year
+        
+        # Lấy danh sách các năm có booking
+        years_qs = Booking.objects.filter(
+            booking_status='confirmed'
+        ).annotate(
+            year=ExtractYear('created_at')
+        ).values('year').distinct().order_by('-year')
+        
+        available_years = [y['year'] for y in years_qs if y['year']]
+        if current_year not in available_years:
+            available_years.insert(0, current_year)
+        available_years = sorted(set(available_years), reverse=True)
+        
+        # Lấy booking đã hoàn thành trong năm được chọn
+        bookings_year = Booking.objects.filter(
+            booking_status='confirmed',
+            created_at__year=selected_year
+        )
+        
+        # Tổng doanh thu năm
+        year_stats = bookings_year.aggregate(
+            total_revenue=Sum('service_fee'),
+            total_count=Count('booking_id')
+        )
+        total_revenue_year = year_stats['total_revenue'] or 0
+        total_bookings_year = year_stats['total_count'] or 0
+        
+        # Doanh thu tháng hiện tại
+        bookings_month = Booking.objects.filter(
+            booking_status='confirmed',
+            created_at__year=current_year,
+            created_at__month=current_month
+        )
+        month_stats = bookings_month.aggregate(
+            total_revenue=Sum('service_fee'),
+            total_count=Count('booking_id')
+        )
+        total_revenue_month = month_stats['total_revenue'] or 0
+        total_bookings_month = month_stats['total_count'] or 0
+        
+        # Thống kê theo tháng trong năm được chọn
+        monthly_stats = bookings_year.annotate(
+            month=ExtractMonth('created_at')
+        ).values('month').annotate(
+            revenue=Sum('service_fee'),
+            count=Count('booking_id')
+        ).order_by('month')
+        
+        # Tạo dữ liệu cho 12 tháng
+        monthly_data = []
+        monthly_revenue_dict = {item['month']: item for item in monthly_stats}
+        
+        for m in range(1, 13):
+            if m in monthly_revenue_dict:
+                monthly_data.append({
+                    'month': m,
+                    'revenue': float(monthly_revenue_dict[m]['revenue'] or 0),
+                    'count': monthly_revenue_dict[m]['count']
+                })
+            else:
+                monthly_data.append({
+                    'month': m,
+                    'revenue': 0,
+                    'count': 0
+                })
+        
+        # Tính trung bình doanh thu/tháng
+        months_with_data = len([m for m in monthly_data if m['revenue'] > 0])
+        avg_revenue_per_month = float(total_revenue_year) / months_with_data if months_with_data > 0 else 0
+        
+        # Dữ liệu cho biểu đồ
+        monthly_labels = [f"Tháng {m}" for m in range(1, 13)]
+        monthly_values = [m['revenue'] for m in monthly_data]
+        
+        context = {
+            **self.each_context(request),
+            'title': 'Thống kê doanh thu',
+            'selected_year': selected_year,
+            'available_years': available_years,
+            'total_revenue_year': total_revenue_year,
+            'total_bookings_year': total_bookings_year,
+            'total_revenue_month': total_revenue_month,
+            'total_bookings_month': total_bookings_month,
+            'avg_revenue_per_month': avg_revenue_per_month,
+            'monthly_data': monthly_data,
+            'monthly_labels': json.dumps(monthly_labels),
+            'monthly_values': json.dumps(monthly_values),
+        }
+        
+        return TemplateResponse(request, 'admin/revenue_statistics.html', context)
+    
     def get_app_list(self, request, app_label=None):
         app_list = super().get_app_list(request, app_label)
         
@@ -32,13 +144,13 @@ class CustomAdminSite(admin.AdminSite):
         revenue_stats = {
             'name': 'Thống kê & Báo cáo',
             'app_label': 'statistics',
-            'app_url': reverse('admin_revenue_statistics'),
+            'app_url': reverse('admin:admin_revenue_statistics'),
             'has_module_perms': True,
             'models': [
                 {
                     'name': '📊 Thống kê doanh thu',
                     'object_name': 'RevenueStatistics',
-                    'admin_url': reverse('admin_revenue_statistics'),
+                    'admin_url': reverse('admin:admin_revenue_statistics'),
                     'view_only': True,
                 }
             ]
