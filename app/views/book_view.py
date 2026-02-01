@@ -105,9 +105,8 @@ def create_booking(request, listing_id):
         # calculate price breakdown using helper (returns Decimal values)
         try:
             price_data = calculate_total_price(listing, checkin, checkout, guests=guests)
-            total_price = price_data.get('total')
         except Exception:
-            total_price = None
+            price_data = None
 
         try:
             # Use a DB transaction + select_for_update to avoid race conditions
@@ -149,12 +148,11 @@ def create_booking(request, listing_id):
                     booking.check_in = checkin
                     booking.check_out = checkout
                     booking.guests = guests
-                    booking.total_price = total_price
                     booking.base_price = base_price
                     booking.service_fee = service_fee_val
                     booking.note = note
                     booking.save(update_fields=[
-                        'check_in', 'check_out', 'guests', 'total_price',
+                        'check_in', 'check_out', 'guests',
                         'base_price', 'service_fee', 'note'
                     ])
                 else:
@@ -164,7 +162,6 @@ def create_booking(request, listing_id):
                         check_in=checkin,
                         check_out=checkout,
                         guests=guests,
-                        total_price=total_price,
                         base_price=base_price,
                         service_fee=service_fee_val,
                         booking_status='pending',  # pending until payment
@@ -325,8 +322,7 @@ def send_booking_confirmation_email(request, booking, listing, checkin, checkout
             'nights': nights,
             'guests': guests,
             'base_price': format_price(price_data.get('base')),
-            'service_fee': format_price(price_data.get('service_fee')),
-            'total_price': format_price(price_data.get('total')),
+            'total_price': format_price(price_data.get('base')),
             'booking_url': request.build_absolute_uri(reverse('booking_success', args=[booking.booking_id])),
             'booking_history_url': request.build_absolute_uri(reverse('user_booking_history')),
         }
@@ -367,7 +363,7 @@ def send_cancellation_email(request, booking, refund_amount=0):
             'check_in': booking.check_in.strftime('%d/%m/%Y'),
             'check_out': booking.check_out.strftime('%d/%m/%Y'),
             'nights': nights,
-            'total_price': format_price(booking.total_price),
+            'total_price': format_price(booking.base_price),
             'refund_amount': format_price(refund_amount),
             'has_refund': refund_amount > 0,
             'booking_history_url': request.build_absolute_uri(reverse('user_booking_history')),

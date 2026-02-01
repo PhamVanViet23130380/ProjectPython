@@ -59,11 +59,11 @@ function calculatePrices(pricePerNight, nights) {
     const numNights = parseInt(nights) || 0;
     
     const subtotal = price * numNights;
-    // Hardcoded service fee (VND) — configurable later
-    const serviceFee = 350000;
+    // Service fee is not charged to user (stored separately in DB)
+    const serviceFee = 0;
     // Host protection fee default 0 (hidden when 0)
     const hostFee = 0;
-    const total = subtotal + serviceFee + hostFee;
+    const total = subtotal + hostFee;
     
     return {
         subtotal,
@@ -874,7 +874,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const confirmDates = document.getElementById('confirmDates');
             const confirmGuests = document.getElementById('confirmGuests');
             const confirmSubtotal = document.getElementById('confirmSubtotal');
-            const confirmServiceFee = document.getElementById('confirmServiceFee');
             const confirmTotalPrice = document.getElementById('confirmTotalPrice');
             const confirmRoomImage = document.getElementById('confirmRoomImage');
 
@@ -882,7 +881,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (confirmDates) confirmDates.textContent = document.getElementById('tripDates').textContent || '';
             if (confirmGuests) confirmGuests.textContent = document.getElementById('reviewGuests').textContent || '';
             if (confirmSubtotal) confirmSubtotal.textContent = document.getElementById('subtotal').textContent || '';
-            if (confirmServiceFee) confirmServiceFee.textContent = document.getElementById('serviceFee').textContent || '';
             if (confirmTotalPrice) confirmTotalPrice.textContent = document.getElementById('totalPrice').textContent || '';
             if (confirmRoomImage) confirmRoomImage.src = document.getElementById('roomImage').src || '';
 

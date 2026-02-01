@@ -231,8 +231,6 @@ class Booking(models.Model):
     # check_out: DATE (DateField)
     check_out = models.DateField(verbose_name='Ngày trả')
 
-    # total_price: DECIMAL(10,2) (DecimalField)
-    total_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Tổng tiền')
 
     # base_price: DECIMAL(10,2) (DecimalField) - subtotal (price_per_night * nights)
     base_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Tiền cơ bản')

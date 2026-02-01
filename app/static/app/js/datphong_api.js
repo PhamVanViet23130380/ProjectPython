@@ -58,22 +58,18 @@
         const {
             nights,
             base,
-            service_fee,
             total
         } = priceData;
 
         document.getElementById('numNights').textContent = nights;
         document.getElementById('subtotal').textContent = formatVND(base);
-        document.getElementById('serviceFee').textContent = formatVND(service_fee);
-        document.getElementById('totalPrice').textContent = formatVND(total);
+        document.getElementById('totalPrice').textContent = formatVND(total || base);
 
         const confirmSubtotal = document.getElementById('confirmSubtotal');
-        const confirmServiceFee = document.getElementById('confirmServiceFee');
         const confirmTotalPrice = document.getElementById('confirmTotalPrice');
 
         if (confirmSubtotal) confirmSubtotal.textContent = formatVND(base);
-        if (confirmServiceFee) confirmServiceFee.textContent = formatVND(service_fee);
-        if (confirmTotalPrice) confirmTotalPrice.textContent = formatVND(total);
+        if (confirmTotalPrice) confirmTotalPrice.textContent = formatVND(total || base);
     }
 // Lấy ngày từ URL params
     function getInitialDates() {

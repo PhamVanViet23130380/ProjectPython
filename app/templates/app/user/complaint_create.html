@@ -36,7 +36,7 @@
             <span><i class="fa-solid fa-calendar"></i> Nhận phòng: {{ booking.check_in|date:"d/m/Y"|default:"--" }}</span>
             <span><i class="fa-solid fa-calendar"></i> Trả phòng: {{ booking.check_out|date:"d/m/Y"|default:"--" }}</span>
             <span><i class="fa-solid fa-users"></i> Số khách: {{ booking.guests|default:"--" }}</span>
-            <span><i class="fa-solid fa-receipt"></i> Tổng tiền: {{ booking.total_price|floatformat:0|intdot|default:"--" }}</span>
+            <span><i class="fa-solid fa-receipt"></i> Tổng tiền: {{ booking.base_price|floatformat:0|intdot|default:"--" }}</span>
         </div>
     </div>
 

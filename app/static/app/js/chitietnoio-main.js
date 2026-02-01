@@ -39,11 +39,11 @@ function loadRoom(roomId) {
     
     // Calculate fees only when we're using demo `rooms` data (do not override server breakdown)
     if (shouldOverridePrice) {
-        // Calculate fees (roughly 32% service fee + 8% host protection)
+        // User only pays base price
         const subtotal = room.price * 2;
-        const serviceFee = Math.round(subtotal * 0.32 / 100) * 100;
-        const hostFee = Math.round(subtotal * 0.08 / 100) * 100;
-        const total = subtotal + serviceFee + hostFee;
+        const serviceFee = 0;
+        const hostFee = 0;
+        const total = subtotal;
 
         if (document.getElementById('fee-service')) document.getElementById('fee-service').textContent = `₫${serviceFee.toLocaleString('vi-VN')}`;
         if (document.getElementById('fee-host')) document.getElementById('fee-host').textContent = `₫${hostFee.toLocaleString('vi-VN')}`;

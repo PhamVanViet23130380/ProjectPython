@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return null;
       }
       const data = await res.json();
-      return data.total_price;
+      return data.base_price;
     } catch (e) {
       console.error('admin_payment fetch exception', e);
       return null;
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!bookingId) return;
       const total = await fetchTotal(bookingId);
       if (total !== null && e.target.value && e.target.value !== total) {
-        showWarning(`Amount should equal booking total: ${total}`);
+        showWarning(`Amount should equal booking base price: ${total}`);
       } else {
         clearWarning();
       }
