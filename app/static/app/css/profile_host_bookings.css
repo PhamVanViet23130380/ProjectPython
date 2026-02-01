@@ -201,7 +201,11 @@ body {
     color: #333;
     font-weight: 600;
 }
-
+.booking-status.in_progress {
+    background: #f2ca8c;
+    color: #333;
+    font-weight: 600;
+}
 
 /* =============================
    ACTIONS

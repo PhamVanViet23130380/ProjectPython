@@ -198,3 +198,66 @@ class BankAccount(models.Model):
         db_table = 'bank_accounts'
         verbose_name = "Tài khoản ngân hàng"
         verbose_name_plural = "Tài khoản ngân hàng"
+
+
+# --- NOTIFICATION ---
+NOTIFICATION_TYPE_CHOICES = [
+    ('listing_approved', 'Chỗ ở được duyệt'),
+    ('listing_rejected', 'Chỗ ở bị từ chối'),
+    ('new_booking', 'Có đặt phòng mới'),
+    ('booking_confirmed', 'Đặt phòng được xác nhận'),
+    ('booking_cancelled', 'Đặt phòng bị hủy'),
+    ('guest_checkin', 'Khách nhận phòng'),
+    ('guest_checkout', 'Khách trả phòng'),
+    ('booking_completed', 'Hoàn thành lượt thuê'),
+    ('payment_received', 'Nhận thanh toán'),
+    ('review_received', 'Nhận đánh giá mới'),
+]
+
+
+class Notification(models.Model):
+    """Thông báo cho người dùng"""
+    
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name='notifications',
+        verbose_name='Người nhận'
+    )
+    
+    notification_type = models.CharField(
+        max_length=30, 
+        choices=NOTIFICATION_TYPE_CHOICES,
+        verbose_name='Loại thông báo'
+    )
+    
+    title = models.CharField(max_length=200, verbose_name='Tiêu đề')
+    message = models.TextField(verbose_name='Nội dung')
+    
+    # Liên kết đến đối tượng liên quan (optional)
+    listing = models.ForeignKey(
+        'app.Listing', 
+        on_delete=models.CASCADE, 
+        null=True, blank=True,
+        related_name='notifications',
+        verbose_name='Chỗ ở liên quan'
+    )
+    booking = models.ForeignKey(
+        Booking, 
+        on_delete=models.CASCADE, 
+        null=True, blank=True,
+        related_name='notifications',
+        verbose_name='Đặt phòng liên quan'
+    )
+    
+    is_read = models.BooleanField(default=False, verbose_name='Đã đọc')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Thời gian')
+    
+    def __str__(self):
+        return f"{self.title} - {self.user.email}"
+    
+    class Meta:
+        db_table = 'notifications'
+        verbose_name = "Thông báo"
+        verbose_name_plural = "Thông báo"
+        ordering = ['-created_at']

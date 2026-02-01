@@ -16,7 +16,10 @@ from decimal import Decimal
 from .models import (
     Listing, ListingAddress, ListingImage, Amenity, ListingAmenity,
     Booking, Payment, Review, ReviewMedia, ReviewAnalysis,
-    Complaint, HostPolicy, ReviewClassification, BankAccount
+    Complaint, HostPolicy, ReviewClassification, BankAccount, Notification
+)
+from .views.notification_views import (
+    notify_listing_approved, notify_listing_rejected
 )
 
 User = get_user_model()
@@ -263,13 +266,25 @@ class ListingAdmin(admin.ModelAdmin):
     price_display.short_description = "Giá"
 
     def approve_listings(self, request, queryset):
-        updated = queryset.update(status='approved', is_active=True)
-        self.message_user(request, f"Approved {updated} listing(s) and set active.")
+        for listing in queryset:
+            if listing.status != 'approved':
+                listing.status = 'approved'
+                listing.is_active = True
+                listing.save()
+                # Send notification to host
+                notify_listing_approved(listing)
+        self.message_user(request, f"Approved {queryset.count()} listing(s) and set active.")
     approve_listings.short_description = 'Approve selected listings'
 
     def reject_listings(self, request, queryset):
-        updated = queryset.update(status='rejected', is_active=False)
-        self.message_user(request, f"Rejected {updated} listing(s) and set inactive.")
+        for listing in queryset:
+            if listing.status != 'rejected':
+                listing.status = 'rejected'
+                listing.is_active = False
+                listing.save()
+                # Send notification to host
+                notify_listing_rejected(listing)
+        self.message_user(request, f"Rejected {queryset.count()} listing(s) and set inactive.")
     reject_listings.short_description = 'Reject selected listings'
 
     def review_sentiment_chart(self, obj):
@@ -494,6 +509,49 @@ class PaymentAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         # do not silently override amount; validation above will prevent mismatches
         super().save_model(request, obj, form, change)
+
+
+# --- QUẢN LÝ THÔNG BÁO (NOTIFICATIONS) ---
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('title', 'user_link', 'notification_type_badge', 'is_read_badge', 'created_at')
+    list_filter = ('notification_type', 'is_read', 'created_at')
+    search_fields = ('title', 'message', 'user__full_name', 'user__email')
+    readonly_fields = ('created_at',)
+    ordering = ('-created_at',)
+    
+    def user_link(self, obj):
+        return format_html(
+            '<a href="/admin/app/user/{}/change/" style="color:#5D4037; font-weight:bold;">{}</a>',
+            obj.user.pk, obj.user.full_name or obj.user.email
+        )
+    user_link.short_description = "Người nhận"
+    
+    def notification_type_badge(self, obj):
+        type_colors = {
+            'listing_approved': '#2e7d32',
+            'listing_rejected': '#c62828',
+            'new_booking': '#1565c0',
+            'booking_confirmed': '#1565c0',
+            'booking_cancelled': '#c62828',
+            'guest_checkin': '#ef6c00',
+            'guest_checkout': '#7b1fa2',
+            'booking_completed': '#388e3c',
+            'payment_received': '#00695c',
+            'review_received': '#f9a825',
+        }
+        color = type_colors.get(obj.notification_type, '#666')
+        return format_html(
+            '<span style="background:{}; color:#fff; padding:3px 8px; border-radius:4px; font-size:11px;">{}</span>',
+            color, obj.get_notification_type_display()
+        )
+    notification_type_badge.short_description = "Loại"
+    
+    def is_read_badge(self, obj):
+        if obj.is_read:
+            return format_html('<span style="color:#2e7d32;">✓ Đã đọc</span>')
+        return format_html('<span style="color:#c62828;">○ Chưa đọc</span>')
+    is_read_badge.short_description = "Trạng thái"
 
 admin.site.register(Payment, PaymentAdmin)
 admin.site.unregister(Group)

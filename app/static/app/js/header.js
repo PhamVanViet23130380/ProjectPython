@@ -292,3 +292,199 @@ window.addEventListener('load', () => {
         });
     }
 });
+
+
+/* ========================
+   NOTIFICATION BELL
+   ======================== */
+document.addEventListener('DOMContentLoaded', () => {
+    const notificationBell = document.getElementById('notificationBell');
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    const notificationBadge = document.getElementById('notificationBadge');
+    const notificationList = document.getElementById('notificationList');
+    const markAllReadBtn = document.getElementById('markAllRead');
+
+    if (!notificationBell) return;
+
+    // Icon map cho các loại thông báo
+    const iconMap = {
+        'listing_approved': { icon: 'fa-solid fa-check-circle', class: 'approved' },
+        'listing_rejected': { icon: 'fa-solid fa-times-circle', class: 'rejected' },
+        'new_booking': { icon: 'fa-solid fa-calendar-plus', class: 'booking' },
+        'booking_confirmed': { icon: 'fa-solid fa-calendar-check', class: 'booking' },
+        'booking_cancelled': { icon: 'fa-solid fa-calendar-xmark', class: 'rejected' },
+        'guest_checkin': { icon: 'fa-solid fa-door-open', class: 'checkin' },
+        'guest_checkout': { icon: 'fa-solid fa-door-closed', class: 'checkout' },
+        'booking_completed': { icon: 'fa-solid fa-flag-checkered', class: 'completed' },
+        'payment_received': { icon: 'fa-solid fa-money-bill-wave', class: 'payment' },
+        'review_received': { icon: 'fa-solid fa-star', class: 'review' },
+    };
+
+    // Toggle dropdown
+    notificationBell.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const isOpen = notificationDropdown.classList.contains('show');
+        
+        // Close menu dropdown if open
+        const menuDropdown = document.getElementById('menuDropdown');
+        if (menuDropdown) menuDropdown.classList.remove('active');
+        
+        if (isOpen) {
+            notificationDropdown.classList.remove('show');
+        } else {
+            notificationDropdown.classList.add('show');
+            loadNotifications();
+        }
+    });
+
+    // Click outside to close
+    document.addEventListener('click', (e) => {
+        if (notificationDropdown && 
+            !notificationDropdown.contains(e.target) && 
+            !notificationBell.contains(e.target)) {
+            notificationDropdown.classList.remove('show');
+        }
+    });
+
+    // Load notifications
+    async function loadNotifications() {
+        try {
+            const response = await fetch('/notifications/api/');
+            const data = await response.json();
+            
+            updateBadge(data.unread_count);
+            renderNotifications(data.notifications);
+        } catch (error) {
+            console.error('Error loading notifications:', error);
+            notificationList.innerHTML = '<div class="notification-empty">Không thể tải thông báo</div>';
+        }
+    }
+
+    // Update badge
+    function updateBadge(count) {
+        if (count > 0) {
+            notificationBadge.textContent = count > 99 ? '99+' : count;
+            notificationBadge.style.display = 'block';
+            notificationBell.classList.add('has-unread');
+        } else {
+            notificationBadge.style.display = 'none';
+            notificationBell.classList.remove('has-unread');
+        }
+    }
+
+    // Render notifications
+    function renderNotifications(notifications) {
+        if (!notifications || notifications.length === 0) {
+            notificationList.innerHTML = '<div class="notification-empty">Không có thông báo mới</div>';
+            return;
+        }
+
+        let html = '';
+        notifications.forEach(n => {
+            const iconInfo = iconMap[n.type] || { icon: 'fa-solid fa-bell', class: '' };
+            const unreadClass = n.is_read ? '' : 'unread';
+            
+            // Determine link
+            let href = '/notifications/';
+            if (n.booking_id) {
+                href = '/booking/history/';
+            } else if (n.listing_id) {
+                href = `/chitietnoio/${n.listing_id}/`;
+            }
+            
+            html += `
+                <a href="${href}" class="notification-item ${unreadClass}" data-id="${n.id}">
+                    <div class="notification-icon ${iconInfo.class}">
+                        <i class="${iconInfo.icon}"></i>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">${escapeHtml(n.title)}</div>
+                        <div class="notification-message">${escapeHtml(n.message)}</div>
+                        <div class="notification-time">${n.created_at}</div>
+                    </div>
+                </a>
+            `;
+        });
+
+        notificationList.innerHTML = html;
+
+        // Add click handler to mark as read
+        notificationList.querySelectorAll('.notification-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const notifId = this.dataset.id;
+                markAsRead(notifId);
+            });
+        });
+    }
+
+    // Mark single notification as read
+    async function markAsRead(notifId) {
+        try {
+            const csrfToken = getCsrfToken();
+            await fetch(`/notifications/mark-read/${notifId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                },
+            });
+        } catch (error) {
+            console.error('Error marking notification as read:', error);
+        }
+    }
+
+    // Mark all as read
+    if (markAllReadBtn) {
+        markAllReadBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                const csrfToken = getCsrfToken();
+                await fetch('/notifications/mark-all-read/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                    },
+                });
+                
+                // Update UI
+                updateBadge(0);
+                notificationList.querySelectorAll('.notification-item.unread').forEach(item => {
+                    item.classList.remove('unread');
+                });
+            } catch (error) {
+                console.error('Error marking all as read:', error);
+            }
+        });
+    }
+
+    // Helper: Get CSRF token
+    function getCsrfToken() {
+        const cookie = document.cookie.split('; ').find(c => c.startsWith('csrftoken='));
+        return cookie ? cookie.split('=')[1] : '';
+    }
+
+    // Helper: Escape HTML
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Initial load badge count
+    async function loadUnreadCount() {
+        try {
+            const response = await fetch('/notifications/api/');
+            const data = await response.json();
+            updateBadge(data.unread_count);
+        } catch (error) {
+            // Silent fail
+        }
+    }
+
+    // Load unread count on page load
+    loadUnreadCount();
+
+    // Refresh every 60 seconds
+    setInterval(loadUnreadCount, 60000);
+});

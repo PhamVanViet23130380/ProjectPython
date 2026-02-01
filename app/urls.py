@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from .views import payment_views
+from .views import notification_views
 from django.contrib.auth import views as auth_views
 from app.views.auth_views import login_view, logout_view
 
@@ -132,10 +133,11 @@ urlpatterns = [
     path('complaints/', views.complaint_list, name='complaint_list'),
     path('complaints/create/<int:booking_id>/', views.complaint_create, name='complaint_create'),
 
-
-
-
-
+    # Notifications
+    path('notifications/', notification_views.notification_list, name='notification_list'),
+    path('notifications/api/', notification_views.notification_api, name='notification_api'),
+    path('notifications/mark-read/<int:notification_id>/', notification_views.mark_as_read, name='notification_mark_read'),
+    path('notifications/mark-all-read/', notification_views.mark_all_as_read, name='notification_mark_all_read'),
 
 
 ]

@@ -71,27 +71,13 @@
                 <button class="filter-pill active" data-filter="all">Tất cả</button>
                 <button class="filter-pill" data-filter="pending">Chờ xác nhận</button>
                 <button class="filter-pill" data-filter="confirmed">Đã xác nhận</button>
+                <button class="filter-pill" data-filter="in_progress">Đang ở</button>
                 <button class="filter-pill" data-filter="completed">Hoàn thành</button>
                 <button class="filter-pill" data-filter="cancelled">Đã huỷ</button>
 
             </div>
 
         </aside>
-
-
-
-        <div class="booking-notifications">
-            <h4>🔔 Thông báo</h4>
-
-            <div class="noti-item warning">
-                Hôm nay <strong>{{ b.user.full_name }}</strong> check-in
-                (<span>{{ b.listing.title }}</span>)
-            </div>
-
-            <div class="noti-item info">
-                Có <strong>2</strong> lượt thuê đang chờ xác nhận
-            </div>
-        </div>
 
 
 
@@ -125,7 +111,7 @@
 
                     <!-- Tổng tiền -->
                     <div class="booking-price">
-                        <strong>{{ b.total_price|intcomma }}đ</strong>
+                        <strong>{{ b.base_price|intcomma }}đ</strong>
                     </div>
 
                     <!-- Trạng thái -->

@@ -1,0 +1,271 @@
+{% extends 'app/layout/base.html' %}
+{% load static %}
+
+{% block title %}Thông báo{% endblock %}
+
+{% block extra_css %}
+<style>
+    .notifications-page {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .notifications-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #e8e8e8;
+    }
+    
+    .notifications-header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #222;
+        margin: 0;
+    }
+    
+    .mark-all-btn {
+        background: #b58b6b;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    
+    .mark-all-btn:hover {
+        background: #a07b63;
+    }
+    
+    .notifications-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .notif-card {
+        display: flex;
+        gap: 16px;
+        padding: 20px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        transition: transform 0.2s, box-shadow 0.2s;
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .notif-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    
+    .notif-card.unread {
+        background: #fef8f4;
+        border-left: 4px solid #b58b6b;
+    }
+    
+    .notif-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+    
+    .notif-icon.approved { background: #e8f5e9; color: #2e7d32; }
+    .notif-icon.rejected { background: #ffebee; color: #c62828; }
+    .notif-icon.booking { background: #e3f2fd; color: #1565c0; }
+    .notif-icon.checkin { background: #fff3e0; color: #ef6c00; }
+    .notif-icon.checkout { background: #f3e5f5; color: #7b1fa2; }
+    .notif-icon.completed { background: #e8f5e9; color: #388e3c; }
+    .notif-icon.payment { background: #e0f2f1; color: #00695c; }
+    .notif-icon.review { background: #fff8e1; color: #f9a825; }
+    .notif-icon.default { background: #f5f5f5; color: #666; }
+    
+    .notif-content {
+        flex: 1;
+    }
+    
+    .notif-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 6px;
+    }
+    
+    .notif-message {
+        font-size: 14px;
+        color: #555;
+        line-height: 1.5;
+        margin-bottom: 8px;
+    }
+    
+    .notif-time {
+        font-size: 12px;
+        color: #999;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: #f9f9f9;
+        border-radius: 12px;
+    }
+    
+    .empty-state i {
+        font-size: 48px;
+        color: #ccc;
+        margin-bottom: 16px;
+    }
+    
+    .empty-state h3 {
+        font-size: 18px;
+        color: #666;
+        margin-bottom: 8px;
+    }
+    
+    .empty-state p {
+        font-size: 14px;
+        color: #999;
+    }
+    
+    @media (max-width: 600px) {
+        .notifications-header {
+            flex-direction: column;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        
+        .notif-card {
+            padding: 16px;
+        }
+        
+        .notif-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 16px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="notifications-page">
+    <div class="notifications-header">
+        <h1>🔔 Thông báo</h1>
+        {% if notifications %}
+        <button class="mark-all-btn" id="markAllBtn">
+            <i class="fa-solid fa-check-double"></i> Đánh dấu tất cả đã đọc
+        </button>
+        {% endif %}
+    </div>
+    
+    {% if notifications %}
+    <div class="notifications-list">
+        {% for notif in notifications %}
+        <a href="{% if notif.booking_id %}{% url 'user_booking_history' %}{% elif notif.listing_id %}{% url 'chitietnoio' notif.listing_id %}{% else %}#{% endif %}" 
+           class="notif-card {% if not notif.is_read %}unread{% endif %}"
+           data-id="{{ notif.id }}">
+            <div class="notif-icon 
+                {% if notif.notification_type == 'listing_approved' %}approved
+                {% elif notif.notification_type == 'listing_rejected' %}rejected
+                {% elif notif.notification_type == 'new_booking' or notif.notification_type == 'booking_confirmed' %}booking
+                {% elif notif.notification_type == 'booking_cancelled' %}rejected
+                {% elif notif.notification_type == 'guest_checkin' %}checkin
+                {% elif notif.notification_type == 'guest_checkout' %}checkout
+                {% elif notif.notification_type == 'booking_completed' %}completed
+                {% elif notif.notification_type == 'payment_received' %}payment
+                {% elif notif.notification_type == 'review_received' %}review
+                {% else %}default{% endif %}">
+                <i class="fa-solid 
+                    {% if notif.notification_type == 'listing_approved' %}fa-check-circle
+                    {% elif notif.notification_type == 'listing_rejected' %}fa-times-circle
+                    {% elif notif.notification_type == 'new_booking' %}fa-calendar-plus
+                    {% elif notif.notification_type == 'booking_confirmed' %}fa-calendar-check
+                    {% elif notif.notification_type == 'booking_cancelled' %}fa-calendar-xmark
+                    {% elif notif.notification_type == 'guest_checkin' %}fa-door-open
+                    {% elif notif.notification_type == 'guest_checkout' %}fa-door-closed
+                    {% elif notif.notification_type == 'booking_completed' %}fa-flag-checkered
+                    {% elif notif.notification_type == 'payment_received' %}fa-money-bill-wave
+                    {% elif notif.notification_type == 'review_received' %}fa-star
+                    {% else %}fa-bell{% endif %}"></i>
+            </div>
+            <div class="notif-content">
+                <div class="notif-title">{{ notif.title }}</div>
+                <div class="notif-message">{{ notif.message }}</div>
+                <div class="notif-time">{{ notif.created_at|date:"d/m/Y H:i" }}</div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fa-regular fa-bell-slash"></i>
+        <h3>Chưa có thông báo nào</h3>
+        <p>Các thông báo mới sẽ xuất hiện ở đây</p>
+    </div>
+    {% endif %}
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const markAllBtn = document.getElementById('markAllBtn');
+    
+    if (markAllBtn) {
+        markAllBtn.addEventListener('click', async () => {
+            try {
+                const csrfToken = document.cookie.split('; ').find(c => c.startsWith('csrftoken='))?.split('=')[1] || '';
+                
+                const response = await fetch('/notifications/mark-all-read/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                    },
+                });
+                
+                if (response.ok) {
+                    document.querySelectorAll('.notif-card.unread').forEach(card => {
+                        card.classList.remove('unread');
+                    });
+                    markAllBtn.innerHTML = '<i class="fa-solid fa-check"></i> Đã đánh dấu tất cả';
+                    markAllBtn.disabled = true;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+    
+    // Mark as read when clicking on notification
+    document.querySelectorAll('.notif-card').forEach(card => {
+        card.addEventListener('click', async function(e) {
+            const notifId = this.dataset.id;
+            const csrfToken = document.cookie.split('; ').find(c => c.startsWith('csrftoken='))?.split('=')[1] || '';
+            
+            try {
+                await fetch(`/notifications/mark-read/${notifId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                    },
+                });
+            } catch (error) {
+                // Silent fail
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

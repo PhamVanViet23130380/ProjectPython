@@ -12,6 +12,7 @@ import hashlib
 from urllib.parse import urlencode
 
 from ..models import Booking, Payment, Listing
+from .notification_views import notify_new_booking
 
 # --- price helper (moved here from app/utils.py) ---
 from decimal import Decimal, ROUND_HALF_UP
@@ -133,6 +134,12 @@ def payment_start(request, booking_id):
         )
         booking.booking_status = 'confirmed'
         booking.save()
+        
+        # Gửi thông báo cho host
+        try:
+            notify_new_booking(booking)
+        except Exception as notif_error:
+            print(f"Lỗi khi gửi thông báo: {notif_error}")
         
         # Gửi email xác nhận đặt phòng SAU KHI thanh toán thành công
         try:
@@ -352,6 +359,12 @@ def create_booking_and_pay(request, listing_id):
         if booking.booking_status != 'confirmed':
             booking.booking_status = 'confirmed'
             booking.save(update_fields=['booking_status'])
+            
+            # Gửi thông báo cho host
+            try:
+                notify_new_booking(booking)
+            except Exception as notif_error:
+                print(f"Lỗi khi gửi thông báo: {notif_error}")
 
     # Send confirmation email after successful payment
     try:
@@ -483,6 +496,12 @@ def vnpay_return(request):
     if booking.booking_status != 'confirmed':
         booking.booking_status = 'confirmed'
         booking.save(update_fields=['booking_status'])
+        
+        # Gửi thông báo cho host
+        try:
+            notify_new_booking(booking)
+        except Exception as notif_error:
+            print(f"Lỗi khi gửi thông báo: {notif_error}")
 
     return redirect('booking_success', booking_id=booking.booking_id)
 
@@ -530,6 +549,12 @@ def vnpay_ipn(request):
         if booking.booking_status != 'confirmed':
             booking.booking_status = 'confirmed'
             booking.save(update_fields=['booking_status'])
+            
+            # Gửi thông báo cho host
+            try:
+                notify_new_booking(booking)
+            except Exception as notif_error:
+                print(f"Lỗi khi gửi thông báo: {notif_error}")
         return JsonResponse({'RspCode': '00', 'Message': 'Confirm Success'})
 
     return JsonResponse({'RspCode': '00', 'Message': 'Confirm Success'})
