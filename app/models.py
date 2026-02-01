@@ -2,6 +2,8 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+from chat.models import Conversation
+
 # Khai báo các lựa chọn (Choices) cho các trường ENUM
 # Trong Django, chúng ta định nghĩa các ENUM bằng cách sử dụng Tuple of Tuples
 ROLE_CHOICES = [
@@ -13,8 +15,8 @@ ROLE_CHOICES = [
 BOOKING_STATUS_CHOICES = [
     ('pending', 'Chờ xác nhận'),
     ('confirmed', 'Đã xác nhận'),
+    ('completed', 'Hoàn thành'),
     ('cancelled', 'Đã hủy'), 
-    ()
 ]
 
 PAYMENT_STATUS_CHOICES = [
@@ -224,6 +226,17 @@ class Booking(models.Model):
 
     # listing_id (FK): Phòng
     listing = models.ForeignKey(Listing, on_delete=models.RESTRICT, related_name='bookings', verbose_name='Phòng')
+
+
+    conversation = models.OneToOneField(
+        Conversation,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='booking',
+        verbose_name='Cuộc trò chuyện'
+    )
+
 
     # check_in: DATE (DateField)
     check_in = models.DateField(verbose_name='Ngày nhận')

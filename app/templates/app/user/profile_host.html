@@ -49,9 +49,12 @@
             Chuyến đi
         </a>
 
+        {% if is_host %}
         <a href="{% url 'profile_host' %}" class="tab-item active">
             Cho thuê
         </a>
+        <a href="{% url 'profile_host_bookings' %}" class="tab-item">Quản lý thuê</a>
+        {% endif %}
     </nav>
 
     <!-- ========== CONTENT ========== -->
@@ -115,12 +118,6 @@
                 {% endfor %}
 
             </section>
-
-            <!-- ===== BOOKINGS (sau này) ===== -->
-            <section class="host-section">
-                <h3>Danh sách đặt phòng</h3>
-                <p class="empty-text">Chưa có lượt đặt.</p>
-            </section>
         </div>
 
         
@@ -137,6 +134,8 @@ function toggleDropdown() {
         dropdown.style.display === 'block' ? 'none' : 'block';
 }
 </script>
+
+{% include 'app/includes/chat_widget.html' %}
 
 </body>
 </html>

@@ -1,0 +1,479 @@
+{% load static %}
+<!-- ========== CHAT WIDGET ========== -->
+{% if user.is_authenticated %}
+
+<!-- Chat Box -->
+<div id="chatBox" class="chat-box" style="display:none;">
+    <div class="chat-header">
+        Chat với <strong id="chatWithName"></strong>
+        <span class="close-chat" onclick="closeChat()">✕</span>
+    </div>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="chat-input">
+        <input type="text" id="chatInput" placeholder="Nhập tin nhắn..." onkeypress="if(event.key==='Enter')sendMessage()">
+        <button onclick="sendMessage()">Gửi</button>
+    </div>
+</div>
+
+<!-- Chat Bubble -->
+<div id="chatBubble" class="chat-bubble" onclick="toggleConversationList()">
+    <i class="fa-solid fa-comments"></i>
+    <span id="unreadBadge" class="unread-badge" style="display:none;">0</span>
+</div>
+
+<!-- Conversation List -->
+<div id="conversationList" class="conversation-list" style="display:none;">
+    <div class="conv-header">
+        <h4>Tin nhắn</h4>
+        <span class="close-conv" onclick="toggleConversationList()">✕</span>
+    </div>
+    <div id="convItems" class="conv-items">
+        <div class="conv-empty">Đang tải...</div>
+    </div>
+</div>
+
+<style>
+/* ============================= */
+/* CHAT BOX */
+/* ============================= */
+.chat-box {
+    position: fixed;
+    right: 100px;
+    bottom: 20px;
+    width: 340px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(107, 83, 68, 0.2);
+    display: none;
+    flex-direction: column;
+    z-index: 1001;
+    border: 1px solid #e8ddd4;
+}
+
+.chat-header {
+    padding: 14px 16px;
+    font-weight: 600;
+    border-bottom: 1px solid #e8ddd4;
+    display: flex;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #8B7355, #6B5344);
+    color: #fff;
+    border-radius: 14px 14px 0 0;
+}
+
+.chat-messages {
+    padding: 12px;
+    height: 260px;
+    overflow-y: auto;
+}
+
+.msg {
+    padding: 10px 14px;
+    border-radius: 18px;
+    margin-bottom: 8px;
+    max-width: 75%;
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+/* Tin nhắn nhận được - bên trái */
+.from-other {
+    background: #f5f0eb;
+    color: #5c4a3d;
+    border: 1px solid #e8ddd4;
+    margin-right: auto;
+    border-radius: 18px 18px 18px 4px;
+}
+
+/* Tin nhắn gửi đi - bên phải */
+.from-me {
+    background: linear-gradient(135deg, #8B7355, #6B5344);
+    color: #fff;
+    margin-left: auto;
+    border-radius: 18px 18px 4px 18px;
+}
+
+.chat-input {
+    display: flex;
+    border-top: 1px solid #e8ddd4;
+}
+
+.chat-input input {
+    flex: 1;
+    border: none;
+    padding: 12px 14px;
+    outline: none;
+    font-size: 14px;
+    border-radius: 0 0 0 14px;
+}
+
+.chat-input input::placeholder {
+    color: #a89383;
+}
+
+.chat-input button {
+    border: none;
+    background: linear-gradient(135deg, #8B7355, #6B5344);
+    color: #fff;
+    padding: 0 18px;
+    cursor: pointer;
+    border-radius: 0 0 14px 0;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.chat-input button:hover {
+    background: linear-gradient(135deg, #6B5344, #5a4538);
+}
+
+.chat-box .chat-header .close-chat {
+    cursor: pointer;
+    color: rgba(255,255,255,0.8);
+    transition: color 0.2s;
+}
+
+.chat-box .chat-header .close-chat:hover {
+    color: #fff;
+}
+
+.chat-empty {
+    text-align: center;
+    color: #999;
+    padding: 20px 0;
+}
+
+/* ============================= */
+/* CHAT BUBBLE */
+/* ============================= */
+.chat-bubble {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #8B7355, #6B5344);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1000;
+}
+
+.chat-bubble:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.35);
+}
+
+.chat-bubble i {
+    font-size: 24px;
+    color: white;
+}
+
+.unread-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 22px;
+    height: 22px;
+    background: #c9a87c;
+    color: #5c4a3d;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+    border: 2px solid white;
+}
+
+/* ============================= */
+/* CONVERSATION LIST */
+/* ============================= */
+.conversation-list {
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    width: 340px;
+    max-height: 450px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(107, 83, 68, 0.2);
+    display: none;
+    flex-direction: column;
+    z-index: 999;
+    overflow: hidden;
+    border: 1px solid #e8ddd4;
+}
+
+.conv-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #e8ddd4;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #8B7355, #6B5344);
+}
+
+.conv-header h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.close-conv {
+    cursor: pointer;
+    font-size: 18px;
+    color: rgba(255,255,255,0.8);
+    transition: color 0.2s;
+}
+
+.close-conv:hover {
+    color: #fff;
+}
+
+.conv-items {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 380px;
+}
+
+.conv-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-bottom: 1px solid #f5f5f5;
+    gap: 12px;
+}
+
+.conv-item:hover {
+    background: #f9f5f2;
+}
+
+.conv-item.has-unread {
+    background: #faf6f2;
+    border-left: 3px solid #8B7355;
+}
+
+.conv-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.conv-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.conv-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #5c4a3d;
+    margin-bottom: 2px;
+}
+
+.conv-listing {
+    font-size: 12px;
+    color: #a89383;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.conv-preview {
+    font-size: 13px;
+    color: #7a6a5a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.conv-unread {
+    min-width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, #8B7355, #6B5344);
+    color: white;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.conv-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: #a89383;
+    font-size: 14px;
+}
+</style>
+
+<script>
+// ========== CHAT FUNCTIONS ==========
+let currentConversationId = null;
+let conversationListOpen = false;
+
+function openChat(conversationId, otherUserName) {
+    currentConversationId = conversationId;
+    document.getElementById('chatWithName').innerText = otherUserName;
+    document.getElementById('chatBox').style.display = 'flex';
+    document.getElementById('chatInput').focus();
+    loadMessages();
+    
+    // Cập nhật số unread sau khi mở chat
+    setTimeout(updateUnreadCount, 500);
+}
+
+function closeChat() {
+    document.getElementById('chatBox').style.display = 'none';
+    currentConversationId = null;
+}
+
+function loadMessages() {
+    if (!currentConversationId) return;
+    
+    fetch(`/chat/conversation/${currentConversationId}/`, { credentials: 'same-origin' })
+        .then(res => res.json())
+        .then(data => {
+            const box = document.getElementById('chatMessages');
+            box.innerHTML = '';
+
+            data.messages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = 'msg ' + (msg.is_me ? 'from-me' : 'from-other');
+                div.innerText = msg.content;
+                box.appendChild(div);
+            });
+
+            box.scrollTop = box.scrollHeight;
+        });
+}
+
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const content = input.value.trim();
+    if (!content || !currentConversationId) return;
+
+    fetch('/chat/send/', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            conversation_id: currentConversationId,
+            content: content
+        })
+    })
+    .then(res => res.json())
+    .then(() => {
+        input.value = '';
+        loadMessages();
+    });
+}
+
+function toggleConversationList() {
+    conversationListOpen = !conversationListOpen;
+    const list = document.getElementById('conversationList');
+    list.style.display = conversationListOpen ? 'flex' : 'none';
+    
+    if (conversationListOpen) {
+        loadConversations();
+    }
+}
+
+function updateUnreadCount() {
+    fetch('/chat/unread-count/', { credentials: 'same-origin' })
+        .then(res => res.json())
+        .then(data => {
+            const badge = document.getElementById('unreadBadge');
+            if (data.unread_count > 0) {
+                badge.innerText = data.unread_count > 99 ? '99+' : data.unread_count;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        })
+        .catch(err => console.error('Error fetching unread count:', err));
+}
+
+function loadConversations() {
+    fetch('/chat/conversations/', { credentials: 'same-origin' })
+        .then(res => res.json())
+        .then(data => {
+            const container = document.getElementById('convItems');
+            
+            if (data.conversations.length === 0) {
+                container.innerHTML = '<div class="conv-empty">Chưa có cuộc hội thoại nào</div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            data.conversations.forEach(conv => {
+                const div = document.createElement('div');
+                div.className = 'conv-item' + (conv.unread_count > 0 ? ' has-unread' : '');
+                div.onclick = () => {
+                    openChat(conv.id, conv.other_user_name);
+                    toggleConversationList();
+                };
+                
+                const avatarUrl = conv.other_user_avatar || 'https://i.pinimg.com/736x/ed/57/43/ed574383727c119220c3934c79a191fb.jpg';
+                
+                div.innerHTML = `
+                    <img src="${avatarUrl}" class="conv-avatar">
+                    <div class="conv-info">
+                        <div class="conv-name">${conv.other_user_name}</div>
+                        <div class="conv-listing">${conv.listing_title}</div>
+                        <div class="conv-preview">${conv.last_message || 'Chưa có tin nhắn'}</div>
+                    </div>
+                    ${conv.unread_count > 0 ? `<span class="conv-unread">${conv.unread_count}</span>` : ''}
+                `;
+                container.appendChild(div);
+            });
+        })
+        .catch(err => {
+            console.error('Error loading conversations:', err);
+            document.getElementById('convItems').innerHTML = '<div class="conv-empty">Lỗi tải tin nhắn</div>';
+        });
+}
+
+// CSRF helper
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Cập nhật số tin chưa đọc khi load trang và định kỳ mỗi 30 giây
+document.addEventListener('DOMContentLoaded', function() {
+    updateUnreadCount();
+    setInterval(updateUnreadCount, 30000);
+});
+</script>
+
+{% endif %}
