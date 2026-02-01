@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from django.db import transaction
+from django.db.models import Count, Q, Max
 
 from app.models import Booking
 from .models import Conversation, Message
@@ -84,7 +85,7 @@ def send_message(request):
 
 @login_required
 def open_chat_for_booking(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id)
+    booking = get_object_or_404(Booking, booking_id=booking_id)
 
     # Chỉ host hoặc guest mới được chat
     if request.user not in [booking.user, booking.listing.host]:
@@ -111,3 +112,54 @@ def open_chat_for_booking(request, booking_id):
         'conversation_id': conversation.id,
         'other_user_name': other_user.full_name or other_user.username
     })
+
+
+@login_required
+def get_unread_count(request):
+    """Lấy tổng số tin nhắn chưa đọc của user hiện tại"""
+    user = request.user
+    
+    # Đếm tin nhắn chưa đọc từ tất cả conversations mà user tham gia
+    unread_count = Message.objects.filter(
+        Q(conversation__host=user) | Q(conversation__guest=user),
+        is_read=False
+    ).exclude(sender=user).count()
+    
+    return JsonResponse({'unread_count': unread_count})
+
+
+@login_required
+def get_conversations(request):
+    """Lấy danh sách conversations với số tin nhắn chưa đọc"""
+    user = request.user
+    
+    # Lấy tất cả conversations mà user tham gia
+    conversations = Conversation.objects.filter(
+        Q(host=user) | Q(guest=user)
+    ).select_related('host', 'guest', 'booking', 'booking__listing').annotate(
+        unread_count=Count(
+            'messages',
+            filter=Q(messages__is_read=False) & ~Q(messages__sender=user)
+        ),
+        last_message_time=Max('messages__created_at')
+    ).order_by('-last_message_time')
+    
+    data = []
+    for conv in conversations:
+        # Xác định người chat cùng
+        other_user = conv.guest if conv.host == user else conv.host
+        
+        # Lấy tin nhắn cuối cùng
+        last_msg = conv.messages.order_by('-created_at').first()
+        
+        data.append({
+            'id': conv.id,
+            'other_user_name': other_user.full_name or other_user.username,
+            'other_user_avatar': other_user.avatar.url if other_user.avatar else None,
+            'listing_title': conv.booking.listing.title if conv.booking else 'Cuộc hội thoại',
+            'unread_count': conv.unread_count,
+            'last_message': last_msg.content[:50] if last_msg else '',
+            'last_message_time': last_msg.created_at.isoformat() if last_msg else None,
+        })
+    
+    return JsonResponse({'conversations': data})

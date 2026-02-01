@@ -133,12 +133,11 @@
 
                     <!-- Hành động -->
                     <div class="booking-actions">
-                        {% if b.conversation %}
-                            <button class="btn chat"
-                                onclick="openChat({{ b.conversation.id }}, '{{ b.user.full_name }}')">
-                                Chat
-                            </button>
-                        {% endif %}
+                        <button class="btn chat"
+                            data-booking-id="{{ b.pk }}"
+                            onclick="openChatForBooking(this)">
+                            Chat
+                        </button>
 
                         {% if b.booking_status == 'pending' %}
                             <button class="btn confirm">Xác nhận</button>
@@ -165,29 +164,6 @@
     </div>
 
 </main>
-    
-<div class="chat-box" id="chatBox">
-    <div class="chat-header">
-        Chat với <strong>{{ chat_with.get_full_name }}</strong>
-        <span class="close-chat" onclick="closeChat()">✕</span>
-    </div>
-
-    <div class="chat-messages" id="chatMessages">
-        {% for msg in messages %}
-            <div class="msg {% if msg.sender == request.user %}from-user{% else %}from-host{% endif %}">
-                {{ msg.content }}
-            </div>
-        {% empty %}
-            <div class="chat-empty">Chưa có tin nhắn nào</div>
-        {% endfor %}
-    </div>
-
-    <div class="chat-input">
-        <input type="text" id="chatInput" placeholder="Nhập tin nhắn...">
-        <button onclick="sendMessage()">Gửi</button>
-    </div>
-</div>
-
 
 <script>
 function toggleDropdown() {
@@ -200,74 +176,8 @@ function toggleDropdown() {
 
 <!-- Mở hộp chat -->
 <script>
-let CURRENT_CONVERSATION_ID = null;
-
-function openChat(conversationId, guestName) {
-    CURRENT_CONVERSATION_ID = conversationId;
-
-    document.querySelector('.chat-header strong').innerText = guestName;
-    document.getElementById('chatBox').style.display = 'flex';
-
-    loadMessages();
-}
+// Function này sẽ được ghi đè sau khi include chat_widget
 </script>
-
-<!-- Đóng hộp chat -->
-<script>
-function closeChat() {
-    document.getElementById('chatBox').style.display = 'none';
-    CURRENT_CONVERSATION_ID = null;
-
-
-}
-</script>
-
-<!-- Load tin nhắn từ DB -->
-<script>
-function loadMessages() {
-    fetch(`/chat/conversation/${CURRENT_CONVERSATION_ID}/`)
-        .then(res => res.json())
-        .then(data => {
-            const box = document.querySelector('.chat-messages');
-            box.innerHTML = '';
-
-            data.messages.forEach(msg => {
-                const div = document.createElement('div');
-                div.className = 'msg ' + (msg.is_me ? 'from-user' : 'from-host');
-                div.innerText = msg.content;
-                box.appendChild(div);
-            });
-        });
-}
-</script>
-
-<!-- Gửi tin nhắn -->
-<script>
-function sendMessage() {
-    const input = document.getElementById('chatInput');
-    const content = input.value.trim();
-
-    if (!content || !CURRENT_CONVERSATION_ID) return;
-
-    fetch('/chat/send/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: JSON.stringify({
-            conversation_id: CURRENT_CONVERSATION_ID,
-            content: content
-        })
-    }).then(() => {
-        input.value = '';
-        loadMessages();
-    });
-}
-</script>
-
-
-
 
 <!-- Lọc theo trạng thái đặt phòng -->
 <script>
@@ -300,9 +210,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script>
     const box = document.getElementById("chatMessages");
-    box.scrollTop = box.scrollHeight;
+    if (box) box.scrollTop = box.scrollHeight;
 </script>
 
+{% include 'app/includes/chat_widget.html' %}
+
+<script>
+// Override openChatForBooking for this page
+function openChatForBooking(btn) {
+    if (!btn || !btn.dataset.bookingId) {
+        console.error('❌ Không lấy được bookingId', btn);
+        return;
+    }
+
+    const bookingId = btn.dataset.bookingId;
+    console.log('✅ bookingId:', bookingId);
+
+    fetch(`/chat/open/${bookingId}/`)
+        .then(res => {
+            if (!res.ok) throw new Error('Open chat failed');
+            return res.json();
+        })
+        .then(data => {
+            console.log('Chat open response:', data);
+            openChat(data.conversation_id, data.other_user_name);
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Không mở được chat');
+        });
+}
+</script>
 
 </body>
 </html>

@@ -350,7 +350,7 @@ body {
 
 .chat-box {
     position: fixed;
-    right: 20px;
+    right: 100px;
     bottom: 20px;
     width: 320px;
     background: #fff;
@@ -439,6 +439,183 @@ body {
 
 .empty-box p {
     margin-top: 6px;
+    font-size: 14px;
+}
+
+/* ============================= */
+/* CHAT BUBBLE */
+/* ============================= */
+
+.chat-bubble {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #8B7355, #6B5344);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1000;
+}
+
+.chat-bubble:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.35);
+}
+
+.chat-bubble i {
+    font-size: 24px;
+    color: white;
+}
+
+.unread-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 22px;
+    height: 22px;
+    background: #ff4757;
+    color: white;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+    border: 2px solid white;
+}
+
+/* ============================= */
+/* CONVERSATION LIST */
+/* ============================= */
+
+.conversation-list {
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    width: 340px;
+    max-height: 450px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    z-index: 999;
+    overflow: hidden;
+}
+
+.conv-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fafafa;
+}
+
+.conv-header h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.close-conv {
+    cursor: pointer;
+    font-size: 18px;
+    color: #999;
+    transition: color 0.2s;
+}
+
+.close-conv:hover {
+    color: #ff4757;
+}
+
+.conv-items {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 380px;
+}
+
+.conv-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-bottom: 1px solid #f5f5f5;
+    gap: 12px;
+}
+
+.conv-item:hover {
+    background: #f8f8f8;
+}
+
+.conv-item.has-unread {
+    background: #fff8f0;
+}
+
+.conv-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.conv-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.conv-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 2px;
+}
+
+.conv-listing {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.conv-preview {
+    font-size: 13px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.conv-unread {
+    min-width: 22px;
+    height: 22px;
+    background: #ff4757;
+    color: white;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.conv-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: #999;
     font-size: 14px;
 }
 
