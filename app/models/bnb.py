@@ -174,7 +174,6 @@ class Review(models.Model):
 class ReviewMedia(models.Model):
     media_id = models.BigAutoField(primary_key=True)
     review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='media')
-    media_url = models.URLField(max_length=255, verbose_name='Link Media')
     media_type = models.CharField(max_length=10, choices=(('image', 'Ảnh'), ('video', 'Video')),
                                   verbose_name='Loại media')
     media = models.FileField(upload_to="reviews/", null=True, blank=True)

@@ -347,9 +347,6 @@ class ReviewMedia(models.Model):
     # Quan hệ: 1 REVIEWS -> N REVIEW_MEDIA
     review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='media')
 
-    # media_url: VARCHAR(255) (FileField) - Đổi thành URLField cho đơn giản hoặc FileField nếu bạn muốn lưu tệp tin
-    media_url = models.URLField(max_length=255, verbose_name='Link Media')
-
     # media_type: ENUM (CharField)
     media_type = models.CharField(max_length=10, choices=MEDIA_TYPE_CHOICES, verbose_name='Loại media')
 
