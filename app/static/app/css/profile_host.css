@@ -45,6 +45,14 @@
     padding: 22px;
     box-shadow: 0 6px 20px rgba(0,0,0,0.08);
     text-align: center;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.stat-card:hover {
+    border-color: #8B5A2B;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 90, 43, 0.15);
 }
 
 .stat-card h3 {

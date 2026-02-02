@@ -52,7 +52,7 @@ class CustomAdminSite(admin.AdminSite):
         
         # Lấy danh sách các năm có booking
         years_qs = Booking.objects.filter(
-            booking_status='confirmed'
+            booking_status='completed'
         ).annotate(
             year=ExtractYear('created_at')
         ).values('year').distinct().order_by('-year')
@@ -64,7 +64,7 @@ class CustomAdminSite(admin.AdminSite):
         
         # Lấy booking đã hoàn thành trong năm được chọn
         bookings_year = Booking.objects.filter(
-            booking_status='confirmed',
+            booking_status='completed',
             created_at__year=selected_year
         )
         
@@ -78,7 +78,7 @@ class CustomAdminSite(admin.AdminSite):
         
         # Doanh thu tháng hiện tại
         bookings_month = Booking.objects.filter(
-            booking_status='confirmed',
+            booking_status='completed',
             created_at__year=current_year,
             created_at__month=current_month
         )

@@ -77,7 +77,7 @@
                 </div>
 
                 <a href="{% url 'host_revenue_statistics' %}" class="stat-card clickable">
-                    <h3>{{ total_revenue|intcomma }}đ</h3>
+                    <h3>{{ total_revenue|floatformat:0|intcomma }}đ</h3>
                     <p>Doanh thu <i class="fas fa-chevron-right"></i></p>
                 </a>
 

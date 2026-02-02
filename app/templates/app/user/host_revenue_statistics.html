@@ -267,7 +267,7 @@
         <!-- Stats Overview - HORIZONTAL ROW -->
         <div class="stats-grid">
             <div class="stat-box highlight">
-                <h3>{{ total_revenue_year|intcomma }}đ</h3>
+                <h3>{{ total_revenue_year|floatformat:0|intcomma }}đ</h3>
                 <p>Tổng doanh thu năm {{ selected_year }}</p>
             </div>
             <div class="stat-box">
@@ -275,7 +275,7 @@
                 <p>Lượt đặt hoàn thành</p>
             </div>
             <div class="stat-box">
-                <h3>{{ total_revenue_month|intcomma }}đ</h3>
+                <h3>{{ total_revenue_month|floatformat:0|intcomma }}đ</h3>
                 <p>Doanh thu tháng này</p>
             </div>
             <div class="stat-box">
